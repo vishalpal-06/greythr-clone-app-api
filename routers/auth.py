@@ -37,16 +37,15 @@ def get_db():
 # Authenticate user
 def authenticate_user(email: str, password: str, db: Session):
     user = db.query(Employee).filter(Employee.email == email).first()
-    if not user or not bcrypt_context.verify(password, user.password):
+    if not user or not (password == user.password):
         return None
     return user
 
 # Create JWT token
-def create_access_token(email: str, employee_id: int, roles: List[str], expires_delta: timedelta):
+def create_access_token(email: str, employee_id: int, expires_delta: timedelta):
     encode = {
         'sub': email,
-        'id': employee_id,
-        'roles': roles
+        'id': employee_id
     }
     expires = datetime.now(timezone.utc) + expires_delta
     encode.update({'exp': expires})
@@ -81,11 +80,8 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
             headers={"WWW-Authenticate": "Bearer"}
         )
     
-    # Fetch user roles
-    roles = [role.roleName for role in user.roles]
-    
     # Create JWT token
-    token = create_access_token(user.email, user.employeeID, roles, timedelta(minutes=60))
+    token = create_access_token(user.email, user.employeeID, timedelta(minutes=60))
     
     # Update last_login
     user.last_login = datetime.now(timezone.utc)
