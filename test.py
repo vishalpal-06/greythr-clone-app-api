@@ -5,6 +5,9 @@ from datetime import date
 # Connect to the SQLite database
 conn = sqlite3.connect('greythr.db')
 cursor = conn.cursor()
+cursor.execute("DELETE FROM department")
+cursor.execute("DELETE FROM role")
+cursor.execute("DELETE FROM employee")
 # -------------------------
 # 1. Insert Departments
 # -------------------------
@@ -36,18 +39,19 @@ print(f"✅ Inserted {len(roles)} roles.")
 # -------------------------
 
 employees_data = [
-    ["John", "Doe", "john.doe123@example.com", date(2023, 1, 15), "123 Main Street, New York", 1, 2, None],
-    ["Alice", "Smith", "alice.smith@example.com", date(2023, 2, 10), "456 Park Avenue, Chicago", 2, 1, 1],
-    ["Robert", "Brown", "robert.brown@example.com", date(2023, 3, 5), "789 Broadway, Los Angeles", 1, 2, 1],
-    ["Emily", "Johnson", "emily.johnson@example.com", date(2023, 4, 20), "101 Pine Street, San Francisco", 3, 2, 2],
-    ["David", "Williams", "david.williams@example.com", date(2023, 5, 18), "202 Oak Street, Seattle", 2, 1, 2]
+    ["Vishu", "Pal", "vishalpal0602@gmail.com", date(2023, 5, 18), "Kalyan(E) Thane, Maharastra", 2, 1, None, 1],
+    ["John", "Doe", "john.doe123@example.com", date(2023, 1, 15), "123 Main Street, New York", 1, 2, 1, 0],
+    ["Alice", "Smith", "alice.smith@example.com", date(2023, 2, 10), "456 Park Avenue, Chicago", 2, 1, 1, 0],
+    ["Robert", "Brown", "robert.brown@example.com", date(2023, 3, 5), "789 Broadway, Los Angeles", 1, 2, 2, 0],
+    ["Emily", "Johnson", "emily.johnson@example.com", date(2023, 4, 20), "101 Pine Street, San Francisco", 3, 2, 2, 0],
+    ["David", "Williams", "david.williams@example.com", date(2023, 5, 18), "202 Oak Street, Seattle", 2, 1, 2, 0]
 ]
 
 
 
 insert_query = """
-INSERT INTO employee (first_name, last_name, email, joining_date, address, fk_department_id, fk_role_id, fk_manager_id, password)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+INSERT INTO employee (first_name, last_name, email, joining_date, address, fk_department_id, fk_role_id, fk_manager_id, isadmin, password)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 """
 
 default_hire_date = date.today().isoformat()
@@ -64,9 +68,16 @@ for emp in employees_data:
 
     # Insert employee
     cursor.execute(insert_query, (
-        emp[0], emp[1], emp[2], emp[3],
-        default_hire_date if emp[4] is None else emp[4],
-        emp[5], emp[6], emp[7], "Testing"
+        emp[0], 
+        emp[1], 
+        emp[2], 
+        emp[3],
+        emp[4],
+        emp[5],
+        emp[6],
+        emp[7],
+        emp[8],
+        "Testing"
     ))
     inserted_count += 1
 

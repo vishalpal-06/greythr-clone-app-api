@@ -1,5 +1,5 @@
 from sqlalchemy import (
-    Column, Integer, String, Date, Float, ForeignKey
+    Column, Integer, String, Date, Float, ForeignKey, Boolean
 )
 from sqlalchemy.orm import relationship, declarative_base
 
@@ -42,6 +42,7 @@ class Employee(Base):
     joining_date = Column(Date, nullable=False)
     address = Column(String(255))
     password = Column(String(255), nullable=False)
+    isadmin = Column(Boolean, nullable=False)
 
     fk_department_id = Column(Integer, ForeignKey('department.department_id'))
     fk_role_id = Column(Integer, ForeignKey('role.role_id'))

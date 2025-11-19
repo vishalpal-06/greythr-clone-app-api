@@ -4,7 +4,7 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 from pydantic import BaseModel
-from typing import Annotated, List
+from typing import Annotated
 from datetime import timedelta, datetime, timezone
 from database.models import Employee
 from database.database import engine,sessionlocal as SessionLocal
@@ -45,10 +45,11 @@ async def authenticate_user(email: str, password: str, db: Session):
     return user
 
 # Create JWT token
-async def create_access_token(email: str, employee_id: int, expires_delta: timedelta):
+async def create_access_token(email: str, employee_id: int, is_admin: bool, expires_delta: timedelta):
     encode = {
-        'sub': email,
-        'id': employee_id
+        'email': email,
+        'emp_id': employee_id,
+        'is_admin': is_admin
     }
     expires = datetime.now(timezone.utc) + expires_delta
     encode.update({'exp': expires})
@@ -58,12 +59,12 @@ async def create_access_token(email: str, employee_id: int, expires_delta: timed
 async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get('sub')
-        employee_id: int = payload.get('id')
-        roles: List[str] = payload.get('roles')
+        email: str = payload.get('email')
+        employee_id: int = payload.get('emp_id')
+        is_admin: bool = payload.get('is_admin')
         if email is None or employee_id is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user.')
-        return {'email': email, 'id': employee_id, 'roles': roles}
+        return {'email': email, 'id': employee_id, 'is_admin': is_admin}
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user.')
 
@@ -84,7 +85,7 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
         )
     
     # Create JWT token
-    token = await create_access_token(user.email, user.employee_id, timedelta(minutes=60))
+    token = await create_access_token(user.email, user.employee_id,user.isadmin, timedelta(minutes=60))
     
     # Update last_login
     user.last_login = datetime.now(timezone.utc)
