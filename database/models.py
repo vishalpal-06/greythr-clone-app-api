@@ -1,5 +1,5 @@
 from sqlalchemy import (
-    Column, Integer, String, Date, Float, ForeignKey, Boolean
+    Column, Integer, String, DateTime, Float, ForeignKey, Boolean
 )
 from sqlalchemy.orm import relationship, declarative_base
 
@@ -39,7 +39,7 @@ class Employee(Base):
     first_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
     email = Column(String(100), unique=True, nullable=False)
-    joining_date = Column(Date, nullable=False)
+    joining_date = Column(DateTime, nullable=False)
     address = Column(String(255))
     password = Column(String(255), nullable=False)
     isadmin = Column(Boolean, nullable=False)
@@ -69,7 +69,7 @@ class ExpenseClaim(Base):
     __tablename__ = 'expense_claim'
 
     claim_id = Column(Integer, primary_key=True, autoincrement=True)
-    claim_date = Column(Date, nullable=False)
+    claim_date = Column(DateTime, nullable=False)
     amount = Column(Float, nullable=False)
 
     fk_employee_id = Column(Integer, ForeignKey('employee.employee_id'))
@@ -90,7 +90,7 @@ class Payslip(Base):
     hra = Column(Float)
     special_allowance = Column(Float)
     internet_allowance = Column(Float)
-    payslip_month = Column(Date, nullable=False)
+    payslip_month = Column(DateTime, nullable=False)
 
     fk_employee_id = Column(Integer, ForeignKey('employee.employee_id'))
     employee = relationship("Employee", back_populates="payslips")
@@ -116,7 +116,7 @@ class Attendance(Base):
     __tablename__ = 'attendance'
 
     attendance_id = Column(Integer, primary_key=True, autoincrement=True)
-    punch_time = Column(Date, nullable=False)
+    punch_time = Column(DateTime, nullable=False)
 
     fk_employee_id = Column(Integer, ForeignKey('employee.employee_id'))
     employee = relationship("Employee", back_populates="attendances")
@@ -129,7 +129,7 @@ class Regularization(Base):
     __tablename__ = 'regularization'
 
     regularization_id = Column(Integer, primary_key=True, autoincrement=True)
-    regularization_date = Column(Date, nullable=False)
+    regularization_date = Column(DateTime, nullable=False)
     regularization_reason = Column(String(255))
 
     fk_employee_id = Column(Integer, ForeignKey('employee.employee_id'))
@@ -165,8 +165,8 @@ class LeaveApplication(Base):
     __tablename__ = 'leave_application'
 
     leave_application_id = Column(Integer, primary_key=True, autoincrement=True)
-    from_date = Column(Date, nullable=False)
-    end_date = Column(Date, nullable=False)
+    from_date = Column(DateTime, nullable=False)
+    end_date = Column(DateTime, nullable=False)
     total_days = Column(Integer)
     fk_status = Column(String(50))  # Assuming status is a string or enum
 
