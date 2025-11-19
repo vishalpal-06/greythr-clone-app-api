@@ -27,7 +27,7 @@ class Token(BaseModel):
     token_type: str
 
 # Database dependency
-def get_db():
+async def get_db():
     db = SessionLocal()
     try:
         yield db
@@ -35,14 +35,14 @@ def get_db():
         db.close()
 
 # Authenticate user
-def authenticate_user(email: str, password: str, db: Session):
+async def authenticate_user(email: str, password: str, db: Session):
     user = db.query(Employee).filter(Employee.email == email).first()
     if not user or not (password == user.password):
         return None
     return user
 
 # Create JWT token
-def create_access_token(email: str, employee_id: int, expires_delta: timedelta):
+async def create_access_token(email: str, employee_id: int, expires_delta: timedelta):
     encode = {
         'sub': email,
         'id': employee_id
@@ -81,7 +81,7 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
         )
     
     # Create JWT token
-    token = create_access_token(user.email, user.employeeID, timedelta(minutes=60))
+    token = create_access_token(user.email, user.employee_id, timedelta(minutes=60))
     
     # Update last_login
     user.last_login = datetime.now(timezone.utc)

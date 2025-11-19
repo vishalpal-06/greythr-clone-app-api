@@ -55,10 +55,10 @@ class Employee(Base):
     payslips = relationship("Payslip", back_populates="employee")
     salaries = relationship("Salary", back_populates="employee")
     attendances = relationship("Attendance", back_populates="employee")
-    regularizations = relationship("Regularization", back_populates="employee")
+    regularizations = relationship("Regularization", foreign_keys="[Regularization.fk_employee_id]", back_populates="employee")
     leaves = relationship("Leave", back_populates="employee")
-    leave_applications = relationship("LeaveApplication", back_populates="employee")
-    expense_claims = relationship("ExpenseClaim", back_populates="employee")
+    leave_applications = relationship("LeaveApplication", foreign_keys="[LeaveApplication.fk_employee_id]", back_populates="employee")
+    expense_claims = relationship("ExpenseClaim", foreign_keys="[ExpenseClaim.fk_employee_id]", back_populates="employee")
 
 
 # -------------------------
