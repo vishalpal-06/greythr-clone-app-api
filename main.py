@@ -8,7 +8,8 @@ from routers import (
     role,
     department,
     attendence,
-    regularization
+    regularization,
+    salary
 )
 
 app = FastAPI(
@@ -35,5 +36,6 @@ app.include_router(role.router)
 app.include_router(department.router)
 app.include_router(attendence.router)
 app.include_router(regularization.router)
+app.include_router(salary.router)
 
 models.Base.metadata.create_all(bind=engine)

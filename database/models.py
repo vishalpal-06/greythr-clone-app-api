@@ -111,6 +111,7 @@ class Salary(Base):
 
     salary_id = Column(Integer, primary_key=True, autoincrement=True)
     lpa = Column(Float, nullable=False)
+    salary_year = Column(Integer, nullable=False)
 
     fk_employee_id = Column(Integer, ForeignKey('employee.employee_id'))
     employee = relationship("Employee", back_populates="salaries")

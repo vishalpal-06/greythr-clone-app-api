@@ -9,6 +9,7 @@ cursor.execute("DELETE FROM department")
 cursor.execute("DELETE FROM role")
 cursor.execute("DELETE FROM employee")
 cursor.execute("DELETE FROM regularization")
+cursor.execute("DELETE FROM salary")
 # -------------------------
 # 1. Insert Departments
 # -------------------------
