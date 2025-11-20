@@ -1,9 +1,16 @@
+import enum
 from sqlalchemy import (
-    Column, Integer, String, DateTime, Float, ForeignKey, Boolean
+    Column, Integer, String, DateTime, Float, ForeignKey, Boolean, Enum
 )
 from sqlalchemy.orm import relationship, declarative_base
 
 Base = declarative_base()
+
+
+class Status(str, enum.Enum):
+    Pending = 'Pending'
+    Approved = 'Approved'
+    Rejected = 'Rejected'
 
 # -------------------------
 # Department Table
@@ -131,6 +138,7 @@ class Regularization(Base):
     regularization_id = Column(Integer, primary_key=True, autoincrement=True)
     regularization_date = Column(DateTime, nullable=False)
     regularization_reason = Column(String(255))
+    regularization_status = Column(Enum(Status), nullable=False, default=Status.Pending)
 
     fk_employee_id = Column(Integer, ForeignKey('employee.employee_id'))
     fk_manager_id = Column(Integer, ForeignKey('employee.employee_id'))
@@ -168,7 +176,7 @@ class LeaveApplication(Base):
     from_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=False)
     total_days = Column(Integer)
-    fk_status = Column(String(50))  # Assuming status is a string or enum
+    leave_status = Column(Enum(Status), nullable=False, default=Status.Pending)
 
     fk_employee_id = Column(Integer, ForeignKey('employee.employee_id'))
     fk_manager_id = Column(Integer, ForeignKey('employee.employee_id'))

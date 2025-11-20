@@ -8,6 +8,7 @@ cursor = conn.cursor()
 cursor.execute("DELETE FROM department")
 cursor.execute("DELETE FROM role")
 cursor.execute("DELETE FROM employee")
+cursor.execute("DELETE FROM regularization")
 # -------------------------
 # 1. Insert Departments
 # -------------------------

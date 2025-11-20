@@ -23,7 +23,7 @@ class AttendanceResponse(BaseModel):
     fk_employee_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 
