@@ -25,7 +25,7 @@ class UpdateSalary(SalaryBase):
 
 
 @router.post("/create_salary")
-async def create_salary(salary_data:CreateSalary, db: db_dependency, user : user_dependency):
+def create_salary(salary_data:CreateSalary, db: db_dependency, user : user_dependency):
     if not user['is_admin']:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have sufficient permissions to perform this action")
 
@@ -49,7 +49,7 @@ async def create_salary(salary_data:CreateSalary, db: db_dependency, user : user
         
 
 @router.get("/get_salary_by_year")
-async def get_salary_by_year(salary_year:int, db: db_dependency, user : user_dependency):
+def get_salary_by_year(salary_year:int, db: db_dependency, user : user_dependency):
     salary = db.query(Salary).filter(Salary.fk_employee_id == user['id'], Salary.salary_year == salary_year).first()
     if not salary:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found salary for year {salary_year}.")
@@ -57,7 +57,7 @@ async def get_salary_by_year(salary_year:int, db: db_dependency, user : user_dep
 
 
 @router.get("/get_all_salarys")
-async def get_salary_by_employee(db: db_dependency, user : user_dependency):
+def get_salary_by_employee(db: db_dependency, user : user_dependency):
     salary = db.query(Salary).filter(Salary.fk_employee_id == user['id']).all()
     if not salary:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found salary")

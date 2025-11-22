@@ -53,7 +53,7 @@ class EmployeeUpdate(BaseModel):
 
 # Create Employee
 @router.post("/", response_model=EmployeeResponse, status_code=status.HTTP_201_CREATED)
-async def create_employee(employee: EmployeeCreate, db: db_dependency, user : user_dependency):
+def create_employee(employee: EmployeeCreate, db: db_dependency, user : user_dependency):
     if user['is_admin']:
         existing = db.query(Employee).filter(Employee.email == employee.email).first()
         if existing:
@@ -70,7 +70,7 @@ async def create_employee(employee: EmployeeCreate, db: db_dependency, user : us
 
 # Get All Employees
 @router.get("/", response_model=List[EmployeeResponse])
-async def get_employees(db: db_dependency, user : user_dependency):
+def get_employees(db: db_dependency, user : user_dependency):
     if user['is_admin']:
         return db.query(Employee).all()
     else:
@@ -79,7 +79,7 @@ async def get_employees(db: db_dependency, user : user_dependency):
 
 # Get Employee by ID
 @router.get("/{employee_id}", response_model=EmployeeResponse)
-async def get_employee(employee_id: int, db: db_dependency, user : user_dependency):
+def get_employee(employee_id: int, db: db_dependency, user : user_dependency):
     if user['is_admin'] or user['id']==employee_id:
         emp = db.query(Employee).filter(Employee.employee_id == employee_id).first()
         if not emp:
@@ -91,7 +91,7 @@ async def get_employee(employee_id: int, db: db_dependency, user : user_dependen
 
 # Update Employee
 @router.put("/{employee_id}", response_model=EmployeeResponse)
-async def update_employee(employee_id: int, updated: EmployeeUpdate, db: db_dependency, user: user_dependency):
+def update_employee(employee_id: int, updated: EmployeeUpdate, db: db_dependency, user: user_dependency):
     if user['is_admin']:
         emp = db.query(Employee).filter(Employee.employee_id == employee_id).first()
         if not emp:
@@ -111,7 +111,7 @@ async def update_employee(employee_id: int, updated: EmployeeUpdate, db: db_depe
 
 # Delete Employee
 @router.delete("/{employee_id}")
-async def delete_employee(employee_id: int, db: db_dependency, user : user_dependency):
+def delete_employee(employee_id: int, db: db_dependency, user : user_dependency):
     if user['is_admin']:
         emp = db.query(Employee).filter(Employee.employee_id == employee_id).first()
         if not emp:

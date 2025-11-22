@@ -31,7 +31,7 @@ class RegularizationUpdate(BaseModel):
 
 #Create Regularization
 @router.post("/create_regularization")
-async def create_regularization(regularization_form: RegularizationCreate, db: db_dependency, user : user_dependency):
+def create_regularization(regularization_form: RegularizationCreate, db: db_dependency, user : user_dependency):
 
     regularization = db.query(Regularization).filter(
         Regularization.fk_employee_id == user['id']).filter(
@@ -56,7 +56,7 @@ async def create_regularization(regularization_form: RegularizationCreate, db: d
 
 
 @router.get("/get_regularization_by_date")
-async def get_regularization_by_date(regularization_date: date, db: db_dependency, user : user_dependency):
+def get_regularization_by_date(regularization_date: date, db: db_dependency, user : user_dependency):
     
     regularization_record = (
         db.query(Regularization)
@@ -68,7 +68,7 @@ async def get_regularization_by_date(regularization_date: date, db: db_dependenc
 
 
 @router.get("/get_all_regularization")
-async def get_all_regularization(db: db_dependency, user : user_dependency):
+def get_all_regularization(db: db_dependency, user : user_dependency):
     regularization_record = (
         db.query(Regularization)
         .filter(Regularization.fk_employee_id == user['id'])
@@ -80,7 +80,7 @@ async def get_all_regularization(db: db_dependency, user : user_dependency):
 
 #Update Regularization
 @router.put("/update_regularization_status/{regularization_id}")
-async def update_regularization_status(regularization_id: int, regularization_form: RegularizationUpdate, db: db_dependency, user : user_dependency):
+def update_regularization_status(regularization_id: int, regularization_form: RegularizationUpdate, db: db_dependency, user : user_dependency):
     regularization_record = db.query(Regularization).filter(Regularization.regularization_id == regularization_id).first()
     if not regularization_record:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Regularization record not found")
@@ -96,7 +96,7 @@ async def update_regularization_status(regularization_id: int, regularization_fo
 
 #Delete Regularization
 @router.delete("/delete_regularization")
-async def delete_regularization(regularization_id: int, db: db_dependency, user : user_dependency):
+def delete_regularization(regularization_id: int, db: db_dependency, user : user_dependency):
     regularization = db.query(Regularization).filter(Regularization.regularization_id == regularization_id).first()
     if not regularization:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Regularization record not found")

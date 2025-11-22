@@ -30,7 +30,7 @@ class Token(BaseModel):
     token_type: str
 
 # Database dependency
-async def get_db():
+def get_db():
     db = SessionLocal()
     try:
         yield db
@@ -38,14 +38,14 @@ async def get_db():
         db.close()
 
 # Authenticate user
-async def authenticate_user(email: str, password: str, db: Session):
+def authenticate_user(email: str, password: str, db: Session):
     user = db.query(Employee).filter(Employee.email == email).first()
     if not user or not (password == user.password):
         return None
     return user
 
 # Create JWT token
-async def create_access_token(email: str, employee_id: int, is_admin: bool, expires_delta: timedelta):
+def create_access_token(email: str, employee_id: int, is_admin: bool, expires_delta: timedelta):
     encode = {
         'email': email,
         'emp_id': employee_id,
@@ -56,7 +56,7 @@ async def create_access_token(email: str, employee_id: int, is_admin: bool, expi
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
 
 # Get current user from token
-async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
+def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get('email')
@@ -75,8 +75,8 @@ user_dependency = Annotated[dict, Depends(get_current_user)]
 
 
 @router.post("/token", response_model=Token)
-async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
-    user = await authenticate_user(form_data.username, form_data.password, db)
+def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
+    user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -85,7 +85,7 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
         )
     
     # Create JWT token
-    token = await create_access_token(user.email, user.employee_id,user.isadmin, timedelta(minutes=60))
+    token = create_access_token(user.email, user.employee_id,user.isadmin, timedelta(minutes=60))
     
     # Update last_login
     user.last_login = datetime.now(timezone.utc)

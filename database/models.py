@@ -78,6 +78,8 @@ class ExpenseClaim(Base):
     claim_id = Column(Integer, primary_key=True, autoincrement=True)
     claim_date = Column(DateTime, nullable=False)
     amount = Column(Float, nullable=False)
+    description = Column(String(500), nullable=False)
+    claim_status = Column(Enum(Status), nullable=False, default=Status.Pending)
 
     fk_employee_id = Column(Integer, ForeignKey('employee.employee_id'))
     fk_manager_id = Column(Integer, ForeignKey('employee.employee_id'))
