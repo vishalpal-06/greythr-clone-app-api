@@ -11,7 +11,8 @@ from routers import (
     regularization,
     salary,
     expense,
-    payslips
+    payslips,
+    leaves
 )
 
 app = FastAPI(
@@ -41,5 +42,6 @@ app.include_router(regularization.router)
 app.include_router(salary.router)
 app.include_router(expense.router)
 app.include_router(payslips.router)
+app.include_router(leaves.router)
 
 models.Base.metadata.create_all(bind=engine)
