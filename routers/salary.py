@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import Enum
-from database.models import Salary, Employee, Status
+from database.models import Salary, Employee
 from routers.auth import user_dependency, db_dependency
 from pydantic import BaseModel
 from datetime import date

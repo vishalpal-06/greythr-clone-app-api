@@ -10,6 +10,7 @@ cursor.execute("DELETE FROM role")
 cursor.execute("DELETE FROM employee")
 cursor.execute("DELETE FROM regularization")
 cursor.execute("DELETE FROM salary")
+cursor.execute("DELETE FROM expense_claim")
 # -------------------------
 # 1. Insert Departments
 # -------------------------
