@@ -1,78 +1,67 @@
-from schema.employee_schema import EmployeeResponse, EmployeeCreate, EmployeeUpdate
-from typing import List
-from routers.auth import db_dependency, user_dependency
+# routers/admin_employee_api.py
 from fastapi import APIRouter, status
+from typing import List
+from schema.employee_schema import EmployeeResponse, EmployeeCreate, EmployeeUpdate
+from routers.auth import db_dependency, user_dependency
 from common.employee import (
-    get_all_employees_common,
-    get_employee_by_email_common,
-    get_employee_by_id_common,
-    create_employee_common,
-    update_employee_using_id_common,
-    update_employee_using_email_common,
-    delete_employee_using_id_common,
-    delete_employee_using_email_common
+    get_all_employees,
+    get_employee_by_id,
+    get_employee_by_email,
+    create_employee,
+    update_employee_by_id,
+    update_employee_by_email,
+    delete_employee_by_id,
+    delete_employee_by_email,
 )
 
-
-router = APIRouter(
-    prefix='/admin',
-    tags=['Admin => Employee']
-)
+router = APIRouter(prefix="/admin/employees", tags=["Admin - Employees"])
 
 
-
-@router.get("/all_employee/", response_model=List[EmployeeResponse])
-def get_all_employees(db: db_dependency, user : user_dependency):
-    return get_all_employees_common(db=db,user=user)
-
+@router.get("/", response_model=List[EmployeeResponse])
+def list_all_employees_endpoint(db: db_dependency, user: user_dependency):
+    return get_all_employees(db=db, user=user)
 
 
-@router.get("/get_employee_by_id/", response_model=EmployeeResponse)
-def get_employee_by_id(employee_id:int ,db: db_dependency, user : user_dependency):
-    return get_employee_by_id_common(employee_id=employee_id, db=db, user=user)
+@router.get("/id/{employee_id}", response_model=EmployeeResponse)
+def retrieve_employee_by_id_endpoint(employee_id: int, db: db_dependency, user: user_dependency):
+    return get_employee_by_id(employee_id=employee_id, db=db, user=user)
 
 
-
-@router.get("/get_employee_by_email/", response_model=EmployeeResponse)
-def get_employee_by_email(email:str, db: db_dependency, user : user_dependency):
-    return get_employee_by_email_common(employee_email=email, db=db, user=user)
-
+@router.get("/email/{email}", response_model=EmployeeResponse)
+def retrieve_employee_by_email_endpoint(email: str, db: db_dependency, user: user_dependency):
+    return get_employee_by_email(email=email, db=db, user=user)
 
 
-# Create Employee
-@router.post("/create_employee/", response_model=EmployeeResponse, status_code=status.HTTP_201_CREATED)
-def create_employee(employee: EmployeeCreate, db: db_dependency, user : user_dependency):
-    return create_employee_common(employee=employee, db=db, user=user)
-    
+@router.post("/", response_model=EmployeeResponse, status_code=status.HTTP_201_CREATED)
+def register_employee_endpoint(employee: EmployeeCreate, db: db_dependency, user: user_dependency):
+    return create_employee(employee_data=employee, db=db, user=user)
 
 
-@router.put("/update_employee_by_id/{employee_id}", response_model=EmployeeResponse)
-def update_employee_using_id(employee_id: int, updated_employee_date: EmployeeUpdate, db: db_dependency, user: user_dependency):
-    update_employee_using_id_common(
-        employee_id=employee_id,
-        updated_employee_date=updated_employee_date,
-        db=db,
-        user=user
-    )
+@router.put("/id/{employee_id}", response_model=EmployeeResponse)
+def update_employee_by_id_endpoint(
+    employee_id: int,
+    update_data: EmployeeUpdate,
+    db: db_dependency,
+    user: user_dependency
+):
+    return update_employee_by_id(employee_id, update_data, db, user)
 
 
-
-@router.put("/update_employee_by_email/{employee_email}", response_model=EmployeeResponse)
-def update_employee_using_email(employee_email: str, updated_employee_date: EmployeeUpdate, db: db_dependency, user: user_dependency):
-    update_employee_using_email_common(
-        employee_email=employee_email,
-        updated_employee_date=updated_employee_date,
-        db=db,
-        user=user
-    )
-
-
-# Delete Employee
-@router.delete("/delete_employee_by_id/{employee_id}")
-def delete_employee_using_id(employee_id: int, db: db_dependency, user : user_dependency):
-    delete_employee_using_id_common(employee_id=employee_id, db=db, user=user)
+@router.put("/email/{email}", response_model=EmployeeResponse)
+def update_employee_by_email_endpoint(
+    email: str,
+    update_data: EmployeeUpdate,
+    db: db_dependency,
+    user: user_dependency
+):
+    return update_employee_by_email(email, update_data, db, user)
 
 
-@router.delete("/delete_employee_by_email/{employee_email}")
-def delete_employee_using_email(employee_email: str, db: db_dependency, user : user_dependency):
-    delete_employee_using_email_common(employee_email=employee_email, db=db, user=user)
+@router.delete("/id/{employee_id}", status_code=status.HTTP_200_OK)
+def remove_employee_by_id_endpoint(employee_id: int, db: db_dependency, user: user_dependency):
+    return delete_employee_by_id(employee_id, db, user)
+
+
+@router.delete("/email/{email}", status_code=status.HTTP_200_OK)
+def remove_employee_by_email_endpoint(email: str, db: db_dependency, user: user_dependency):
+    return delete_employee_by_email(email, db, user)
