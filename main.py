@@ -2,19 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database.database import engine
 from database import models
-from routers import (
-    auth,
-    employee,
-    role,
-    department,
-    attendence,
-    regularization,
-    salary,
-    expense,
-    payslips,
-    leaves,
-    leave_applications
-)
+from routers import auth
+from routers.admin import admin_employee_api
+from routers.user import user_employee_api
+from routers.manager import manager_employee_api
 
 app = FastAPI(
     title="Grethr Clone API",
@@ -35,15 +26,8 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
-app.include_router(employee.router)
-app.include_router(role.router)
-app.include_router(department.router)
-app.include_router(attendence.router)
-app.include_router(regularization.router)
-app.include_router(salary.router)
-app.include_router(expense.router)
-app.include_router(payslips.router)
-app.include_router(leaves.router)
-app.include_router(leave_applications.router)
+app.include_router(admin_employee_api.router)
+app.include_router(user_employee_api.router)
+app.include_router(manager_employee_api.router)
 
 models.Base.metadata.create_all(bind=engine)
