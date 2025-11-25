@@ -1,10 +1,10 @@
-# common/employee.py
+# /employee.py
 from database.models import Employee
 from fastapi import HTTPException, status
 from schema.employee_schema import EmployeeCreate, EmployeeUpdate
 from typing import List
 from routers.auth import db_dependency, user_dependency
-
+from common.common import _require_admin
 
 # === PUBLIC / SHARED ===
 def get_current_user_employee(db: db_dependency, user: user_dependency) -> Employee:
@@ -134,14 +134,6 @@ def get_subordinate_by_email(email: str, db: db_dependency, user: user_dependenc
 
 
 # === Helper Functions ===
-def _require_admin(user: user_dependency) -> None:
-    if not user.get('is_admin'):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin privileges required"
-        )
-
-
 def _get_employee_or_404(db, employee_id: int) -> Employee:
     employee = db.query(Employee).filter(Employee.employee_id == employee_id).first()
     if not employee:
