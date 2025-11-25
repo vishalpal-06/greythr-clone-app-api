@@ -180,7 +180,7 @@ class LeaveApplication(Base):
     end_date = Column(DateTime, nullable=False)
     total_days = Column(Integer)
     leave_status = Column(Enum(Status), nullable=False, default=Status.Pending)
-
+    leave_reason = Column(String(255))
     fk_employee_id = Column(Integer, ForeignKey('employee.employee_id'))
     fk_manager_id = Column(Integer, ForeignKey('employee.employee_id'))
 

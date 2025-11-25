@@ -12,7 +12,8 @@ from routers import (
     salary,
     expense,
     payslips,
-    leaves
+    leaves,
+    leave_applications
 )
 
 app = FastAPI(
@@ -43,5 +44,6 @@ app.include_router(salary.router)
 app.include_router(expense.router)
 app.include_router(payslips.router)
 app.include_router(leaves.router)
+app.include_router(leave_applications.router)
 
 models.Base.metadata.create_all(bind=engine)
