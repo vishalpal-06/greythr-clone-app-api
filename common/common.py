@@ -6,4 +6,3 @@ def _require_admin(user: dict):
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin privileges required"
         )
-
