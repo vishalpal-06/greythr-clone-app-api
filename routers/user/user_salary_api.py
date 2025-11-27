@@ -9,7 +9,7 @@ from common.salary import (
 import schema.salary_schema as salary_schema
 from routers.auth import user_dependency,db_dependency
 
-router = APIRouter(prefix="/my/salary", tags=["My Salary"])
+router = APIRouter(prefix="/my/salary", tags=["User - Salary"])
 
 
 @router.get("/year/{year}", response_model=salary_schema.SalaryResponse)
