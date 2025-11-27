@@ -9,7 +9,8 @@ from routers.admin import (
     admin_department_api, 
     admin_attedence_api, 
     admin_salary_api,
-    admin_leave_api
+    admin_leave_api,
+    admin_regularization_api
 )
 from routers.user import (
     user_employee_api, 
@@ -17,12 +18,14 @@ from routers.user import (
     user_department_api, 
     user_attendence_api, 
     user_salary_api, 
-    user_leave_api
+    user_leave_api,
+    user_regularization_api
 )
 from routers.manager import (
     manager_employee_api,
     manager_attendance_api,
-    manager_leave_api
+    manager_leave_api,
+    manager_regularization_api
 )
 
 app = FastAPI(
@@ -59,5 +62,8 @@ app.include_router(user_salary_api.router)
 app.include_router(admin_leave_api.router)
 app.include_router(user_leave_api.router)
 app.include_router(manager_leave_api.router)
+app.include_router(admin_regularization_api.router)
+app.include_router(user_regularization_api.router)
+app.include_router(manager_regularization_api.router)
 
 models.Base.metadata.create_all(bind=engine)

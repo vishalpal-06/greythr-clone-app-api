@@ -10,7 +10,7 @@ from common.attendance import (
 from routers.auth import db_dependency, user_dependency
 from datetime import datetime
 
-router = APIRouter(prefix="/user/attendance", tags=["User - Attendance"])
+router = APIRouter(prefix="/my/attendance", tags=["My - Attendance"])
 
 
 @router.post("/", response_model=AttendanceResponse, status_code=201)

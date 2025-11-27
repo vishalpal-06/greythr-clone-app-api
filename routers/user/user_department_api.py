@@ -5,7 +5,7 @@ from schema.department_schema import DepartmentResponse
 from common.department import get_all_departments, get_department_by_id
 from routers.auth import db_dependency, user_dependency
 
-router = APIRouter(prefix="/user/departments", tags=["User - Departments"])
+router = APIRouter(prefix="/my/departments", tags=["My - Departments"])
 
 
 @router.get("/", response_model=List[DepartmentResponse])

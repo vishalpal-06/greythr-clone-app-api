@@ -139,7 +139,8 @@ class Regularization(Base):
     __tablename__ = 'regularization'
 
     regularization_id = Column(Integer, primary_key=True, autoincrement=True)
-    regularization_date = Column(DateTime, nullable=False)
+    regularization_start_time = Column(DateTime, nullable=False)
+    regularization_end_time = Column(DateTime, nullable=False)
     regularization_reason = Column(String(255))
     regularization_status = Column(Enum(Status), nullable=False, default=Status.Pending)
 

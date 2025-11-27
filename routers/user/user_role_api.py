@@ -5,7 +5,7 @@ from schema.role_schema import RoleResponse
 from common.role import get_all_roles, get_role_by_id
 from routers.auth import db_dependency, user_dependency
 
-router = APIRouter(prefix="/user/roles", tags=["User - Roles"])
+router = APIRouter(prefix="/my/roles", tags=["My - Roles"])
 
 
 @router.get("/", response_model=List[RoleResponse])
