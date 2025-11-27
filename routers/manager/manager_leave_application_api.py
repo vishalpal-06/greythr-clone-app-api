@@ -9,7 +9,7 @@ from common.leave_application import (
     manager_update_status
 )
 
-router = APIRouter(prefix="/manager/leave-applications", tags=["Manager - Leave Applications"])
+router = APIRouter(prefix="/leave-applications", tags=["Manager - Leave Applications"])
 
 
 @router.put("/{app_id}/status", response_model=LeaveApplicationResponse)

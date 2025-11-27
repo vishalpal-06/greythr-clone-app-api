@@ -9,7 +9,7 @@ from common.leave_application import (
     get_all_by_month_admin, admin_update_status
 )
 
-router = APIRouter(prefix="/admin/leave-applications", tags=["Admin - Leave Applications"])
+router = APIRouter(prefix="/leave-applications", tags=["Admin - Leave Applications"])
 
 
 @router.get("/{app_id}", response_model=LeaveApplicationResponse)

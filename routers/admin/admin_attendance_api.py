@@ -11,7 +11,7 @@ from common.attendance import (
 from routers.auth import db_dependency, user_dependency
 from datetime import datetime
 
-router = APIRouter(prefix="/admin/attendance", tags=["Admin - Attendance"])
+router = APIRouter(prefix="/attendance", tags=["Admin - Attendance"])
 
 
 @router.get("/", response_model=List[AttendanceResponse])

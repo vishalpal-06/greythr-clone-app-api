@@ -10,7 +10,7 @@ from common.regularization import (
     manager_update_regularization_status,
 )
 
-router = APIRouter(prefix="/manager/regularizations", tags=["Manager - Regularization"])
+router = APIRouter(prefix="/regularizations", tags=["Manager - Regularization"])
 
 
 @router.get("/pending", response_model=List[RegularizationResponse])

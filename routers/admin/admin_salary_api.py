@@ -14,7 +14,7 @@ import schema.salary_schema as salary_schema
 from common.common import _require_admin
 from routers.auth import db_dependency,user_dependency
 
-router = APIRouter(prefix="/admin/salaries", tags=["Admin - Salary"])
+router = APIRouter(prefix="/salaries", tags=["Admin - Salary"])
 
 
 # Only these lines change — everything else stays same

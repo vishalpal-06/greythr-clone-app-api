@@ -13,7 +13,7 @@ from common.payslip import (
     delete_payslip_by_employee_and_month,
 )
 
-router = APIRouter(prefix="/admin/payslips", tags=["Admin - Payslip"])
+router = APIRouter(prefix="/payslips", tags=["Admin - Payslip"])
 
 
 @router.post("/", response_model=PayslipResponse, status_code=status.HTTP_201_CREATED)

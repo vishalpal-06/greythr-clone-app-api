@@ -5,7 +5,7 @@ from routers.auth import db_dependency, user_dependency
 from common.common import _require_admin
 from common.regularization import get_regularization_by_id_admin, admin_update_status
 
-router = APIRouter(prefix="/admin/regularizations", tags=["Admin - Regularization"])
+router = APIRouter(prefix="/regularizations", tags=["Admin - Regularization"])
 
 
 @router.get("/{reg_id}", response_model=RegularizationResponse)

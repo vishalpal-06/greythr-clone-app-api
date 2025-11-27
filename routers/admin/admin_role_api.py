@@ -11,7 +11,7 @@ from common.role import (
 )
 from routers.auth import db_dependency, user_dependency
 
-router = APIRouter(prefix="/admin/roles", tags=["Admin - Roles"])
+router = APIRouter(prefix="/roles", tags=["Admin - Roles"])
 
 
 @router.post("/", response_model=RoleResponse, status_code=status.HTTP_201_CREATED)

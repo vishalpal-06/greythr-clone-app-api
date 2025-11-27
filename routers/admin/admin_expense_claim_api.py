@@ -10,7 +10,7 @@ from common.expense_claim import (
     admin_update_status, get_claims_by_employee_and_month_any
 )
 
-router = APIRouter(prefix="/admin/expense-claims", tags=["Admin - Expense Claims"])
+router = APIRouter(prefix="/expense-claims", tags=["Admin - Expense Claims"])
 
 
 @router.get("/{claim_id}", response_model=ExpenseClaimResponse)

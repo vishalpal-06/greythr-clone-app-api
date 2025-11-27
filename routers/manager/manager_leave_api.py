@@ -11,7 +11,7 @@ from routers.auth import db_dependency, user_dependency
 from common.employee import get_subordinate_by_id
 
 
-router = APIRouter(prefix="/manager/leaves", tags=["Manager - Leave"])
+router = APIRouter(prefix="/leaves", tags=["Manager - Leave"])
 
 
 @router.get(

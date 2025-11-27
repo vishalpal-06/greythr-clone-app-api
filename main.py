@@ -2,39 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database.database import engine
 from database import models
-from routers import auth
-from routers.admin import (
-    admin_employee_api, 
-    admin_role_api, 
-    admin_department_api, 
-    admin_attedence_api, 
-    admin_salary_api,
-    admin_leave_api,
-    admin_regularization_api,
-    admin_payslip_api,
-    admin_leave_application_api,
-    admin_expense_claim_api
-)
-from routers.user import (
-    user_employee_api, 
-    user_role_api, 
-    user_department_api, 
-    user_attendence_api, 
-    user_salary_api, 
-    user_leave_api,
-    user_regularization_api,
-    user_payslip_api,
-    user_leave_application_api,
-    user_expense_claim_api
-)
-from routers.manager import (
-    manager_employee_api,
-    manager_attendance_api,
-    manager_leave_api,
-    manager_regularization_api,
-    manager_leave_application_api,
-    manager_expense_claim_api
-)
+from routers.auth import auth_router
+from routers.admin.admin_api import admin_router
+from routers.manager.manager_api import manager_router
+from routers.user.user_api import user_router
 
 app = FastAPI(
     title="Grethr Clone API",
@@ -42,9 +13,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-origins = [
-    "http://localhost:3000"
-]
+origins = ["http://localhost:3000"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -54,32 +23,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth.router)
-app.include_router(admin_employee_api.router)
-app.include_router(user_employee_api.router)
-app.include_router(manager_employee_api.router)
-# app.include_router(admin_role_api.router)
-# app.include_router(user_role_api.router)
-# app.include_router(admin_department_api.router)
-# app.include_router(user_department_api.router)
-# app.include_router(admin_attedence_api.router)
-# app.include_router(user_attendence_api.router)
-# app.include_router(manager_attendance_api.router)
-# app.include_router(admin_salary_api.router)
-# app.include_router(user_salary_api.router)
-# app.include_router(admin_leave_api.router)
-# app.include_router(user_leave_api.router)
-# app.include_router(manager_leave_api.router)
-# app.include_router(admin_regularization_api.router)
-# app.include_router(user_regularization_api.router)
-# app.include_router(manager_regularization_api.router)
-# app.include_router(admin_payslip_api.router)
-# app.include_router(user_payslip_api.router)
-# app.include_router(admin_leave_application_api.router)
-# app.include_router(user_leave_application_api.router)
-# app.include_router(manager_leave_application_api.router)
-app.include_router(admin_expense_claim_api.router)
-app.include_router(user_expense_claim_api.router)
-app.include_router(manager_expense_claim_api.router)
+
+app.include_router(auth_router)
+app.include_router(admin_router)
+app.include_router(manager_router)
+app.include_router(user_router)
 
 models.Base.metadata.create_all(bind=engine)

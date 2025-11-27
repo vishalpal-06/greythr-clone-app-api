@@ -13,7 +13,7 @@ import schema.leave_schema as leave_schema
 from routers.auth import db_dependency, user_dependency
 from common.common import _require_admin
 
-router = APIRouter(prefix="/admin/leaves", tags=["Admin - Leave"])
+router = APIRouter(prefix="/leaves", tags=["Admin - Leave"])
 
 
 @router.get("/employee/{employee_id}/year/{year}", response_model=leave_schema.LeaveResponse)

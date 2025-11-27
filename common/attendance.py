@@ -55,6 +55,75 @@ def get_my_attendance_by_date(
     )
 
 
+
+
+# MANAGER: All direct reports' attendance on a given date
+def get_manager_team_attendance_by_date(
+    punch_date: date,
+    db: Session,
+    user: dict,
+) -> List[Attendance]:
+    # Real check: does ANY employee report to this user?
+    has_subordinates = db.query(Employee).filter(
+        Employee.fk_manager_id == user["id"]
+    ).first()
+
+    if not has_subordinates:
+        return []  # No one reports to you → empty list (safe)
+
+    managed_ids = [
+        e.employee_id for e in
+        db.query(Employee.employee_id)
+          .filter(Employee.fk_manager_id == user["id"])
+          .all()
+    ]
+
+    start_dt = datetime.combine(punch_date, time.min)
+    end_dt = datetime.combine(punch_date, time.max)
+
+    return (
+        db.query(Attendance)
+        .filter(
+            Attendance.fk_employee_id.in_(managed_ids),
+            Attendance.punch_time.between(start_dt, end_dt)
+        )
+        .order_by(Attendance.fk_employee_id, Attendance.punch_time)
+        .all()
+    )
+
+
+# MANAGER: One specific subordinate's attendance on a date
+def get_manager_subordinate_attendance_by_date(
+    employee_id: int,
+    punch_date: date,
+    db: Session,
+    user: dict,
+) -> List[Attendance]:
+    # Security: employee must exist AND report directly to current user
+    employee = db.query(Employee).filter(
+        Employee.employee_id == employee_id,
+        Employee.fk_manager_id == user["id"]
+    ).first()
+
+    if not employee:
+        raise HTTPException(
+            status_code=404,
+            detail="Employee not found under your management"
+        )
+
+    start_dt = datetime.combine(punch_date, time.min)
+    end_dt = datetime.combine(punch_date, time.max)
+
+    return (
+        db.query(Attendance)
+        .filter(
+            Attendance.fk_employee_id == employee_id,
+            Attendance.punch_time.between(start_dt, end_dt)
+        )
+        .order_by(Attendance.punch_time)
+        .all()
+    )
+
 # === ADMIN: READ ALL ===
 def get_all_attendance(db: Session, user: user_dependency):
     _require_admin(user=user)

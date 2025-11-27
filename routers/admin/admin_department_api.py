@@ -11,7 +11,7 @@ from common.department import (
 )
 from routers.auth import db_dependency, user_dependency
 
-router = APIRouter(prefix="/admin/departments", tags=["Admin - Departments"])
+router = APIRouter(prefix="/departments", tags=["Admin - Departments"])
 
 
 @router.post("/", response_model=DepartmentResponse, status_code=status.HTTP_201_CREATED)

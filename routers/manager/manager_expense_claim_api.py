@@ -9,7 +9,7 @@ from common.expense_claim import (
     manager_update_status
 )
 
-router = APIRouter(prefix="/manager/expense-claims", tags=["Manager - Expense Claims"])
+router = APIRouter(prefix="/expense-claims", tags=["Manager - Expense Claims"])
 
 
 @router.get("/{claim_id}", response_model=ExpenseClaimResponse)

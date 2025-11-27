@@ -14,7 +14,7 @@ from common.employee import (
     delete_employee_by_email,
 )
 
-router = APIRouter(prefix="/admin/employees", tags=["Admin - Employees"])
+router = APIRouter(prefix="/employees", tags=["Admin - Employees"])
 
 
 @router.get("/", response_model=List[EmployeeResponse])
