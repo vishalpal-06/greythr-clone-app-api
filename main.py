@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from database.database import engine
 from database import models
 from routers import auth
-from routers.admin import admin_employee_api, admin_role_api, admin_department_api, admin_attedence_api
-from routers.user import user_employee_api, user_role_api, user_department_api, user_attendence_api
+from routers.admin import admin_employee_api, admin_role_api, admin_department_api, admin_attedence_api, admin_salary_api
+from routers.user import user_employee_api, user_role_api, user_department_api, user_attendence_api, user_salary_api
 from routers.manager import manager_employee_api,manager_attendance_api
 
 app = FastAPI(
@@ -35,6 +35,7 @@ app.include_router(admin_department_api.router)
 app.include_router(user_department_api.router)
 app.include_router(admin_attedence_api.router)
 app.include_router(user_attendence_api.router)
-app.include_router(manager_attendance_api.router)
+app.include_router(admin_salary_api.router)
+app.include_router(user_salary_api.router)
 
 models.Base.metadata.create_all(bind=engine)
