@@ -1,0 +1,6 @@
+[
+    {"role": "Manager", "role_id": 1},
+    {"role": "Developer", "role_id": 2},
+    {"role": "Accountant", "role_id": 3},
+    {"role": "HR Executive", "role_id": 4}
+]

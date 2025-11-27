@@ -5,7 +5,7 @@ from schema.payslip_schema import PayslipResponse
 from routers.auth import db_dependency, user_dependency
 from common.payslip import get_payslips_by_employee, get_payslip_by_employee_and_month
 
-router = APIRouter(prefix="/my/payslips", tags=["My Payslips"])
+router = APIRouter(prefix="/my/payslips", tags=["My - Payslips"])
 
 
 @router.get("/", response_model=List[PayslipResponse])
