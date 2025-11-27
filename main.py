@@ -10,7 +10,8 @@ from routers.admin import (
     admin_attedence_api, 
     admin_salary_api,
     admin_leave_api,
-    admin_regularization_api
+    admin_regularization_api,
+    admin_payslip_api
 )
 from routers.user import (
     user_employee_api, 
@@ -19,7 +20,8 @@ from routers.user import (
     user_attendence_api, 
     user_salary_api, 
     user_leave_api,
-    user_regularization_api
+    user_regularization_api,
+    user_payslip_api
 )
 from routers.manager import (
     manager_employee_api,
@@ -65,5 +67,7 @@ app.include_router(manager_leave_api.router)
 app.include_router(admin_regularization_api.router)
 app.include_router(user_regularization_api.router)
 app.include_router(manager_regularization_api.router)
+app.include_router(admin_payslip_api.router)
+app.include_router(user_payslip_api.router)
 
 models.Base.metadata.create_all(bind=engine)
