@@ -7,11 +7,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from main import app
-from database.models import Base, Department, Role, Employee
+from database.models import Base, Department, Role, Employee, Attendance
 from datetime import date
 from routers.auth import get_db
-
-
+import datetime
+UTC = datetime.timezone.utc 
 # ------------------------------
 # TEST DATABASE SETUP
 # ------------------------------

@@ -19,13 +19,13 @@ def list_all_attendance(db: db_dependency, user: user_dependency):
     return get_all_attendance(db=db, user=user)
 
 
-@router.get("/date/{date_str}", response_model=List[AttendanceResponse])
+@router.get("/date/{punch_date}", response_model=List[AttendanceResponse])
 def get_all_employees_attendance_on_date(
     punch_date: datetime,
     db: db_dependency,
     user: user_dependency
 ):
-    return get_attendance_by_date_all_employees(db=db, punch_date=punch_date)
+    return get_attendance_by_date_all_employees(db=db, punch_date=punch_date, user=user)
 
 
 @router.get("/employee/{employee_id}/date/{punch_date}", response_model=List[AttendanceResponse])

@@ -130,7 +130,8 @@ def get_all_attendance(db: Session, user: user_dependency):
     return db.query(Attendance).all()
 
 
-def get_attendance_by_date_all_employees(db: Session, punch_date: datetime):
+def get_attendance_by_date_all_employees(db: Session, punch_date: datetime, user: user_dependency):
+    _require_admin(user=user)
     start_dt = datetime.combine(punch_date, time.min)
     end_dt = datetime.combine(punch_date, time.max)
 
@@ -163,6 +164,7 @@ def get_attendance_by_date_one_employee(db: Session, employee_id: int, punch_dat
 
 
 def get_all_attendance_of_employee(db: Session, employee_id: int, user:user_dependency):
+    _require_admin(user=user)
     employee = db.query(Employee).filter(Employee.employee_id==employee_id).first()
     if not employee:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Employee Not Founds")
