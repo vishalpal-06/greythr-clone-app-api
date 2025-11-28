@@ -1,0 +1,82 @@
+[
+  {
+    "claim_date": "2025-01-12T15:00:00Z",
+    "amount": 1450.75,
+    "description": "Team lunch for Q1 planning session.",
+    "claim_status": "Approved",
+    "fk_employee_id": 2,
+    "fk_manager_id": 1
+  },
+  {
+    "claim_date": "2025-02-05T10:00:00Z",
+    "amount": 350.00,
+    "description": "Taxi fare for client meeting downtown.",
+    "claim_status": "Pending",
+    "fk_employee_id": 2,
+    "fk_manager_id": 1
+  },
+  {
+    "claim_date": "2025-03-01T09:00:00Z",
+    "amount": 999.00,
+    "description": "New software license subscription (monthly).",
+    "claim_status": "Approved",
+    "fk_employee_id": 3,
+    "fk_manager_id": 1
+  },
+  {
+    "claim_date": "2025-03-10T14:00:00Z",
+    "amount": 45.50,
+    "description": "Office supplies purchase (pens, paper).",
+    "claim_status": "Pending",
+    "fk_employee_id": 3,
+    "fk_manager_id": 1
+  },
+  {
+    "claim_date": "2025-04-02T11:00:00Z",
+    "amount": 150.00,
+    "description": "Coffee supplies for A1 team pantry.",
+    "claim_status": "Rejected",
+    "fk_employee_id": 4,
+    "fk_manager_id": 2
+  },
+  {
+    "claim_date": "2025-04-25T16:00:00Z",
+    "amount": 2500.00,
+    "description": "Travel expenses for industry conference in Pune.",
+    "claim_status": "Pending",
+    "fk_employee_id": 4,
+    "fk_manager_id": 2
+  },
+  {
+    "claim_date": "2025-05-01T12:00:00Z",
+    "amount": 750.00,
+    "description": "Domain renewal fee for project 'X'.",
+    "claim_status": "Approved",
+    "fk_employee_id": 5,
+    "fk_manager_id": 2
+  },
+  {
+    "claim_date": "2025-04-14T09:30:00Z",
+    "amount": 500.00,
+    "description": "Courier charges for sending client contracts.",
+    "claim_status": "Approved",
+    "fk_employee_id": 6,
+    "fk_manager_id": 3
+  },
+  {
+    "claim_date": "2025-04-30T18:00:00Z",
+    "amount": 80.00,
+    "description": "Parking fee during site visit.",
+    "claim_status": "Pending",
+    "fk_employee_id": 6,
+    "fk_manager_id": 3
+  },
+  {
+    "claim_date": "2025-05-05T11:00:00Z",
+    "amount": 1200.00,
+    "description": "Laptop bag replacement (approved by manager).",
+    "claim_status": "Approved",
+    "fk_employee_id": 7,
+    "fk_manager_id": 3
+  }
+]

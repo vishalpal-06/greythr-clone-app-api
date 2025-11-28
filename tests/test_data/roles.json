@@ -1,0 +1,8 @@
+
+[
+    { "role": "Admin role" },
+    { "role": "Manager" },
+    { "role": "Developer" },
+    { "role": "Accountant" },
+    { "role": "HR Executive" }
+]

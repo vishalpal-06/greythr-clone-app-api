@@ -1,0 +1,170 @@
+[
+  {
+    "basic_amount": 80000,
+    "hra": 40000,
+    "special_allowance": 10000,
+    "internet_allowance": 1500,
+    "payslip_month": "2025-01-01T00:00:00Z",
+    "fk_employee_id": 1
+  },
+  {
+    "basic_amount": 80000,
+    "hra": 40000,
+    "special_allowance": 10000,
+    "internet_allowance": 1500,
+    "payslip_month": "2025-02-01T00:00:00Z",
+    "fk_employee_id": 1
+  },
+  {
+    "basic_amount": 80000,
+    "hra": 40000,
+    "special_allowance": 10000,
+    "internet_allowance": 1500,
+    "payslip_month": "2025-03-01T00:00:00Z",
+    "fk_employee_id": 1
+  },
+  {
+    "basic_amount": 60000,
+    "hra": 30000,
+    "special_allowance": 8000,
+    "internet_allowance": 1000,
+    "payslip_month": "2025-01-01T00:00:00Z",
+    "fk_employee_id": 2
+  },
+  {
+    "basic_amount": 60000,
+    "hra": 30000,
+    "special_allowance": 8000,
+    "internet_allowance": 1000,
+    "payslip_month": "2025-02-01T00:00:00Z",
+    "fk_employee_id": 2
+  },
+  {
+    "basic_amount": 60000,
+    "hra": 30000,
+    "special_allowance": 8000,
+    "internet_allowance": 1000,
+    "payslip_month": "2025-03-01T00:00:00Z",
+    "fk_employee_id": 2
+  },
+  {
+    "basic_amount": 60000,
+    "hra": 30000,
+    "special_allowance": 8000,
+    "internet_allowance": 1000,
+    "payslip_month": "2025-01-01T00:00:00Z",
+    "fk_employee_id": 3
+  },
+  {
+    "basic_amount": 60000,
+    "hra": 30000,
+    "special_allowance": 8000,
+    "internet_allowance": 1000,
+    "payslip_month": "2025-02-01T00:00:00Z",
+    "fk_employee_id": 3
+  },
+  {
+    "basic_amount": 60000,
+    "hra": 30000,
+    "special_allowance": 8000,
+    "internet_allowance": 1000,
+    "payslip_month": "2025-03-01T00:00:00Z",
+    "fk_employee_id": 3
+  },
+  {
+    "basic_amount": 45000,
+    "hra": 22500,
+    "special_allowance": 5000,
+    "internet_allowance": 800,
+    "payslip_month": "2025-01-01T00:00:00Z",
+    "fk_employee_id": 4
+  },
+  {
+    "basic_amount": 45000,
+    "hra": 22500,
+    "special_allowance": 5000,
+    "internet_allowance": 800,
+    "payslip_month": "2025-02-01T00:00:00Z",
+    "fk_employee_id": 4
+  },
+  {
+    "basic_amount": 45000,
+    "hra": 22500,
+    "special_allowance": 5000,
+    "internet_allowance": 800,
+    "payslip_month": "2025-03-01T00:00:00Z",
+    "fk_employee_id": 4
+  },
+  {
+    "basic_amount": 45000,
+    "hra": 22500,
+    "special_allowance": 5000,
+    "internet_allowance": 800,
+    "payslip_month": "2025-01-01T00:00:00Z",
+    "fk_employee_id": 5
+  },
+  {
+    "basic_amount": 45000,
+    "hra": 22500,
+    "special_allowance": 5000,
+    "internet_allowance": 800,
+    "payslip_month": "2025-02-01T00:00:00Z",
+    "fk_employee_id": 5
+  },
+  {
+    "basic_amount": 45000,
+    "hra": 22500,
+    "special_allowance": 5000,
+    "internet_allowance": 800,
+    "payslip_month": "2025-03-01T00:00:00Z",
+    "fk_employee_id": 5
+  },
+  {
+    "basic_amount": 45000,
+    "hra": 22500,
+    "special_allowance": 5000,
+    "internet_allowance": 800,
+    "payslip_month": "2025-01-01T00:00:00Z",
+    "fk_employee_id": 6
+  },
+  {
+    "basic_amount": 45000,
+    "hra": 22500,
+    "special_allowance": 5000,
+    "internet_allowance": 800,
+    "payslip_month": "2025-02-01T00:00:00Z",
+    "fk_employee_id": 6
+  },
+  {
+    "basic_amount": 45000,
+    "hra": 22500,
+    "special_allowance": 5000,
+    "internet_allowance": 800,
+    "payslip_month": "2025-03-01T00:00:00Z",
+    "fk_employee_id": 6
+  },
+  {
+    "basic_amount": 45000,
+    "hra": 22500,
+    "special_allowance": 5000,
+    "internet_allowance": 800,
+    "payslip_month": "2025-01-01T00:00:00Z",
+    "fk_employee_id": 7
+  },
+  {
+    "basic_amount": 45000,
+    "hra": 22500,
+    "special_allowance": 5000,
+    "internet_allowance": 800,
+    "payslip_month": "2025-02-01T00:00:00Z",
+    "fk_employee_id": 7
+  },
+  {
+    "basic_amount": 45000,
+    "hra": 22500,
+    "special_allowance": 5000,
+    "internet_allowance": 800,
+    "payslip_month": "2025-03-01T00:00:00Z",
+    "fk_employee_id": 7
+  }
+]
