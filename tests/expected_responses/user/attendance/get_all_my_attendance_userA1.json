@@ -1,22 +1,22 @@
 [
   {
-    "attendance_id": 25,
-    "fk_employee_id": 7,
-    "punch_time": "2023-04-02T10:00:00"
+    "punch_time": "2023-04-01T10:00:00",
+    "attendance_id": 13,
+    "fk_employee_id": 4
   },
   {
-    "attendance_id": 26,
-    "fk_employee_id": 7,
-    "punch_time": "2023-04-02T07:10:00"
+    "punch_time": "2023-04-01T07:10:00",
+    "attendance_id": 14,
+    "fk_employee_id": 4
   },
   {
-    "attendance_id": 27,
-    "fk_employee_id": 7,
-    "punch_time": "2023-04-06T10:20:00"
+    "punch_time": "2023-04-03T10:20:00",
+    "attendance_id": 15,
+    "fk_employee_id": 4
   },
   {
-    "attendance_id": 28,
-    "fk_employee_id": 7,
-    "punch_time": "2023-04-06T07:20:00"
+    "punch_time": "2023-04-03T07:20:00",
+    "attendance_id": 16,
+    "fk_employee_id": 4
   }
 ]

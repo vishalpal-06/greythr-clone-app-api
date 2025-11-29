@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-BASE_PATH = Path(__file__).resolve().parent.parent / "expected_responses/user/roles/"
+BASE_PATH = Path(__file__).resolve().parent.parent.parent / "expected_responses/user/roles/"
 
 def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:

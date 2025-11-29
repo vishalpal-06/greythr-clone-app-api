@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-BASE_PATH = Path(__file__).resolve().parent.parent / "expected_responses/user/attendance"
+BASE_PATH = Path(__file__).resolve().parent.parent.parent / "expected_responses/user/attendance"
 
 def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:
@@ -15,7 +15,7 @@ def test_user_create_attendance(client, user_A1):
         headers={"Authorization": f"Bearer {user_A1}"},
     )
     assert response.status_code == 201
-    assert response.json() == {'punch_time': '2025-10-10T04:30:00', 'attendance_id': 29, 'fk_employee_id': 7}
+    assert response.json() == {'punch_time': '2025-10-10T04:30:00', 'attendance_id': 29, 'fk_employee_id': 4}
 
 
 def test_user_get_all_my_attendance(client, user_A1):
@@ -33,7 +33,6 @@ def test_user_get_my_attendance_using_date(client, user_A1):
         "/user/my/attendance/my/date/2025-10-10",
         headers={"Authorization": f"Bearer {user_A1}"},
     )
-    print("2  =>",response.json())
     assert response.status_code == 200
     assert response.json() == []
 

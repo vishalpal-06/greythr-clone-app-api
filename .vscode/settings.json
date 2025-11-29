@@ -1,0 +1,10 @@
+// .vscode/settings.json
+{
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestPath": "pytest", 
+    // CHANGE THIS LINE: Set the root directory for test discovery to the 'tests' folder
+    "python.testing.pytestArgs": [
+        "tests" 
+    ],
+    "python.testing.pytestModulePattern": "test_*.py" 
+}
