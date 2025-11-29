@@ -1,14 +1,14 @@
 import json
 from pathlib import Path
 
-BASE_PATH = Path(__file__).resolve().parent.parent / "expected_responses/user/departments/"
+BASE_PATH = Path(__file__).resolve().parent.parent.parent / "expected_responses/user/departments/"
 
 def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:
         return json.load(f)
 
 # -------------------------------------------------test user api ---------------------------------------------------
-def test_user_get_all_departments(client, user_A1):
+def test_user_get_all_departments_success(client, user_A1):
     response = client.get(
         "/user/my/departments/",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -18,7 +18,7 @@ def test_user_get_all_departments(client, user_A1):
     assert response.json() == expected
 
 
-def test_user_get_Sales_departments(client, user_A1):
+def test_user_get_department_by_id_success(client, user_A1):
     response = client.get(
         "/user/my/departments/id/4",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -30,7 +30,7 @@ def test_user_get_Sales_departments(client, user_A1):
     assert response.json() == expected
 
 
-def test_user_get_departments_not_found(client, user_A1):
+def test_user_get_department_by_id_not_found(client, user_A1):
     response = client.get(
         "/user/my/departments/id/14",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -41,7 +41,7 @@ def test_user_get_departments_not_found(client, user_A1):
 
 
 # -------------------------------------------------test admin api ---------------------------------------------------
-def test_user_create_department(client, user_A1):
+def test_user_access_admin_create_department_forbidden(client, user_A1):
     payload = {
         "department_name": "string"
     }
@@ -56,7 +56,7 @@ def test_user_create_department(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_update_department_using_id(client, user_A1):
+def test_user_access_admin_update_department_by_id_forbidden(client, user_A1):
     response = client.put(
         "/admin/departments/id/1",
         params={"new_name": "HR"},
@@ -67,7 +67,7 @@ def test_user_update_department_using_id(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_delete_departments_using_id(client, user_A1):
+def test_user_access_admin_delete_department_by_id_forbidden(client, user_A1):
     response = client.delete(
         "/admin/departments/id/1",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -77,7 +77,7 @@ def test_user_delete_departments_using_id(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_update_department_using_name(client, user_A1):
+def test_user_access_admin_update_department_by_name_forbidden(client, user_A1):
     response = client.put(
         "/admin/departments/name/Human Resources",
         params={"new_name": "HR"},
@@ -88,7 +88,7 @@ def test_user_update_department_using_name(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_delete_departments_using_name(client, user_A1):
+def test_user_access_admin_delete_department_by_name_forbidden(client, user_A1):
     response = client.delete(
         "/admin/departments/name/Human Resources",
         headers={"Authorization": f"Bearer {user_A1}"}

@@ -1,14 +1,14 @@
 import json
 from pathlib import Path
 
-BASE_PATH = Path(__file__).resolve().parent.parent / "expected_responses/user/employee/"
+BASE_PATH = Path(__file__).resolve().parent.parent.parent / "expected_responses/user/employee/"
 
 def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:
         return json.load(f)
 
 # -------------------------------------------------test user api ---------------------------------------------------
-def test_user_get_my_details(client, user_A1):
+def test_user_get_my_profile_success(client, user_A1):
     response = client.get(
         "/user/my/me/",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -19,7 +19,7 @@ def test_user_get_my_details(client, user_A1):
     assert response.json() == expected
 
 # -------------------------------------------------test manager api ---------------------------------------------------
-def test_employee_not_under_manager_by_id(client, user_A1):
+def test_user_access_manager_subordinate_by_id_not_under_manager(client, user_A1):
     response = client.get(
         "/manager/subordinates/id/1",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -29,7 +29,7 @@ def test_employee_not_under_manager_by_id(client, user_A1):
     assert response.json() == {"detail": "Employee not found under your management"}
 
 
-def test_employee_not_under_manager_by_email(client, user_A1):
+def test_user_access_manager_subordinate_by_email_not_under_manager(client, user_A1):
     response = client.get(
         "/manager/subordinates/email/userA2@test.com/",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -39,7 +39,7 @@ def test_employee_not_under_manager_by_email(client, user_A1):
     assert response.json() == {"detail": "Employee not found under your management"}
 
 
-def test_employee_not_under_manager_by_email_not_exist_in_db(client, user_A1):
+def test_user_access_manager_subordinate_by_email_not_found(client, user_A1):
     response = client.get(
         "/manager/subordinates/email/altufaltu@test.com/",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -49,7 +49,7 @@ def test_employee_not_under_manager_by_email_not_exist_in_db(client, user_A1):
     assert response.json() == {"detail": "Employee not found"}
 
 
-def test_employee_not_under_manager_by_id_not_exist_in_db(client, user_A1):
+def test_user_access_manager_subordinate_by_id_not_found(client, user_A1):
     response = client.get(
         "/manager/subordinates/id/10",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -60,7 +60,7 @@ def test_employee_not_under_manager_by_id_not_exist_in_db(client, user_A1):
 
 
 # -------------------------------------------------test admin api ---------------------------------------------------
-def test_user_get_all_employee(client, user_A1):
+def test_user_access_admin_get_all_employees_forbidden(client, user_A1):
     response = client.get(
         "/admin/employees/",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -70,7 +70,7 @@ def test_user_get_all_employee(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_create_employee(client, user_A1):
+def test_user_access_admin_create_employee_forbidden(client, user_A1):
     payload = {
         "first_name": "string",
         "last_name": "string",
@@ -94,7 +94,7 @@ def test_user_create_employee(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_get_employee_using_id(client, user_A1):
+def test_user_access_admin_get_employee_by_id_forbidden(client, user_A1):
     response = client.get(
         "/admin/employees/id/1",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -104,7 +104,7 @@ def test_user_get_employee_using_id(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_update_employee_using_id(client, user_A1):
+def test_user_access_admin_update_employee_by_id_forbidden(client, user_A1):
     payload = {
         "first_name": "string",
         "last_name": "string",
@@ -127,7 +127,7 @@ def test_user_update_employee_using_id(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_delete_employee_using_id(client, user_A1):
+def test_user_access_admin_delete_employee_by_id_forbidden(client, user_A1):
     response = client.delete(
         "/admin/employees/id/1",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -137,7 +137,7 @@ def test_user_delete_employee_using_id(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_get_employee_using_email(client, user_A1):
+def test_user_access_admin_get_employee_by_email_forbidden(client, user_A1):
     response = client.get(
         "/admin/employees/email/admin@test.com",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -147,7 +147,7 @@ def test_user_get_employee_using_email(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_update_employee_using_email(client, user_A1):
+def test_user_access_admin_update_employee_by_email_forbidden(client, user_A1):
     payload = {
         "first_name": "string",
         "last_name": "string",
@@ -170,7 +170,7 @@ def test_user_update_employee_using_email(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_delete_employee_using_email(client, user_A1):
+def test_user_access_admin_delete_employee_by_email_forbidden(client, user_A1):
     response = client.delete(
         "/admin/employees/email/admin@test.com",
         headers={"Authorization": f"Bearer {user_A1}"}
