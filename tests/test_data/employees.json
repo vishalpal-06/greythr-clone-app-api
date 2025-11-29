@@ -1,0 +1,86 @@
+[
+  {
+    "first_name": "admin",
+    "last_name": "Pal",
+    "email": "admin@test.com",
+    "password": "pass123",
+    "joining_date": "2023-01-01",
+    "address": "Kalyan",
+    "fk_department_id": 1,
+    "fk_role_id": 1,
+    "isadmin": 1,
+    "fk_manager_id": null
+  },
+  {
+    "first_name": "managerA",
+    "last_name": "Pal",
+    "email": "managerA@test.com",
+    "password": "pass123",
+    "joining_date": "2023-01-10",
+    "address": "NY",
+    "fk_department_id": 3,
+    "fk_role_id": 2,
+    "isadmin": 0,
+    "fk_manager_id": 1
+  },
+  {
+    "first_name": "managerB",
+    "last_name": "Pal",
+    "email": "managerB@test.com",
+    "password": "pass123",
+    "joining_date": "2023-01-10",
+    "address": "NY",
+    "fk_department_id": 4,
+    "fk_role_id": 2,
+    "isadmin": 0,
+    "fk_manager_id": 1
+  },
+  {
+    "first_name": "userA1",
+    "last_name": "Pal",
+    "email": "userA1@test.com",
+    "password": "pass123",
+    "joining_date": "2023-04-01",
+    "address": "NY",
+    "fk_department_id": 3,
+    "fk_role_id": 4,
+    "isadmin": 0,
+    "fk_manager_id": 2
+  },
+  {
+    "first_name": "userA2",
+    "last_name": "Pal",
+    "email": "userA2@test.com",
+    "password": "pass123",
+    "joining_date": "2023-04-01",
+    "address": "NY",
+    "fk_department_id": 3,
+    "fk_role_id": 4,
+    "isadmin": 0,
+    "fk_manager_id": 2
+  },
+  {
+    "first_name": "userB1",
+    "last_name": "Pal",
+    "email": "userB1@test.com",
+    "password": "pass123",
+    "joining_date": "2023-04-01",
+    "address": "NY",
+    "fk_department_id": 4,
+    "fk_role_id": 3,
+    "isadmin": 0,
+    "fk_manager_id": 3
+  },
+  {
+    "first_name": "userB2",
+    "last_name": "Pal",
+    "email": "userB2@test.com",
+    "password": "pass123",
+    "joining_date": "2023-04-01",
+    "address": "NY",
+    "fk_department_id": 4,
+    "fk_role_id": 3,
+    "isadmin": 0,
+    "fk_manager_id": 3
+  }
+]

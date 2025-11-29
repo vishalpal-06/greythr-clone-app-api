@@ -5,7 +5,7 @@ from common.leave import get_leave_by_employee_and_year, get_all_leaves_by_emplo
 import schema.leave_schema as leave_schema
 from routers.auth import db_dependency, user_dependency
 
-router = APIRouter(prefix="/my/leave", tags=["My Leave"])
+router = APIRouter(prefix="/my/leave", tags=["My - Leave"])
 
 
 @router.get("/year/{year}", response_model=leave_schema.LeaveResponse)

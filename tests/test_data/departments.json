@@ -1,0 +1,8 @@
+
+[
+    { "department_name": "Admin Department" },
+    { "department_name": "Human Resources" },
+    { "department_name": "Finance" },
+    { "department_name": "Engineering" },
+    { "department_name": "Sales" }
+]

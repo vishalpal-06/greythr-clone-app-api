@@ -10,7 +10,7 @@ from common.regularization import (
     get_my_regularizations_by_month,
 )
 
-router = APIRouter(prefix="/my/regularizations", tags=["My Regularizations"])
+router = APIRouter(prefix="/my/regularizations", tags=["My - Regularizations"])
 
 
 @router.post("/", response_model=RegularizationResponse, status_code=status.HTTP_201_CREATED)

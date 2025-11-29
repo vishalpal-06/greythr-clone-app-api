@@ -1,0 +1,212 @@
+[
+  {
+    "assign_year": 2023,
+    "casual_leave": 5,
+    "plan_leave": 15,
+    "probation_leave": 6,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "fk_employee_id": 1
+  },
+  {
+    "assign_year": 2023,
+    "casual_leave": 5,
+    "plan_leave": 15,
+    "probation_leave": 6,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "fk_employee_id": 2
+  },
+  {
+    "assign_year": 2023,
+    "casual_leave": 5,
+    "plan_leave": 15,
+    "probation_leave": 6,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "fk_employee_id": 3
+  },
+  {
+    "assign_year": 2023,
+    "casual_leave": 5,
+    "plan_leave": 15,
+    "probation_leave": 6,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "fk_employee_id": 4
+  },
+  {
+    "assign_year": 2023,
+    "casual_leave": 5,
+    "plan_leave": 15,
+    "probation_leave": 6,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "fk_employee_id": 5
+  },
+  {
+    "assign_year": 2023,
+    "casual_leave": 5,
+    "plan_leave": 15,
+    "probation_leave": 6,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "fk_employee_id": 6
+  },
+  {
+    "assign_year": 2023,
+    "casual_leave": 5,
+    "plan_leave": 15,
+    "probation_leave": 6,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "fk_employee_id": 7
+  },
+  {
+    "assign_year": 2024,
+    "casual_leave": 5,
+    "plan_leave": 18,
+    "probation_leave": 0,
+    "sick_leave": 5,
+    "total_leave": 28,
+    "balance_leave": 28,
+    "fk_employee_id": 1
+  },
+  {
+    "assign_year": 2024,
+    "casual_leave": 5,
+    "plan_leave": 18,
+    "probation_leave": 0,
+    "sick_leave": 5,
+    "total_leave": 28,
+    "balance_leave": 28,
+    "fk_employee_id": 2
+  },
+  {
+    "assign_year": 2024,
+    "casual_leave": 5,
+    "plan_leave": 18,
+    "probation_leave": 0,
+    "sick_leave": 5,
+    "total_leave": 28,
+    "balance_leave": 28,
+    "fk_employee_id": 3
+  },
+  {
+    "assign_year": 2024,
+    "casual_leave": 5,
+    "plan_leave": 18,
+    "probation_leave": 0,
+    "sick_leave": 5,
+    "total_leave": 28,
+    "balance_leave": 28,
+    "fk_employee_id": 4
+  },
+  {
+    "assign_year": 2024,
+    "casual_leave": 5,
+    "plan_leave": 18,
+    "probation_leave": 0,
+    "sick_leave": 5,
+    "total_leave": 28,
+    "balance_leave": 28,
+    "fk_employee_id": 5
+  },
+  {
+    "assign_year": 2024,
+    "casual_leave": 5,
+    "plan_leave": 18,
+    "probation_leave": 0,
+    "sick_leave": 5,
+    "total_leave": 28,
+    "balance_leave": 28,
+    "fk_employee_id": 6
+  },
+  {
+    "assign_year": 2024,
+    "casual_leave": 5,
+    "plan_leave": 18,
+    "probation_leave": 0,
+    "sick_leave": 5,
+    "total_leave": 28,
+    "balance_leave": 28,
+    "fk_employee_id": 7
+  },
+  {
+    "assign_year": 2025,
+    "casual_leave": 5,
+    "plan_leave": 21,
+    "probation_leave": 0,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "fk_employee_id": 1
+  },
+  {
+    "assign_year": 2025,
+    "casual_leave": 5,
+    "plan_leave": 21,
+    "probation_leave": 0,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "fk_employee_id": 2
+  },
+  {
+    "assign_year": 2025,
+    "casual_leave": 5,
+    "plan_leave": 21,
+    "probation_leave": 0,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "fk_employee_id": 3
+  },
+  {
+    "assign_year": 2025,
+    "casual_leave": 5,
+    "plan_leave": 21,
+    "probation_leave": 0,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "fk_employee_id": 4
+  },
+  {
+    "assign_year": 2025,
+    "casual_leave": 5,
+    "plan_leave": 21,
+    "probation_leave": 0,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "fk_employee_id": 5
+  },
+  {
+    "assign_year": 2025,
+    "casual_leave": 5,
+    "plan_leave": 21,
+    "probation_leave": 0,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "fk_employee_id": 6
+  },
+  {
+    "assign_year": 2025,
+    "casual_leave": 5,
+    "plan_leave": 21,
+    "probation_leave": 0,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "fk_employee_id": 7
+  }
+]

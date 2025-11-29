@@ -10,7 +10,7 @@ from common.expense_claim import (
     get_my_claims_by_status, get_my_claim_by_id, get_my_claims_by_month
 )
 
-router = APIRouter(prefix="/my/expense-claims", tags=["My Expense Claims"])
+router = APIRouter(prefix="/my/expense-claims", tags=["My - Expense Claims"])
 
 
 @router.post("/", response_model=ExpenseClaimResponse, status_code=status.HTTP_201_CREATED)

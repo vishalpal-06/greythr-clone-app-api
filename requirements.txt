@@ -4,3 +4,5 @@ sqlalchemy==2.0.27
 pydantic==2.6.3
 passlib[bcrypt]
 python-jose>=3.0.0
+pytest
+pytest-cov
