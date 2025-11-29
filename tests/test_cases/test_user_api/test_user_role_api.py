@@ -8,7 +8,7 @@ def read_json(filename):
         return json.load(f)
 
 # -------------------------------------------------test user api ---------------------------------------------------
-def test_user_get_all_roles(client, user_A1):
+def test_user_get_all_roles_success(client, user_A1):
     response = client.get(
         "/user/my/roles/",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -19,7 +19,7 @@ def test_user_get_all_roles(client, user_A1):
     assert response.json() == expected
 
 
-def test_user_get_Sales_roles(client, user_A1):
+def test_user_get_role_by_id_success(client, user_A1):
     response = client.get(
         "/user/my/roles/id/4",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -30,7 +30,7 @@ def test_user_get_Sales_roles(client, user_A1):
     assert response.json() == expected
 
 
-def test_user_get_roles_not_found(client, user_A1):
+def test_user_get_role_by_id_not_found(client, user_A1):
     response = client.get(
         "/user/my/roles/id/14",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -41,7 +41,7 @@ def test_user_get_roles_not_found(client, user_A1):
 
 
 # -------------------------------------------------test admin api ---------------------------------------------------
-def test_user_create_role(client, user_A1):
+def test_user_access_admin_create_role_forbidden(client, user_A1):
     payload = {
         "role": "string"
     }
@@ -56,7 +56,7 @@ def test_user_create_role(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_update_role_using_id(client, user_A1):
+def test_user_access_admin_update_role_by_id_forbidden(client, user_A1):
     response = client.put(
         "/admin/roles/id/1",
         params={"new_name": "HR"},
@@ -67,7 +67,7 @@ def test_user_update_role_using_id(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_delete_roles_using_id(client, user_A1):
+def test_user_access_admin_delete_role_by_id_forbidden(client, user_A1):
     response = client.delete(
         "/admin/roles/id/1",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -77,7 +77,7 @@ def test_user_delete_roles_using_id(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_update_role_using_name(client, user_A1):
+def test_user_access_admin_update_role_by_name_forbidden(client, user_A1):
     response = client.put(
         "/admin/roles/name/Human Resources",
         params={"new_name": "HR"},
@@ -88,7 +88,7 @@ def test_user_update_role_using_name(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_delete_roles_using_name(client, user_A1):
+def test_user_access_admin_delete_role_by_name_forbidden(client, user_A1):
     response = client.delete(
         "/admin/roles/name/Human Resources",
         headers={"Authorization": f"Bearer {user_A1}"}
