@@ -1,0 +1,12 @@
+[
+  {
+    "from_date": "2025-06-01T09:00:00",
+    "end_date": "2025-06-05T18:00:00",
+    "leave_reason": "Planned surgery.",
+    "leave_application_id": 2,
+    "total_days": 5,
+    "leave_status": "Approved",
+    "fk_employee_id": 4,
+    "fk_manager_id": 2
+  }
+]

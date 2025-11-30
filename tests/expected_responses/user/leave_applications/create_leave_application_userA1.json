@@ -1,0 +1,10 @@
+{
+  "from_date": "2025-11-30T10:00:00",
+  "end_date": "2025-11-30T19:00:00",
+  "leave_reason": "string",
+  "leave_application_id": 6,
+  "total_days": 1,
+  "leave_status": "Pending",
+  "fk_employee_id": 4,
+  "fk_manager_id": 2
+}
