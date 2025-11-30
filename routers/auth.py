@@ -16,8 +16,8 @@ load_dotenv()
 auth_router = APIRouter(prefix='/auth', tags=['Authentication'] )
 
 # Security settings
-SECRET_KEY = os.getenv("SECRET_KEY") 
-ALGORITHM = os.getenv("ALGORITHM")
+SECRET_KEY = os.getenv("SECRET_KEY","d2e2b8fe4827c93ad7ac831a45b2f28c6f33e04f975c0b4b2b1b8d8b38d694a4") 
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
 
