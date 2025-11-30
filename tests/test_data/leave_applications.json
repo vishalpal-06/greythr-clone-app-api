@@ -43,5 +43,14 @@
     "leave_reason": "Annual leave.",
     "fk_employee_id": 5,
     "fk_manager_id": 2
+  },
+  {
+    "from_date": "2025-05-10T09:00:00Z",
+    "end_date": "2025-05-12T18:00:00Z",
+    "total_days": 3,
+    "leave_status": "Pending",
+    "leave_reason": "Family vacation in Goa.",
+    "fk_employee_id": 3,
+    "fk_manager_id": 1
   }
 ]

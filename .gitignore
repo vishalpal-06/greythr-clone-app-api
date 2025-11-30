@@ -2,3 +2,5 @@
 __pyc*
 .env
 test_db.sqlite3
+test_db.sqlite3-journal
+.pytest_cache

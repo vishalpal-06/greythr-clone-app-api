@@ -1,0 +1,12 @@
+[
+  {
+    "punch_time": "2023-04-02T07:10:00",
+    "attendance_id": 22,
+    "fk_employee_id": 5
+  },
+  {
+    "punch_time": "2023-04-02T10:00:00",
+    "attendance_id": 21,
+    "fk_employee_id": 5
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "claim_date": "2025-12-01T10:30:00",
+  "amount": 10000,
+  "description": "Mujhe to bas paisa chaiye",
+  "claim_id": 11,
+  "claim_status": "Pending",
+  "fk_employee_id": 2,
+  "fk_manager_id": 1
+}

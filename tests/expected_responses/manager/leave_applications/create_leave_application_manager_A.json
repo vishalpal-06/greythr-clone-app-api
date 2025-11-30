@@ -5,6 +5,6 @@
   "leave_application_id": 7,
   "total_days": 1,
   "leave_status": "Pending",
-  "fk_employee_id": 4,
-  "fk_manager_id": 2
+  "fk_employee_id": 2,
+  "fk_manager_id": 1
 }
