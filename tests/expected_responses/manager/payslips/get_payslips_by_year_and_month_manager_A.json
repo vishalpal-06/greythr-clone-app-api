@@ -1,0 +1,9 @@
+{
+  "basic_amount": 60000,
+  "hra": 30000,
+  "special_allowance": 8000,
+  "internet_allowance": 1000,
+  "payslip_month": "2025-01-01T00:00:00",
+  "payslip_id": 4,
+  "fk_employee_id": 2
+}

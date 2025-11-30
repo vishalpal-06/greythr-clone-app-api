@@ -1,0 +1,12 @@
+{
+    "first_name": "userA2", 
+    "last_name": "Pal", 
+    "email": "userA2@test.com", 
+    "joining_date": "2023-04-01", 
+    "address": "NY", 
+    "isadmin": false, 
+    "fk_department_id": 3, 
+    "fk_role_id": 4, 
+    "fk_manager_id": 2, 
+    "employee_id": 5
+}

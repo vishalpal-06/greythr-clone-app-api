@@ -1,0 +1,9 @@
+{
+  "regularization_start_time": "2025-04-10T10:00:00",
+  "regularization_end_time": "2025-04-10T10:30:00",
+  "regularization_reason": "Late arrival due to public transport strike.",
+  "regularization_id": 4,
+  "regularization_status": "Rejected",
+  "fk_employee_id": 5,
+  "fk_manager_id": 2
+}
