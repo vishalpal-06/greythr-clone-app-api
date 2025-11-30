@@ -1,0 +1,35 @@
+[
+  {
+    "assign_year": 2023,
+    "casual_leave": 5,
+    "plan_leave": 15,
+    "probation_leave": 6,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "leave_id": 4,
+    "fk_employee_id": 4
+  },
+  {
+    "assign_year": 2024,
+    "casual_leave": 5,
+    "plan_leave": 18,
+    "probation_leave": 0,
+    "sick_leave": 5,
+    "total_leave": 28,
+    "balance_leave": 28,
+    "leave_id": 11,
+    "fk_employee_id": 4
+  },
+  {
+    "assign_year": 2025,
+    "casual_leave": 5,
+    "plan_leave": 21,
+    "probation_leave": 0,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "leave_id": 18,
+    "fk_employee_id": 4
+  }
+]
