@@ -1,0 +1,9 @@
+{
+  "regularization_start_time": "2025-04-05T09:00:00",
+  "regularization_end_time": "2025-04-05T13:00:00",
+  "regularization_reason": "Half-day WFH approval, need to update time records.",
+  "regularization_id": 3,
+  "regularization_status": "Pending",
+  "fk_employee_id": 4,
+  "fk_manager_id": 2
+}
