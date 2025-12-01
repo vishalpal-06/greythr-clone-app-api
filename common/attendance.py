@@ -148,6 +148,9 @@ def get_attendance_by_date_all_employees(db: Session, punch_date: datetime, user
 
 def get_attendance_by_date_one_employee(db: Session, employee_id: int, punch_date: datetime, user:user_dependency):
     _require_admin(user=user)
+    employee = db.query(Employee).filter(Employee.employee_id == employee_id).first()
+    if not employee:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Employee not found")
     start_dt = datetime.combine(punch_date, time.min)
     end_dt = datetime.combine(punch_date, time.max)
 

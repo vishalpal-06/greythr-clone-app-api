@@ -1,0 +1,22 @@
+[
+  {
+    "punch_time": "2023-04-01T07:10:00",
+    "attendance_id": 14,
+    "fk_employee_id": 4
+  },
+  {
+    "punch_time": "2023-04-01T07:10:00",
+    "attendance_id": 18,
+    "fk_employee_id": 6
+  },
+  {
+    "punch_time": "2023-04-01T10:00:00",
+    "attendance_id": 13,
+    "fk_employee_id": 4
+  },
+  {
+    "punch_time": "2023-04-01T10:00:00",
+    "attendance_id": 17,
+    "fk_employee_id": 6
+  }
+]

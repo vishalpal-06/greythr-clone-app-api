@@ -82,7 +82,7 @@ def get_auth_token(client, email: str, password: str) -> str:
 # TOKEN FIXTURE (optional)
 # ------------------------------
 @pytest.fixture
-def admin_token(client):
+def admin_user(client):
     return get_auth_token(client, "admin@test.com", "pass123")
 
 

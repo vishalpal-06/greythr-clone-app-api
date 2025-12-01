@@ -1,0 +1,13 @@
+
+{
+  "employee_id": 8,
+  "first_name": "string",
+  "last_name": "string",
+  "email": "string@example.com",
+  "joining_date": "2025-11-27",
+  "address": "string",
+  "isadmin": true,
+  "fk_department_id": 1,
+  "fk_role_id": 1,
+  "fk_manager_id": 1
+}

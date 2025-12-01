@@ -1,0 +1,42 @@
+[
+  {
+    "punch_time": "2023-01-10T07:10:00",
+    "attendance_id": 6,
+    "fk_employee_id": 2
+  },
+  {
+    "punch_time": "2023-01-10T07:20:00",
+    "attendance_id": 8,
+    "fk_employee_id": 2
+  },
+  {
+    "punch_time": "2023-01-10T10:00:00",
+    "attendance_id": 5,
+    "fk_employee_id": 2
+  },
+  {
+    "punch_time": "2023-01-10T10:20:00",
+    "attendance_id": 7,
+    "fk_employee_id": 2
+  },
+  {
+    "punch_time": "2023-01-10T07:10:00",
+    "attendance_id": 10,
+    "fk_employee_id": 3
+  },
+  {
+    "punch_time": "2023-01-10T07:20:00",
+    "attendance_id": 12,
+    "fk_employee_id": 3
+  },
+  {
+    "punch_time": "2023-01-10T10:00:00",
+    "attendance_id": 9,
+    "fk_employee_id": 3
+  },
+  {
+    "punch_time": "2023-01-10T10:20:00",
+    "attendance_id": 11,
+    "fk_employee_id": 3
+  }
+]
