@@ -8,53 +8,33 @@ def read_json(filename):
         return json.load(f)
 
 # -------------------------------------------------test user api ---------------------------------------------------
-def test_user_get_salary_by_year_success(client, user_A1):
+def test_user_get_all_my_salary_success(client, user_A1):
     response = client.get(
-        "/user/my/leave/year/2025",
+        "/user/my/salary/",
         headers={"Authorization": f"Bearer {user_A1}"}
     )
-    expected = read_json("get_2025_salary_userA1.json")
-
+    expected = read_json("get_all_my_salary_userA1.json")
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_user_get_salary_by_year_not_found(client, user_A1):
+def test_user_get_my_salary_by_year_success(client, user_A1):
     response = client.get(
-        "/user/my/leave/year/2028",
+        "/user/my/salary/year/2025",
         headers={"Authorization": f"Bearer {user_A1}"}
     )
-    assert response.status_code == 404
-    assert response.json() == {"detail": "Leave record not found for employee 4 in year 2028"}
-
-
-def test_user_get_all_salary_success(client, user_A1):
-    response = client.get(
-        "user/my/leave/",
-        headers={"Authorization": f"Bearer {user_A1}"}
-    )
-    expected = read_json("get_all_salary_userA1.json")
+    expected = read_json("get_my_salary_by_year_userA1.json")
     assert response.status_code == 200
     assert response.json() == expected
-    
 
-# -------------------------------------------------test manager api ---------------------------------------------------
-def test_user_manager_access_get_employee_salary_by_year_not_found(client, user_A1):
+
+def test_user_get_my_salary_by_year_not_found(client, user_A1):
     response = client.get(
-        "manager/leaves/employee/1/year/2025",
+        "/user/my/salary/year/2028",
         headers={"Authorization": f"Bearer {user_A1}"}
     )
     assert response.status_code == 404
-    assert response.json() == {"detail": "Employee not found under your management"}
-
-
-def test_user_manager_access_get_employee_salary_by_empid_not_found(client, user_A1):
-    response = client.get(
-        "manager/leaves/employee/1",
-        headers={"Authorization": f"Bearer {user_A1}"}
-    )
-    assert response.status_code == 404
-    assert response.json() == {"detail": "Employee not found under your management"}
+    assert response.json() == {"detail": "Salary record not found for employee in year 2028"}
 
 
 # -------------------------------------------------test admin api ---------------------------------------------------
@@ -111,9 +91,4 @@ def test_user_admin_access_delete_salary_by_salaryid_forbidden(client, user_A1):
     )
     assert response.status_code == 403
     assert response.json() == {"detail": "Admin privileges required"}
-
-
-
-
-
 
