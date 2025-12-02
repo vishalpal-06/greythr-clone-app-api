@@ -14,7 +14,6 @@ def test_user_get_all_my_regularization_success(client, user_A1):
         headers={"Authorization": f"Bearer {user_A1}"}
     )
     expected = read_json("get_all_my_regularization_userA1.json")
-
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -39,7 +38,7 @@ def test_user_get_my_regularization_by_id_success(client, user_A1):
         "user/my/regularizations/3",
         headers={"Authorization": f"Bearer {user_A1}"}
     )
-    expected = read_json("get_regularization_by_id_userA1.json")
+    expected = read_json("get_my_regularization_by_id_userA1.json")
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -74,7 +73,7 @@ def test_user_get_my_regularization_by_year_and_month_not_found(client, user_A1)
 
 
 # -------------------------------------------------test manager api ---------------------------------------------------
-def test_user_access_manager_get_regularization_by_status_success(client, user_A1):
+def test_user_manager_access_get_subordinate_regularization_by_status_success(client, user_A1):
     response = client.get(
         "/manager/regularizations/pending",
         headers={"Authorization": f"Bearer {user_A1}"},
@@ -83,7 +82,7 @@ def test_user_access_manager_get_regularization_by_status_success(client, user_A
     assert response.json() == []
 
 
-def test_user_access_manager_get_regularization_by_id_forbidden(client, user_A1):
+def test_user_manager_access_get_subordinate_regularization_by_id_forbidden(client, user_A1):
     response = client.get(
         "manager/regularizations/1",
         headers={"Authorization": f"Bearer {user_A1}"},
@@ -92,7 +91,7 @@ def test_user_access_manager_get_regularization_by_id_forbidden(client, user_A1)
     assert response.json() == {"detail": "Regularization not found under your management"}
 
 
-def test_user_access_manager_get_regularization_by_empid_forbidden(client, user_A1):
+def test_user_manager_access_get_subordinate_regularization_by_empid_forbidden(client, user_A1):
     response = client.get(
         "manager/regularizations/employee/1",
         headers={"Authorization": f"Bearer {user_A1}"},
@@ -101,7 +100,7 @@ def test_user_access_manager_get_regularization_by_empid_forbidden(client, user_
     assert response.json() == {"detail": "Employee not found under your management"}
 
 
-def test_user_access_manager_update_regularization_by_id_not_allowed(client, user_A1):
+def test_user_manager_access_update_subordinate_regularization_by_id_not_allowed(client, user_A1):
     response = client.get(
         "/manager/regularizations/1/status",
         headers={"Authorization": f"Bearer {user_A1}"},
@@ -110,7 +109,7 @@ def test_user_access_manager_update_regularization_by_id_not_allowed(client, use
     assert response.json() == {"detail": "Method Not Allowed"}
 
 # -------------------------------------------------test admin api ---------------------------------------------------
-def test_user_access_admin_get_regularization_by_id_forbidden(client, user_A1):
+def test_user_admin_access_get_employee_regularization_by_id_forbidden(client, user_A1):
     response = client.get(
         "/admin/regularizations/1",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -119,7 +118,7 @@ def test_user_access_admin_get_regularization_by_id_forbidden(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_access_admin_update_regularization_by_id_forbidden(client, user_A1):
+def test_user_admin_access_update_employee_regularization_by_id_forbidden(client, user_A1):
     response = client.put(
         "/admin/regularizations/1/status",
         json = {"regularization_status": "Rejected"},

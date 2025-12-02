@@ -23,7 +23,7 @@ def test_user_get_my_payslips_by_year_and_month_success(client, user_A1):
         "/user/my/payslips/month/2025/1",
         headers={"Authorization": f"Bearer {user_A1}"}
     )
-    expected = read_json("get_payslips_by_year_and_month_userA1.json")
+    expected = read_json("get_my_payslips_by_year_and_month_userA1.json")
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -38,7 +38,7 @@ def test_user_get_my_payslips_by_year_and_month_fot_found(client, user_A1):
 
 
 # -------------------------------------------------test admin api ---------------------------------------------------
-def test_user_access_admin_create_payslips_forbidden(client, user_A1):
+def test_user_admin_access_create_payslips_forbidden(client, user_A1):
     payload = {
                 "basic_amount": 1,
                 "hra": 0,
@@ -56,7 +56,7 @@ def test_user_access_admin_create_payslips_forbidden(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_access_admin_get_payslips_by_id_forbidden(client, user_A1):
+def test_user_admin_access_get_payslips_by_id_forbidden(client, user_A1):
     response = client.get(
         "/admin/payslips/employee/1",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -65,7 +65,7 @@ def test_user_access_admin_get_payslips_by_id_forbidden(client, user_A1):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_access_admin_get_payslips_by_year_and_month_forbidden(client, user_A1):
+def test_user_admin_access_get_payslips_by_year_and_month_forbidden(client, user_A1):
     response = client.get(
         "/admin/payslips/month/2025/4",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -74,7 +74,7 @@ def test_user_access_admin_get_payslips_by_year_and_month_forbidden(client, user
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_access_admin_get_payslips_by_empid_year_and_month_forbidden(client, user_A1):
+def test_user_admin_access_get_payslips_by_empid_year_and_month_forbidden(client, user_A1):
     response = client.get(
         "/admin/payslips/employee/1/month/2025/4",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -83,7 +83,7 @@ def test_user_access_admin_get_payslips_by_empid_year_and_month_forbidden(client
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_access_admin_delete_payslips_by_empid_year_and_month_forbidden(client, user_A1):
+def test_user_admin_access_delete_payslips_by_empid_year_and_month_forbidden(client, user_A1):
     response = client.delete(
         "/admin/payslips/employee/1/month/2025/4",
         headers={"Authorization": f"Bearer {user_A1}"}
@@ -92,7 +92,7 @@ def test_user_access_admin_delete_payslips_by_empid_year_and_month_forbidden(cli
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_user_access_admin_delete_payslips_by_id_forbidden(client, user_A1):
+def test_user_admin_access_delete_payslips_by_id_forbidden(client, user_A1):
     response = client.delete(
         "/admin/payslips/1",
         headers={"Authorization": f"Bearer {user_A1}"}

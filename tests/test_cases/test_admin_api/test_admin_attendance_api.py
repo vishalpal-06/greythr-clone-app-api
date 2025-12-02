@@ -78,7 +78,7 @@ def test_admin_access_manager_attendance_by_employee_and_date_under_manager_succ
     assert response.json() == expected
 
 
-def test_admin_access_manager_attendance_by_employee__and_date_not_under_manager_empty(client, admin_user):
+def test_admin_access_manager_attendance_by_employee_and_date_not_under_manager_empty(client, admin_user):
     response = client.get(
         "manager/attendance/employee/2/date/2025-11-25",
         headers={"Authorization": f"Bearer {admin_user}"},
