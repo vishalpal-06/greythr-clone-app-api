@@ -1,0 +1,9 @@
+{
+  "regularization_start_time": "2025-11-30T10:00:00",
+  "regularization_end_time": "2025-11-30T19:00:00",
+  "regularization_reason": "mera man nahi tha kam kerne ka",
+  "regularization_id": 8,
+  "regularization_status": "Pending",
+  "fk_employee_id": 2,
+  "fk_manager_id": 1
+}

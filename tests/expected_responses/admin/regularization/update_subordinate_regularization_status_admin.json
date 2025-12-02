@@ -1,0 +1,9 @@
+{
+  "regularization_start_time": "2025-01-15T09:00:00",
+  "regularization_end_time": "2025-01-15T18:00:00",
+  "regularization_reason": "Forgot to punch out after an evening client call.",
+  "regularization_id": 1,
+  "regularization_status": "Rejected",
+  "fk_employee_id": 2,
+  "fk_manager_id": 1
+}
