@@ -1,0 +1,20 @@
+[
+  {
+    "lpa": 10,
+    "salary_year": 2023,
+    "salary_id": 4,
+    "fk_employee_id": 2
+  },
+  {
+    "lpa": 12,
+    "salary_year": 2024,
+    "salary_id": 5,
+    "fk_employee_id": 2
+  },
+  {
+    "lpa": 15,
+    "salary_year": 2025,
+    "salary_id": 6,
+    "fk_employee_id": 2
+  }
+]

@@ -24,7 +24,7 @@ def test_manager_create_leave_application_success(client, manager_A):
     assert response.json() == expected
 
 
-def test_manager_delete_own_leave_application_by_id_success(client, manager_B):
+def test_manager_delete_my_leave_application_by_id_success(client, manager_B):
     response = client.delete(
         "/user/my/leave-applications/6",
         headers={"Authorization": f"Bearer {manager_B}"}
@@ -55,7 +55,7 @@ def test_manager_get_my_leave_application_by_id_success(client, manager_B):
         "/user/my/leave-applications/6",
         headers={"Authorization": f"Bearer {manager_B}"}
     )
-    expected = read_json("get_leave_application_by_id_manager_A.json")
+    expected = read_json("get_my_leave_application_by_id_manager_A.json")
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -107,7 +107,7 @@ def test_manager_get_my_leave_application_by_year_and_month_not_found(client, ma
 
 
 # -------------------------------------------------test manager api ---------------------------------------------------
-def test_manager_access_manager_update_leave_application_status_by_id_success(client, manager_A):
+def test_manager_manager_access_update_leave_application_status_by_id_success(client, manager_A):
     response = client.put(
         "manager/leave-applications/1/status",
         json={"leave_status": "Rejected"},
@@ -118,7 +118,7 @@ def test_manager_access_manager_update_leave_application_status_by_id_success(cl
     assert response.json() == expected
 
 
-def test_manager_access_manager_update_leave_application_status_by_id_forbidden(client, manager_A):
+def test_manager_manager_access_update_leave_application_status_by_id_forbidden(client, manager_A):
     response = client.put(
         "manager/leave-applications/3/status",
         json={"leave_status": "Approved"},
@@ -128,7 +128,7 @@ def test_manager_access_manager_update_leave_application_status_by_id_forbidden(
     assert response.json() == {"detail": "Leave Application not found under your management"}
 
 
-def test_manager_access_manager_update_leave_application_not_exist_status_by_id_not_found(client, manager_A):
+def test_manager_manager_access_update_leave_application_not_exist_status_by_id_not_found(client, manager_A):
     response = client.put(
         "manager/leave-applications/11/status",
         json={"leave_status": "Approved"},
@@ -138,7 +138,7 @@ def test_manager_access_manager_update_leave_application_not_exist_status_by_id_
     assert response.json() == {"detail": "Leave application not found"}
 
 
-def test_manager_access_manager_get_leave_applications_by_status_success(client, manager_A):
+def test_manager_manager_access_get_leave_applications_by_status_success(client, manager_A):
     response = client.get(
         "/manager/leave-applications/status/Pending",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -148,7 +148,7 @@ def test_manager_access_manager_get_leave_applications_by_status_success(client,
     assert response.json() == expected
 
 
-def test_manager_access_manager_get_leave_applications_by_year_and_month_success(client, manager_B):
+def test_manager_manager_access_get_leave_applications_by_year_and_month_success(client, manager_B):
     response = client.get(
         "/manager/leave-applications/month/2025/5",
         headers={"Authorization": f"Bearer {manager_B}"},
@@ -158,7 +158,7 @@ def test_manager_access_manager_get_leave_applications_by_year_and_month_success
     assert response.json() == expected
 
 
-def test_manager_access_manager_get_leave_applications_by_year_and_month_not_found(client, manager_A):
+def test_manager_manager_access_get_leave_applications_by_year_and_month_not_found(client, manager_A):
     response = client.get(
         "/manager/leave-applications/month/2025/11",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -167,7 +167,7 @@ def test_manager_access_manager_get_leave_applications_by_year_and_month_not_fou
     assert response.json() == []
 
 
-def test_manager_access_manager_leave_applications_by_empid_not_under_manager_forbidden(client, manager_A):
+def test_manager_manager_access_leave_applications_by_empid_not_under_manager_forbidden(client, manager_A):
     response = client.get(
         "/manager/leave-applications/employee/2",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -176,7 +176,7 @@ def test_manager_access_manager_leave_applications_by_empid_not_under_manager_fo
     assert response.json() == {"detail":"Employee not found under your management"}
 
 
-def test_manager_access_manager_leave_applications_by_empid_not_exist_not_found(client, manager_A):
+def test_manager_manager_access_leave_applications_by_empid_not_exist_not_found(client, manager_A):
     response = client.get(
         "/manager/leave-applications/employee/12",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -186,7 +186,7 @@ def test_manager_access_manager_leave_applications_by_empid_not_exist_not_found(
 
 
 # -------------------------------------------------test admin api ---------------------------------------------------
-def test_manager_access_admin_get_employee_leave_application_by_id_forbidden(client, manager_A):
+def test_manager_admin_access_get_employee_leave_application_by_id_forbidden(client, manager_A):
     response = client.get(
         "/admin/leave-applications/1",
         headers={"Authorization": f"Bearer {manager_A}"}
@@ -195,7 +195,7 @@ def test_manager_access_admin_get_employee_leave_application_by_id_forbidden(cli
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_manager_access_admin_get_employee_leave_application_by_empid_forbidden(client, manager_A):
+def test_manager_admin_access_get_employee_leave_application_by_empid_forbidden(client, manager_A):
     response = client.get(
         "/admin/leave-applications/employee/1",
         headers={"Authorization": f"Bearer {manager_A}"}
@@ -204,7 +204,7 @@ def test_manager_access_admin_get_employee_leave_application_by_empid_forbidden(
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_manager_access_admin_get_employee_leave_application_by_year_and_month_forbidden(client, manager_A):
+def test_manager_admin_access_get_employee_leave_application_by_year_and_month_forbidden(client, manager_A):
     response = client.get(
         "/admin/leave-applications/month/2026/11",
         headers={"Authorization": f"Bearer {manager_A}"}
@@ -213,7 +213,7 @@ def test_manager_access_admin_get_employee_leave_application_by_year_and_month_f
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_manager_access_admin_update_employee_leave_application_status_by_id_forbidden(client, manager_A):
+def test_manager_admin_access_update_employee_leave_application_status_by_id_forbidden(client, manager_A):
     response = client.put(
         "/admin/leave-applications/1/status",
         json={"leave_status": "Approved"},
