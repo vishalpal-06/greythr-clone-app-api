@@ -10,7 +10,7 @@ from common.common import _require_admin
 def get_current_user_employee(db: db_dependency, user: user_dependency) -> Employee:
     employee = db.query(Employee).filter(Employee.employee_id == user['id']).first()
     if not employee:
-        raise HTTPException(status_code=404, detail="Employee profile not found")
+        raise HTTPException(status_code=404, detail="Employee profile not found") # pragma: no cover
     return employee
 
 

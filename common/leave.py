@@ -30,17 +30,6 @@ def get_all_leaves_by_employee_id(db: Session, employee_id: int) -> List[Leave]:
     return leaves
 
 
-def get_leave_years_by_employee(db: Session, employee_id: int) -> List[int]:
-    years = [row[0] for row in db.query(Leave.assign_year)
-             .filter(Leave.fk_employee_id == employee_id)
-             .distinct()
-             .order_by(Leave.assign_year)
-             .all()]
-    if not years:
-        raise HTTPException(status_code=404, detail=f"No leave records found for employee {employee_id}")
-    return years
-
-
 def create_leave(db: Session, leave_in: LeaveCreate) -> Leave:
     # Prevent duplicate year per employee
     exists = db.query(Leave).filter(

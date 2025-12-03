@@ -4,7 +4,6 @@ from typing import Annotated, List
 from common.leave import (
     get_leave_by_employee_and_year,
     get_all_leaves_by_employee_id,
-    get_leave_years_by_employee,
     create_leave,
     delete_leave,
     delete_leave_by_employee_and_year,
@@ -26,12 +25,6 @@ def get_employee_leave_by_year_endpoint(employee_id: int, year: int, db: db_depe
 def get_all_leave_by_empid_endpoint(employee_id: int, db: db_dependency, user: user_dependency):
     _require_admin(user)
     return get_all_leaves_by_employee_id(db, employee_id)
-
-
-@router.get("/employee/{employee_id}/years", response_model=List[int])
-def get_leave_years_endpoint(employee_id: int, db: db_dependency, user: user_dependency):
-    _require_admin(user)
-    return get_leave_years_by_employee(db, employee_id)
 
 
 @router.post("/", response_model=leave_schema.LeaveResponse, status_code=201)

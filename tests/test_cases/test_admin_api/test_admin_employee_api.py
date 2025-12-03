@@ -117,6 +117,29 @@ def test_admin_access_admin_create_employee_success(client, admin_user):
     assert response.json() == expected
 
 
+def test_admin_access_admin_create_employee_duplicate_email_conflict(client, admin_user):
+    payload = {
+        "first_name": "string",
+        "last_name": "string",
+        "email": "userB2@test.com",
+        "joining_date": "2025-11-27",
+        "address": "string",
+        "isadmin": True,
+        "fk_department_id": 1,
+        "fk_role_id": 1,
+        "fk_manager_id": 1,
+        "password": "string"
+    }
+
+    response = client.post(
+        "/admin/employees/",
+        json=payload,
+        headers={"Authorization": f"Bearer {admin_user}"}
+    )
+    assert response.status_code == 409
+    assert response.json() == {"detail":"Employee with this email already exists"}
+
+
 def test_admin_access_admin_get_employee_by_id_success(client, admin_user):
     response = client.get(
         "/admin/employees/id/1",

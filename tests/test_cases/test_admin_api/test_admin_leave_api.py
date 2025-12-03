@@ -132,7 +132,7 @@ def test_admin_admin_access_get_employee_leaves_by_empid_not_found(client, admin
     assert response.json() == {"detail": "No leave records found for employee 10"}
 
 
-def test_admin_admin_access_create_leave_forbidden(client, admin_user):
+def test_admin_admin_access_create_leave_success(client, admin_user):
     payloads = {
         "assign_year": 2000,
         "casual_leave": 0,
@@ -151,6 +151,26 @@ def test_admin_admin_access_create_leave_forbidden(client, admin_user):
     expected = read_json("create_leave_admin.json")
     assert response.status_code == 201
     assert response.json() == expected
+
+
+def test_admin_admin_access_create_duplicate_leave_conflict(client, admin_user):
+    payloads = {
+    "assign_year": 2023,
+    "casual_leave": 5,
+    "plan_leave": 15,
+    "probation_leave": 6,
+    "sick_leave": 5,
+    "total_leave": 31,
+    "balance_leave": 31,
+    "fk_employee_id": 2
+  }
+    response = client.post(
+        "admin/leaves/",
+        json=payloads,
+        headers={"Authorization": f"Bearer {admin_user}"}
+    )
+    assert response.status_code == 409
+    assert response.json() == {"detail":"Leave record already exists for employee 2 in year 2023"}
 
 
 def test_admin_admin_access_delete_leave_by_id_success(client, admin_user):

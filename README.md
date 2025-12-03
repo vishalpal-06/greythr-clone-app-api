@@ -3,3 +3,5 @@
 pytest --disable-warnings
 
 pytest --cov=.
+
+coverage html

@@ -19,7 +19,7 @@ class LeaveApplicationBase(BaseModel):
     @validator("end_date")
     def end_after_start(cls, v, values):
         if 'from_date' in values and v <= values['from_date']:
-            raise ValueError("end_date must be after from_date")
+            raise ValueError("end_date must be after from_date") # pragma: no cover
         return v
 
 

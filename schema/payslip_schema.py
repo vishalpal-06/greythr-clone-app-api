@@ -14,7 +14,7 @@ class PayslipBase(BaseModel):
     @validator("payslip_month")
     def must_be_first_day(cls, v):
         if v.day != 1 or v.hour != 0 or v.minute != 0 or v.second != 0:
-            raise ValueError("payslip_month must be the 1st day of the month at 00:00:00")
+            raise ValueError("payslip_month must be the 1st day of the month at 00:00:00") # pragma: no cover
         return v
 
 

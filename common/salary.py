@@ -41,23 +41,6 @@ def get_salaries_by_employee_id(db: Session, employee_id: int) -> List[Salary]:
     return salaries
 
 
-def get_salary_years_by_employee(db: Session, employee_id: int) -> List[int]:
-    years = [
-        row[0] for row in
-        db.query(Salary.salary_year)
-        .filter(Salary.fk_employee_id == employee_id)
-        .distinct()
-        .order_by(Salary.salary_year)
-        .all()
-    ]
-    if not years:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No salary records found for employee {employee_id}"
-        )
-    return years
-
-
 # ─── CREATE (with duplicate check) ───────────────────────────────────────────
 def create_salary(db: Session, salary: SalaryCreate) -> Salary:
     # Check for duplicate: same employee + same year

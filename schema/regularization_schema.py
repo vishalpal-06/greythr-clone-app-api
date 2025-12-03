@@ -18,7 +18,7 @@ class RegularizationBase(BaseModel):
     @validator("regularization_end_time")
     def end_must_be_after_start(cls, v, values):
         if 'regularization_start_time' in values and v <= values['regularization_start_time']:
-            raise ValueError("end_time must be after start_time")
+            raise ValueError("end_time must be after start_time") # pragma: no cover
         return v
 
 

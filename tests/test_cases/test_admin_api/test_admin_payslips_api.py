@@ -57,6 +57,23 @@ def test_admin_admin_access_create_payslips_success(client, admin_user):
     assert response.json() == expected
 
 
+def test_admin_admin_access_create_payslips_conflict(client, admin_user):
+    payload = {
+        "basic_amount": 80000,
+        "hra": 40000,
+        "special_allowance": 10000,
+        "internet_allowance": 1500,
+        "payslip_month": "2025-02-01T00:00:00Z",
+        "fk_employee_id": 1
+    }
+    response = client.post(
+        "/admin/payslips/",
+        json=payload,
+        headers={"Authorization": f"Bearer {admin_user}"}
+    )
+    assert response.status_code == 409
+    assert response.json() == {"detail":"Payslip already exists for employee 1 in February 2025"}
+
 def test_admin_admin_access_get_payslips_by_id_success(client, admin_user):
     response = client.get(
         "/admin/payslips/employee/1",

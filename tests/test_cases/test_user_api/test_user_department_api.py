@@ -8,30 +8,30 @@ def read_json(filename):
         return json.load(f)
 
 # -------------------------------------------------Test User API ---------------------------------------------------
-def test_user_get_all_departments_success(client, user_A1):
+def test_user_get_all_departments_success(client, user_A2):
     response = client.get(
         "/user/my/departments/",
-        headers={"Authorization": f"Bearer {user_A1}"}
+        headers={"Authorization": f"Bearer {user_A2}"}
     )
-    expected = read_json("get_all_departments_userA1.json")
+    expected = read_json("get_all_departments_userA2.json")
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_user_get_department_by_id_success(client, user_A1):
+def test_user_get_department_by_id_success(client, user_B1):
     response = client.get(
         "/user/my/departments/id/4",
-        headers={"Authorization": f"Bearer {user_A1}"}
+        headers={"Authorization": f"Bearer {user_B1}"}
     )
-    expected = read_json("get_department_by_id_userA1.json")
+    expected = read_json("get_department_by_id_userB1.json")
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_user_get_department_by_id_not_found(client, user_A1):
+def test_user_get_department_by_id_not_found(client, user_B2):
     response = client.get(
         "/user/my/departments/id/14",
-        headers={"Authorization": f"Bearer {user_A1}"}
+        headers={"Authorization": f"Bearer {user_B2}"}
     )
     assert response.status_code == 404
     assert response.json() == {'detail': 'Department not found'}

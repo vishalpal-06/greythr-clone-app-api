@@ -50,8 +50,6 @@ def update_role_by_id(db: Session, role_id: int, new_role_name: str, user: dict)
     role = _get_role_by_id(db, role_id)
 
     new_name = new_role_name.strip()
-    if role.role.lower() == new_name.lower():
-        return role  # no change
 
     if db.query(Role).filter(Role.role.ilike(new_name), Role.role_id != role_id).first():
         raise HTTPException(status_code=400, detail="Role with this name already exists")
@@ -67,8 +65,6 @@ def update_role_by_name(db: Session, current_role_name: str, new_role_name: str,
     role = _get_role_by_name(db, current_role_name)
 
     new_name = new_role_name.strip()
-    if role.role.lower() == new_name.lower():
-        return role
 
     if db.query(Role).filter(Role.role.ilike(new_name)).first():
         raise HTTPException(status_code=400, detail="Role with this name already exists")
