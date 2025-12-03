@@ -7,7 +7,7 @@ def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:
         return json.load(f)
 
-# -------------------------------------------------test user api ---------------------------------------------------
+# -------------------------------------------------Test User API ---------------------------------------------------
 def test_manager_get_all_my_payslips_success(client, manager_A):
     response = client.get(
         "/user/my/payslips/",
@@ -37,7 +37,7 @@ def test_manager_get_my_payslips_by_year_and_month_fot_found(client, manager_A):
     assert response.json() == {"detail": "Payslip not found for this month"}
 
 
-# -------------------------------------------------test admin api ---------------------------------------------------
+# -------------------------------------------------Test Admin API ---------------------------------------------------
 def test_manager_admin_access_create_payslips_forbidden(client, manager_A):
     payload = {
                 "basic_amount": 1,

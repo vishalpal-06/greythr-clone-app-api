@@ -7,7 +7,7 @@ def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:
         return json.load(f)
 
-# -------------------------------------------------test user api ---------------------------------------------------
+# -------------------------------------------------Test User API ---------------------------------------------------
 def test_manager_get_my_all_leave_success(client, manager_A):
     response = client.get(
         "user/my/leave/",
@@ -37,7 +37,7 @@ def test_manager_get_my_leave_by_year_not_found(client, manager_A):
     assert response.json() == {"detail": "Leave record not found for employee 2 in year 2030"}
 
 
-# -------------------------------------------------test admin api ---------------------------------------------------
+# -------------------------------------------------Test Admin API ---------------------------------------------------
 def test_manager_admin_access_get_employee_leave_by_empid_and_years_forbidden(client, manager_A):
     response = client.get(
         "admin/leaves/employee/1/year/2025",

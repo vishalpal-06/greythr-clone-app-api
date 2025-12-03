@@ -7,7 +7,7 @@ def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:
         return json.load(f)
 
-# -------------------------------------------------test user api ---------------------------------------------------
+# -------------------------------------------------Test User API ---------------------------------------------------
 def test_manager_get_all_my_regularization_success(client, manager_A):
     response = client.get(
         "/user/my/regularizations/",
@@ -71,7 +71,7 @@ def test_manager_get_my_regularization_by_year_and_month_not_found(client, manag
     assert response.json() == []
 
 
-# -------------------------------------------------test manager api ---------------------------------------------------
+# -------------------------------------------------Test Manager API ---------------------------------------------------
 def test_manager_manager_access_get_subordinate_regularization_by_status_success(client, manager_A):
     response = client.get(
         "/manager/regularizations/pending",
@@ -168,7 +168,7 @@ def test_manager_manager_access_update_subordinate_regularization_status_by_id_n
     assert response.status_code == 404
     assert response.json() == {"detail": "Regularization request not found"}
 
-# -------------------------------------------------test admin api ---------------------------------------------------
+# -------------------------------------------------Test Admin API ---------------------------------------------------
 def test_manager_admin_access_get_regularization_by_id_forbidden(client, manager_A):
     response = client.get(
         "/admin/regularizations/1",

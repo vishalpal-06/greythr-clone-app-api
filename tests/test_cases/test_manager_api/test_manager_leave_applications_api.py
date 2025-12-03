@@ -7,7 +7,7 @@ def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:
         return json.load(f)
 
-# -------------------------------------------------test user api ---------------------------------------------------
+# -------------------------------------------------Test User API ---------------------------------------------------
 def test_manager_create_leave_application_success(client, manager_A):
     payload = {
         "from_date": "2025-11-30T10:00:00.000Z",
@@ -106,7 +106,7 @@ def test_manager_get_my_leave_application_by_year_and_month_not_found(client, ma
     assert response.json() == []
 
 
-# -------------------------------------------------test manager api ---------------------------------------------------
+# -------------------------------------------------Test Manager API ---------------------------------------------------
 def test_manager_manager_access_update_leave_application_status_by_id_success(client, manager_A):
     response = client.put(
         "manager/leave-applications/1/status",
@@ -185,7 +185,7 @@ def test_manager_manager_access_leave_applications_by_empid_not_exist_not_found(
     assert response.json() == {"detail":"Employee not found"}
 
 
-# -------------------------------------------------test admin api ---------------------------------------------------
+# -------------------------------------------------Test Admin API ---------------------------------------------------
 def test_manager_admin_access_get_employee_leave_application_by_id_forbidden(client, manager_A):
     response = client.get(
         "/admin/leave-applications/1",

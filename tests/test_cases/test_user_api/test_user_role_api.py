@@ -7,7 +7,7 @@ def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:
         return json.load(f)
 
-# -------------------------------------------------test user api ---------------------------------------------------
+# -------------------------------------------------Test User API ---------------------------------------------------
 def test_user_get_all_roles_success(client, user_A1):
     response = client.get(
         "/user/my/roles/",
@@ -37,7 +37,7 @@ def test_user_get_role_by_id_not_found(client, user_A1):
     assert response.json() == {'detail': 'Role not found'}
 
 
-# -------------------------------------------------test admin api ---------------------------------------------------
+# -------------------------------------------------Test Admin API ---------------------------------------------------
 def test_user_admin_access_create_role_forbidden(client, user_A1):
     payload = {
         "role": "string"

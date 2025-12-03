@@ -7,7 +7,7 @@ def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:
         return json.load(f)
 
-# -------------------------------------------------test user api ---------------------------------------------------
+# -------------------------------------------------Test User API ---------------------------------------------------
 def test_manager_create_expense_claim_success(client, manager_A):
     response = client.post(
         "user/my/expense-claims/",
@@ -103,7 +103,7 @@ def test_manager_get_expense_claims_by_year_and_month_not_found(client, manager_
     assert response.json() == []
 
 
-# -------------------------------------------------test manager api ---------------------------------------------------
+# -------------------------------------------------Test Manager API ---------------------------------------------------
 def test_manager_manager_access_get_subordinate_expense_claim_by_id_success(client, manager_A):
     response = client.get(
         "/manager/expense-claims/5",
@@ -192,7 +192,7 @@ def test_manager_manager_access_update_expense_claim_status_not_found(client, ma
     assert response.json() == {"detail": "Expense claim not found"}
 
 
-# -------------------------------------------------test admin api ---------------------------------------------------
+# -------------------------------------------------Test Admin API ---------------------------------------------------
 def test_manager_admin_access_get_expense_claim_by_id_forbidden(client, manager_A):
     response = client.get(
         "admin/expense-claims/1",

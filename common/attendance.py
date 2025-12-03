@@ -10,14 +10,6 @@ from datetime import datetime, date, time
 from routers.auth import db_dependency, user_dependency
 
 
-# === Helpers ===
-def _get_attendance_or_404(db: Session, attendance_id: int) -> Attendance:
-    att = db.query(Attendance).filter(Attendance.attendance_id == attendance_id).first()
-    if not att:
-        raise HTTPException(status_code=404, detail="Attendance record not found")
-    return att
-
-
 # === USER: CREATE ===
 def create_attendance(db: Session, punch_time, current_user: dict) -> Attendance:
     new_att = Attendance(
@@ -171,11 +163,8 @@ def get_all_attendance_of_employee(db: Session, employee_id: int, user:user_depe
     employee = db.query(Employee).filter(Employee.employee_id==employee_id).first()
     if not employee:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Employee Not Founds")
-    if user['is_admin'] or employee.fk_manager_id == user['is_admin']:
-        records = db.query(Attendance).filter(Attendance.fk_employee_id == employee_id).all()
-        return records
-    else:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="you can not perform this action")
+    records = db.query(Attendance).filter(Attendance.fk_employee_id == employee_id).all()
+    return records
 
 
 

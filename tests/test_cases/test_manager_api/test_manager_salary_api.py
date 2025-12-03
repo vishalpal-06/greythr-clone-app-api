@@ -7,7 +7,7 @@ def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:
         return json.load(f)
 
-# -------------------------------------------------test user api ---------------------------------------------------
+# -------------------------------------------------Test User API ---------------------------------------------------
 def test_user_get_all_my_salary_success(client, manager_A):
     response = client.get(
         "/user/my/salary/",
@@ -37,7 +37,7 @@ def test_user_get_my_salary_by_year_not_found(client, manager_A):
     assert response.json() == {"detail": "Salary record not found for employee in year 2028"}
     
 
-# -------------------------------------------------test manager api ---------------------------------------------------
+# -------------------------------------------------Test Manager API ---------------------------------------------------
 def test_manager_manager_access_get_employee_salary_by_year_not_found(client, manager_A):
     response = client.get(
         "manager/leaves/employee/1/year/2025",
@@ -56,7 +56,7 @@ def test_manager_manager_access_get_employee_salary_by_empid_not_found(client, m
     assert response.json() == {"detail": "Employee not found under your management"}
 
 
-# -------------------------------------------------test admin api ---------------------------------------------------
+# -------------------------------------------------Test Admin API ---------------------------------------------------
 def test_manager_admin_access_get_employee_salary_by_years_forbidden(client, manager_A):
     response = client.get(
         "admin/salaries/year/2025",

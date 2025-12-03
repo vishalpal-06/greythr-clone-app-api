@@ -7,7 +7,7 @@ def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:
         return json.load(f)
 
-# -------------------------------------------------test user api ---------------------------------------------------
+# -------------------------------------------------Test User API ---------------------------------------------------
 def test_user_get_all_my_regularization_success(client, user_A1):
     response = client.get(
         "/user/my/regularizations/",
@@ -72,7 +72,7 @@ def test_user_get_my_regularization_by_year_and_month_not_found(client, user_A1)
 
 
 
-# -------------------------------------------------test manager api ---------------------------------------------------
+# -------------------------------------------------Test Manager API ---------------------------------------------------
 def test_user_manager_access_get_subordinate_regularization_by_status_success(client, user_A1):
     response = client.get(
         "/manager/regularizations/pending",
@@ -108,7 +108,7 @@ def test_user_manager_access_update_subordinate_regularization_by_id_not_allowed
     assert response.status_code == 405
     assert response.json() == {"detail": "Method Not Allowed"}
 
-# -------------------------------------------------test admin api ---------------------------------------------------
+# -------------------------------------------------Test Admin API ---------------------------------------------------
 def test_user_admin_access_get_employee_regularization_by_id_forbidden(client, user_A1):
     response = client.get(
         "/admin/regularizations/1",

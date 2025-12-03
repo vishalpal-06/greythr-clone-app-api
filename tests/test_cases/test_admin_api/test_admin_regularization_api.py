@@ -8,7 +8,7 @@ def read_json(filename):
         return json.load(f)
 
 
-# -------------------------------------------------test manager api ---------------------------------------------------
+# -------------------------------------------------Test Manager API ---------------------------------------------------
 def test_admin_access_manager_get_subordinate_regularization_by_status_success(client, admin_user):
     response = client.get(
         "/manager/regularizations/pending",
@@ -105,7 +105,7 @@ def test_admin_access_manager_update_regularization_status_by_id_not_found(clien
     assert response.status_code == 404
     assert response.json() == {"detail": "Regularization request not found"}
 
-# -------------------------------------------------test admin api ---------------------------------------------------
+# -------------------------------------------------Test Admin API ---------------------------------------------------
 def test_admin_access_admin_get_regularization_by_id_success(client, admin_user):
     response = client.get(
         "/admin/regularizations/1",

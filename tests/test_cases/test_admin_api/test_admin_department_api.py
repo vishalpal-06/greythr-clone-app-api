@@ -7,7 +7,7 @@ def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:
         return json.load(f)
 
-# -------------------------------------------------test user api ---------------------------------------------------
+# -------------------------------------------------Test User API ---------------------------------------------------
 def test_admin_get_all_departments_success(client, admin_user):
     response = client.get(
         "/user/my/departments/",
@@ -40,7 +40,7 @@ def test_admin_get_department_by_id_not_found(client, admin_user):
     assert response.json() == {'detail': 'Department not found'}
 
 
-# -------------------------------------------------test admin api ---------------------------------------------------
+# -------------------------------------------------Test Admin API ---------------------------------------------------
 def test_admin_access_admin_create_department_success(client, admin_user):
     payload = {
         "department_name": "string"
@@ -54,6 +54,19 @@ def test_admin_access_admin_create_department_success(client, admin_user):
     assert response.json() == {"department_name": "string", "department_id": 6}
 
 
+def test_admin_access_admin_create_department_conflict(client, admin_user):
+    payload = {
+        "department_name": "Engineering"
+    }
+    response = client.post(
+        "/admin/departments/",
+        json=payload,
+        headers={"Authorization": f"Bearer {admin_user}"}
+    )
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Department already exists"}
+
+
 def test_admin_access_admin_update_department_by_id_success(client, admin_user):
     response = client.put(
         "/admin/departments/id/1",
@@ -63,6 +76,17 @@ def test_admin_access_admin_update_department_by_id_success(client, admin_user):
 
     assert response.status_code == 200
     assert response.json() == {"department_name": "HR", "department_id": 1}
+
+
+def test_admin_access_admin_update_department_by_id_conflict(client, admin_user):
+    response = client.put(
+        "/admin/departments/id/1",
+        params={"new_name": "Engineering"},
+        headers={"Authorization": f"Bearer {admin_user}"}
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {"detail":"Department with this name already exists"}
 
 
 def test_admin_access_admin_update_department_by_id_not_found(client, admin_user):
@@ -105,6 +129,16 @@ def test_admin_access_admin_update_department_by_name_success(client, admin_user
 
     assert response.status_code == 200
     assert response.json() == {"department_name": "HR", "department_id": 2}
+
+
+def test_admin_access_admin_update_department_by_name_conflict(client, admin_user):
+    response = client.put(
+        "/admin/departments/name/Human Resources",
+        params={"new_name": "Engineering"},
+        headers={"Authorization": f"Bearer {admin_user}"}
+    )
+    assert response.status_code == 400
+    assert response.json() == {"detail":"Department with this name already exists"}
 
 
 def test_admin_access_admin_update_department_by_name_not_found(client, admin_user):

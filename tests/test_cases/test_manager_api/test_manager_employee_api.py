@@ -7,7 +7,7 @@ def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:
         return json.load(f)
 
-# -------------------------------------------------test user api ---------------------------------------------------
+# -------------------------------------------------Test User API ---------------------------------------------------
 def test_manager_get_my_profile_success(client, manager_A):
     response = client.get(
         "/user/my/me/",
@@ -18,7 +18,7 @@ def test_manager_get_my_profile_success(client, manager_A):
     assert response.status_code == 200
     assert response.json() == expected
 
-# -------------------------------------------------test manager api ---------------------------------------------------
+# -------------------------------------------------Test Manager API ---------------------------------------------------
 def test_manager_manager_access_get_subordinate_by_id_success(client, manager_A):
     response = client.get(
         "/manager/subordinates/id/4",
@@ -82,7 +82,7 @@ def test_manager_manager_access_get_subordinate_by_id_not_found(client, manager_
     assert response.json() == {"detail": "Employee not found"}
 
 
-# -------------------------------------------------test admin api ---------------------------------------------------
+# -------------------------------------------------Test Admin API ---------------------------------------------------
 def test_manager_admin_access_get_all_employees_forbidden(client, manager_A):
     response = client.get(
         "/admin/employees/",

@@ -7,7 +7,7 @@ def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:
         return json.load(f)
 
-# -------------------------------------------------test user api ---------------------------------------------------
+# -------------------------------------------------Test User API ---------------------------------------------------
 def test_user_get_all_departments_success(client, user_A1):
     response = client.get(
         "/user/my/departments/",
@@ -37,7 +37,7 @@ def test_user_get_department_by_id_not_found(client, user_A1):
     assert response.json() == {'detail': 'Department not found'}
 
 
-# -------------------------------------------------test admin api ---------------------------------------------------
+# -------------------------------------------------Test Admin API ---------------------------------------------------
 def test_user_admin_access_create_department_forbidden(client, user_A1):
     payload = {
         "department_name": "string"

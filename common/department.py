@@ -51,9 +51,6 @@ def update_department_by_id(db: db_dependency, department_id: int, new_departmen
     department = _get_department_by_id(db, department_id)
 
     new_name = new_department_name.strip()
-    if department.department_name.lower() == new_name.lower():
-        return department  # no change
-
     if db.query(Department).filter(Department.department_name.ilike(new_name), Department.department_id != department_id).first():
         raise HTTPException(status_code=400, detail="Department with this name already exists")
 
@@ -68,9 +65,6 @@ def update_department_by_name(db: db_dependency, current_department_name: str, n
     department = _get_department_by_name(db, current_department_name)
 
     new_name = new_department_name.strip()
-    if department.department_name.lower() == new_name.lower():
-        return department
-
     if db.query(Department).filter(Department.department_name.ilike(new_name)).first():
         raise HTTPException(status_code=400, detail="Department with this name already exists")
 

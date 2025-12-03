@@ -7,7 +7,7 @@ def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:
         return json.load(f)
 
-# -------------------------------------------------test user api ---------------------------------------------------
+# -------------------------------------------------Test User API ---------------------------------------------------
 def test_manager_create_my_attendance_success(client, manager_A):
     response = client.post(
         "user/my/attendance/",
@@ -48,7 +48,7 @@ def test_manager_get_my_attendance_by_date_not_found(client, manager_A):
     assert response.json() == []
 
 
-# -------------------------------------------------test manager api ---------------------------------------------------
+# -------------------------------------------------Test Manager API ---------------------------------------------------
 
 def test_manager_manager_access_get_subordinate_attendance_by_date_success(client, manager_A):
     response = client.get(
@@ -96,7 +96,7 @@ def test_manager_manager_access_get_attendance_by_empid_and_date_nonsubordinate(
     assert response.status_code == 404
     assert response.json() == {"detail":"Employee not found under your management"}
 
-# -------------------------------------------------test admin api ---------------------------------------------------
+# -------------------------------------------------Test Admin API ---------------------------------------------------
 
 def test_manager_admin_access_get_all_attendance_list_forbidden(client, manager_A):
     response = client.get(

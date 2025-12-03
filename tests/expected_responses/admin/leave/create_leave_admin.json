@@ -1,0 +1,11 @@
+{
+  "assign_year": 2000,
+  "casual_leave": 0,
+  "plan_leave": 0,
+  "probation_leave": 0,
+  "sick_leave": 0,
+  "total_leave": 0,
+  "balance_leave": 0,
+  "leave_id": 22,
+  "fk_employee_id": 1
+}
