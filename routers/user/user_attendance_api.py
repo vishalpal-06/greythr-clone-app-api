@@ -5,7 +5,7 @@ from schema.attendance_schema import AttendanceCreate, AttendanceResponse
 from common.attendance import (
     create_attendance,
     get_my_attendance_all,
-    get_my_attendance_by_date
+    get_my_attendance_by_date,
 )
 from routers.auth import db_dependency, user_dependency
 from datetime import datetime
@@ -24,5 +24,7 @@ def get_my_all_attendance(db: db_dependency, user: user_dependency):
 
 
 @router.get("/my/date/{date_str}", response_model=List[AttendanceResponse])
-def get_my_attendance_by_date_endpoint(db: db_dependency, date_str: datetime, user: user_dependency):
-    return get_my_attendance_by_date(db=db, punch_date = date_str, user=user)
+def get_my_attendance_by_date_endpoint(
+    db: db_dependency, date_str: datetime, user: user_dependency
+):
+    return get_my_attendance_by_date(db=db, punch_date=date_str, user=user)

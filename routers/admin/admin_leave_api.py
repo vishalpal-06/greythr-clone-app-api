@@ -15,20 +15,28 @@ from common.common import _require_admin
 router = APIRouter(prefix="/leaves", tags=["Admin - Leave"])
 
 
-@router.get("/employee/{employee_id}/year/{year}", response_model=leave_schema.LeaveResponse)
-def get_employee_leave_by_year_endpoint(employee_id: int, year: int, db: db_dependency, user: user_dependency):
+@router.get(
+    "/employee/{employee_id}/year/{year}", response_model=leave_schema.LeaveResponse
+)
+def get_employee_leave_by_year_endpoint(
+    employee_id: int, year: int, db: db_dependency, user: user_dependency
+):
     _require_admin(user)
     return get_leave_by_employee_and_year(db, employee_id, year)
 
 
 @router.get("/employee/{employee_id}", response_model=List[leave_schema.LeaveResponse])
-def get_all_leave_by_empid_endpoint(employee_id: int, db: db_dependency, user: user_dependency):
+def get_all_leave_by_empid_endpoint(
+    employee_id: int, db: db_dependency, user: user_dependency
+):
     _require_admin(user)
     return get_all_leaves_by_employee_id(db, employee_id)
 
 
 @router.post("/", response_model=leave_schema.LeaveResponse, status_code=201)
-def post_leave_endpoint(leave_in: leave_schema.LeaveCreate, db: db_dependency, user: user_dependency):
+def post_leave_endpoint(
+    leave_in: leave_schema.LeaveCreate, db: db_dependency, user: user_dependency
+):
     _require_admin(user)
     return create_leave(db, leave_in)
 
@@ -40,6 +48,8 @@ def delete_leave_endpoint(leave_id: int, db: db_dependency, user: user_dependenc
 
 
 @router.delete("/employee/{employee_id}/year/{year}", status_code=204)
-def delete_by_employee_and_year_endpoint(employee_id: int, year: int, db: db_dependency, user: user_dependency):
+def delete_by_employee_and_year_endpoint(
+    employee_id: int, year: int, db: db_dependency, user: user_dependency
+):
     _require_admin(user)
     delete_leave_by_employee_and_year(db, employee_id, year)

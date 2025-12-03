@@ -13,8 +13,12 @@ from common.regularization import (
 router = APIRouter(prefix="/my/regularizations", tags=["My - Regularizations"])
 
 
-@router.post("/", response_model=RegularizationResponse, status_code=status.HTTP_201_CREATED)
-def create_regularization_endpoint(reg_in: RegularizationCreate, db: db_dependency, user: user_dependency):
+@router.post(
+    "/", response_model=RegularizationResponse, status_code=status.HTTP_201_CREATED
+)
+def create_regularization_endpoint(
+    reg_in: RegularizationCreate, db: db_dependency, user: user_dependency
+):
     return create_regularization(db=db, reg_in=reg_in, user=user)
 
 
@@ -24,7 +28,9 @@ def get_all_my_regularizations(db: db_dependency, user: user_dependency):
 
 
 @router.get("/{reg_id}", response_model=RegularizationResponse)
-def get_my_regularization_by_id_endpoint(reg_id: int, db: db_dependency, user: user_dependency):
+def get_my_regularization_by_id_endpoint(
+    reg_id: int, db: db_dependency, user: user_dependency
+):
     return get_my_regularization_by_id(reg_id=reg_id, db=db, user=user)
 
 

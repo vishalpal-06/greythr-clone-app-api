@@ -1,7 +1,10 @@
 # api/manager_regularization_api.py
 from fastapi import APIRouter
 from typing import List
-from schema.regularization_schema import RegularizationResponse, RegularizationStatusUpdate
+from schema.regularization_schema import (
+    RegularizationResponse,
+    RegularizationStatusUpdate,
+)
 from routers.auth import db_dependency, user_dependency
 from common.regularization import (
     get_manager_regularization_by_id,
@@ -25,9 +28,18 @@ def get_by_id(reg_id: int, db: db_dependency, user: user_dependency):
 
 @router.get("/employee/{employee_id}", response_model=List[RegularizationResponse])
 def get_by_employee(employee_id: int, db: db_dependency, user: user_dependency):
-    return get_manager_regularizations_for_employee(employee_id=employee_id, db=db, user=user)
+    return get_manager_regularizations_for_employee(
+        employee_id=employee_id, db=db, user=user
+    )
 
 
 @router.put("/{reg_id}/status", response_model=RegularizationResponse)
-def update_status(reg_id: int, status_update: RegularizationStatusUpdate, db: db_dependency, user: user_dependency):
-    return manager_update_regularization_status(reg_id=reg_id, status_update=status_update, db=db, user=user)
+def update_status(
+    reg_id: int,
+    status_update: RegularizationStatusUpdate,
+    db: db_dependency,
+    user: user_dependency,
+):
+    return manager_update_regularization_status(
+        reg_id=reg_id, status_update=status_update, db=db, user=user
+    )

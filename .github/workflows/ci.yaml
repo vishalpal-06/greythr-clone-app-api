@@ -7,8 +7,20 @@ on:
     branches: ["main"]
 
 jobs:
+  format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Black code formatter check
+        uses: psf/black@stable
+        with:
+          check: true
+  
   test:
     runs-on: ubuntu-latest
+    needs: format-check
 
     steps:
       - name: Checkout code
@@ -25,6 +37,6 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
-      - name: Run tests
+      - name: Run tests and coverage check
         run: |
           pytest --disable-warnings --maxfail=1 --cov=.

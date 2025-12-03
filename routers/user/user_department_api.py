@@ -14,5 +14,7 @@ def get_all_departments_endpoint(db: db_dependency, user: user_dependency):
 
 
 @router.get("/id/{department_id}", response_model=DepartmentResponse)
-def get_department_by_id_endpoint(department_id: int, db: db_dependency, user: user_dependency):
+def get_department_by_id_endpoint(
+    department_id: int, db: db_dependency, user: user_dependency
+):
     return get_department_by_id(db=db, department_id=department_id)

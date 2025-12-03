@@ -7,7 +7,7 @@ from common.salary import (
     get_salaries_by_employee_id,
 )
 import schema.salary_schema as salary_schema
-from routers.auth import user_dependency,db_dependency
+from routers.auth import user_dependency, db_dependency
 
 router = APIRouter(prefix="/my/salary", tags=["My - Salary"])
 

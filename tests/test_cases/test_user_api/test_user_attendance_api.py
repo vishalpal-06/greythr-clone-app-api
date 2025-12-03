@@ -1,11 +1,15 @@
 import json
 from pathlib import Path
 
-BASE_PATH = Path(__file__).resolve().parent.parent.parent / "expected_responses/user/attendance"
+BASE_PATH = (
+    Path(__file__).resolve().parent.parent.parent / "expected_responses/user/attendance"
+)
+
 
 def read_json(filename):
     with open(BASE_PATH / filename, "r") as f:
         return json.load(f)
+
 
 # -------------------------------------------------Test User API ---------------------------------------------------
 def test_user_create_my_attendance_success(client, user_A1):
@@ -15,7 +19,11 @@ def test_user_create_my_attendance_success(client, user_A1):
         headers={"Authorization": f"Bearer {user_A1}"},
     )
     assert response.status_code == 201
-    assert response.json() == {'punch_time': '2025-10-10T04:30:00', 'attendance_id': 29, 'fk_employee_id': 4}
+    assert response.json() == {
+        "punch_time": "2025-10-10T04:30:00",
+        "attendance_id": 29,
+        "fk_employee_id": 4,
+    }
 
 
 def test_user_get_all_my_attendance_success(client, user_A1):
@@ -48,7 +56,10 @@ def test_user_get_my_attendance_by_date_not_found(client, user_A1):
 
 # -------------------------------------------------Test Manager API ---------------------------------------------------
 
-def test_user_manager_access_get_subordinate_attendance_by_date_success_empty(client, user_A1):
+
+def test_user_manager_access_get_subordinate_attendance_by_date_success_empty(
+    client, user_A1
+):
     response = client.get(
         "manager/attendance/date/2025-11-25",
         headers={"Authorization": f"Bearer {user_A1}"},
@@ -57,16 +68,19 @@ def test_user_manager_access_get_subordinate_attendance_by_date_success_empty(cl
     assert response.json() == []
 
 
-def test_user_manager_access_get_subordinate_attendance_by_empid_and_date_nonsubordinate_forbidden(client, user_A1):
+def test_user_manager_access_get_subordinate_attendance_by_empid_and_date_nonsubordinate_forbidden(
+    client, user_A1
+):
     response = client.get(
         "manager/attendance/employee/3/date/2025-11-25",
         headers={"Authorization": f"Bearer {user_A1}"},
     )
     assert response.status_code == 404
-    assert response.json() == {"detail":"Employee not found under your management"}
+    assert response.json() == {"detail": "Employee not found under your management"}
 
 
 # -------------------------------------------------Test Admin API ---------------------------------------------------
+
 
 def test_user_admin_access_get_all_attendance_list_forbidden(client, user_A1):
     response = client.get(
@@ -102,4 +116,3 @@ def test_user_admin_access_get_attendance_by_empid_forbidden(client, user_A1):
     )
     assert response.status_code == 403
     assert response.json() == {"detail": "Admin privileges required"}
-

@@ -12,10 +12,7 @@ from routers.auth import db_dependency, user_dependency
 
 # === USER: CREATE ===
 def create_attendance(db: Session, punch_time, current_user: dict) -> Attendance:
-    new_att = Attendance(
-        punch_time=punch_time,
-        fk_employee_id=current_user["id"]
-    )
+    new_att = Attendance(punch_time=punch_time, fk_employee_id=current_user["id"])
     db.add(new_att)
     db.commit()
     return new_att
@@ -23,14 +20,15 @@ def create_attendance(db: Session, punch_time, current_user: dict) -> Attendance
 
 # === USER: READ OWN ===
 def get_my_attendance_all(db: Session, current_user: dict) -> List[Attendance]:
-    return db.query(Attendance).filter(Attendance.fk_employee_id == current_user["id"]).all()
+    return (
+        db.query(Attendance)
+        .filter(Attendance.fk_employee_id == current_user["id"])
+        .all()
+    )
 
-    
 
 def get_my_attendance_by_date(
-    db: db_dependency,
-    user: user_dependency,
-    punch_date: date
+    db: db_dependency, user: user_dependency, punch_date: date
 ):
     start_dt = datetime.combine(punch_date, time.min)
     end_dt = datetime.combine(punch_date, time.max)
@@ -40,13 +38,11 @@ def get_my_attendance_by_date(
         .filter(
             Attendance.fk_employee_id == user["id"],
             Attendance.punch_time >= start_dt,
-            Attendance.punch_time <= end_dt
+            Attendance.punch_time <= end_dt,
         )
         .order_by(Attendance.punch_time)
         .all()
     )
-
-
 
 
 # MANAGER: All direct reports' attendance on a given date
@@ -56,18 +52,18 @@ def get_manager_team_attendance_by_date(
     user: dict,
 ) -> List[Attendance]:
     # Real check: does ANY employee report to this user?
-    has_subordinates = db.query(Employee).filter(
-        Employee.fk_manager_id == user["id"]
-    ).first()
+    has_subordinates = (
+        db.query(Employee).filter(Employee.fk_manager_id == user["id"]).first()
+    )
 
     if not has_subordinates:
         return []  # No one reports to you → empty list (safe)
 
     managed_ids = [
-        e.employee_id for e in
-        db.query(Employee.employee_id)
-          .filter(Employee.fk_manager_id == user["id"])
-          .all()
+        e.employee_id
+        for e in db.query(Employee.employee_id)
+        .filter(Employee.fk_manager_id == user["id"])
+        .all()
     ]
 
     start_dt = datetime.combine(punch_date, time.min)
@@ -77,7 +73,7 @@ def get_manager_team_attendance_by_date(
         db.query(Attendance)
         .filter(
             Attendance.fk_employee_id.in_(managed_ids),
-            Attendance.punch_time.between(start_dt, end_dt)
+            Attendance.punch_time.between(start_dt, end_dt),
         )
         .order_by(Attendance.fk_employee_id, Attendance.punch_time)
         .all()
@@ -92,15 +88,17 @@ def get_manager_subordinate_attendance_by_date(
     user: dict,
 ) -> List[Attendance]:
     # Security: employee must exist AND report directly to current user
-    employee = db.query(Employee).filter(
-        Employee.employee_id == employee_id,
-        Employee.fk_manager_id == user["id"]
-    ).first()
+    employee = (
+        db.query(Employee)
+        .filter(
+            Employee.employee_id == employee_id, Employee.fk_manager_id == user["id"]
+        )
+        .first()
+    )
 
     if not employee:
         raise HTTPException(
-            status_code=404,
-            detail="Employee not found under your management"
+            status_code=404, detail="Employee not found under your management"
         )
 
     start_dt = datetime.combine(punch_date, time.min)
@@ -110,11 +108,12 @@ def get_manager_subordinate_attendance_by_date(
         db.query(Attendance)
         .filter(
             Attendance.fk_employee_id == employee_id,
-            Attendance.punch_time.between(start_dt, end_dt)
+            Attendance.punch_time.between(start_dt, end_dt),
         )
         .order_by(Attendance.punch_time)
         .all()
     )
+
 
 # === ADMIN: READ ALL ===
 def get_all_attendance(db: Session, user: user_dependency):
@@ -122,27 +121,30 @@ def get_all_attendance(db: Session, user: user_dependency):
     return db.query(Attendance).all()
 
 
-def get_attendance_by_date_all_employees(db: Session, punch_date: datetime, user: user_dependency):
+def get_attendance_by_date_all_employees(
+    db: Session, punch_date: datetime, user: user_dependency
+):
     _require_admin(user=user)
     start_dt = datetime.combine(punch_date, time.min)
     end_dt = datetime.combine(punch_date, time.max)
 
     return (
         db.query(Attendance)
-        .filter(
-            Attendance.punch_time >= start_dt,
-            Attendance.punch_time <= end_dt
-        )
+        .filter(Attendance.punch_time >= start_dt, Attendance.punch_time <= end_dt)
         .order_by(Attendance.punch_time)
         .all()
     )
 
 
-def get_attendance_by_date_one_employee(db: Session, employee_id: int, punch_date: datetime, user:user_dependency):
+def get_attendance_by_date_one_employee(
+    db: Session, employee_id: int, punch_date: datetime, user: user_dependency
+):
     _require_admin(user=user)
     employee = db.query(Employee).filter(Employee.employee_id == employee_id).first()
     if not employee:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Employee not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Employee not found"
+        )
     start_dt = datetime.combine(punch_date, time.min)
     end_dt = datetime.combine(punch_date, time.max)
 
@@ -158,13 +160,16 @@ def get_attendance_by_date_one_employee(db: Session, employee_id: int, punch_dat
     )
 
 
-def get_all_attendance_of_employee(db: Session, employee_id: int, user:user_dependency):
+def get_all_attendance_of_employee(
+    db: Session, employee_id: int, user: user_dependency
+):
     _require_admin(user=user)
-    employee = db.query(Employee).filter(Employee.employee_id==employee_id).first()
+    employee = db.query(Employee).filter(Employee.employee_id == employee_id).first()
     if not employee:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Employee Not Founds")
-    records = db.query(Attendance).filter(Attendance.fk_employee_id == employee_id).all()
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Employee Not Founds"
+        )
+    records = (
+        db.query(Attendance).filter(Attendance.fk_employee_id == employee_id).all()
+    )
     return records
-
-
-

@@ -14,7 +14,9 @@ def get_my_all_payslips(db: db_dependency, user: user_dependency):
 
 
 @router.get("/month/{year}/{month}", response_model=PayslipResponse)
-def get_my_payslips_by_month(year: int, month: int, db: db_dependency, user: user_dependency):
+def get_my_payslips_by_month(
+    year: int, month: int, db: db_dependency, user: user_dependency
+):
     return get_payslip_by_employee_and_month(
         db=db, employee_id=user["id"], year=year, month=month
     )

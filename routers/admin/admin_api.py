@@ -10,7 +10,7 @@ from . import (
     admin_regularization_api,
     admin_payslip_api,
     admin_leave_application_api,
-    admin_expense_claim_api
+    admin_expense_claim_api,
 )
 
 admin_router = APIRouter(prefix="/admin")

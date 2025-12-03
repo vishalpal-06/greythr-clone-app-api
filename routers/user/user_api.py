@@ -10,7 +10,7 @@ from . import (
     user_regularization_api,
     user_payslip_api,
     user_leave_application_api,
-    user_expense_claim_api
+    user_expense_claim_api,
 )
 
 user_router = APIRouter(prefix="/user")

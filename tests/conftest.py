@@ -1,4 +1,5 @@
 import sys, os
+
 # Remove unused imports (e.g., json, datetime, date, all models except Base)
 import pytest
 from fastapi.testclient import TestClient
@@ -7,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from .seed_db import seed_all_tables
 
 from main import app
-from database.models import Base 
+from database.models import Base
 from routers.auth import get_db
 
 # ... (rest of the initial setup and imports remain the same)
@@ -25,6 +26,7 @@ TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "test_data")
 
 # REMOVE load_json_data function from here, it's now in seed_db.py
 
+
 # ------------------------------
 # DATABASE FIXTURE
 # ------------------------------
@@ -35,16 +37,17 @@ def db_session():
     Base.metadata.create_all(bind=engine)
 
     session = TestingSessionLocal()
-    
+
     # 2. Seed Data using the new external function
     # Pass the session and the path to the test data directory
-    seed_all_tables(session, TEST_DATA_DIR) 
+    seed_all_tables(session, TEST_DATA_DIR)
 
     # 3. Yield the session for tests and clean up
     try:
         yield session
     finally:
         session.close()
+
 
 # ... (rest of conftest.py remains the same, including client, tokens, etc.)
 

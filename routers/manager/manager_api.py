@@ -6,7 +6,7 @@ from . import (
     manager_leave_api,
     manager_regularization_api,
     manager_leave_application_api,
-    manager_expense_claim_api
+    manager_expense_claim_api,
 )
 
 manager_router = APIRouter(prefix="/manager")

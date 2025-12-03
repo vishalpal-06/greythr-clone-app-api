@@ -18,6 +18,7 @@ class EmployeeBase(BaseModel):
 class EmployeeCreate(EmployeeBase):
     password: str
 
+
 class EmployeeResponse(EmployeeBase):
     employee_id: int
 
@@ -35,4 +36,3 @@ class EmployeeUpdate(BaseModel):
     fk_role_id: Optional[int] = None
     fk_manager_id: Optional[int] = None
     password: Optional[str] = None
-

@@ -25,7 +25,9 @@ def get_team_attendance_by_date(
     return get_manager_team_attendance_by_date(punch_date=punch_date, db=db, user=user)
 
 
-@router.get("/employee/{employee_id}/date/{punch_date}", response_model=List[AttendanceResponse])
+@router.get(
+    "/employee/{employee_id}/date/{punch_date}", response_model=List[AttendanceResponse]
+)
 def get_subordinate_attendance_by_date(
     employee_id: int,
     punch_date: date,

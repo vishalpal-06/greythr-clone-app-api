@@ -1,6 +1,13 @@
 import enum
 from sqlalchemy import (
-    Column, Integer, String, DateTime, Float, ForeignKey, Boolean, Enum
+    Column,
+    Integer,
+    String,
+    DateTime,
+    Float,
+    ForeignKey,
+    Boolean,
+    Enum,
 )
 from sqlalchemy.orm import relationship, declarative_base
 
@@ -8,15 +15,16 @@ Base = declarative_base()
 
 
 class Status(str, enum.Enum):
-    Pending = 'Pending'
-    Approved = 'Approved'
-    Rejected = 'Rejected'
+    Pending = "Pending"
+    Approved = "Approved"
+    Rejected = "Rejected"
+
 
 # -------------------------
 # Department Table
 # -------------------------
 class Department(Base):
-    __tablename__ = 'department'
+    __tablename__ = "department"
 
     department_id = Column(Integer, primary_key=True, autoincrement=True)
     department_name = Column(String(100), nullable=False, unique=True)
@@ -28,7 +36,7 @@ class Department(Base):
 # Role Table
 # -------------------------
 class Role(Base):
-    __tablename__ = 'role'
+    __tablename__ = "role"
 
     role_id = Column(Integer, primary_key=True, autoincrement=True)
     role = Column(String(100), nullable=False, unique=True)
@@ -40,7 +48,7 @@ class Role(Base):
 # Employee Table
 # -------------------------
 class Employee(Base):
-    __tablename__ = 'employee'
+    __tablename__ = "employee"
 
     employee_id = Column(Integer, primary_key=True, autoincrement=True)
     first_name = Column(String(50), nullable=False)
@@ -51,29 +59,43 @@ class Employee(Base):
     password = Column(String(255), nullable=False)
     isadmin = Column(Boolean, nullable=False)
 
-    fk_department_id = Column(Integer, ForeignKey('department.department_id'))
-    fk_role_id = Column(Integer, ForeignKey('role.role_id'))
-    fk_manager_id = Column(Integer, ForeignKey('employee.employee_id'), nullable=True)
+    fk_department_id = Column(Integer, ForeignKey("department.department_id"))
+    fk_role_id = Column(Integer, ForeignKey("role.role_id"))
+    fk_manager_id = Column(Integer, ForeignKey("employee.employee_id"), nullable=True)
 
     department = relationship("Department", back_populates="employees")
     role = relationship("Role", back_populates="employees")
-    manager = relationship("Employee", remote_side=[employee_id], backref="subordinates")
+    manager = relationship(
+        "Employee", remote_side=[employee_id], backref="subordinates"
+    )
 
     # Relationships to other tables
     payslips = relationship("Payslip", back_populates="employee")
     salaries = relationship("Salary", back_populates="employee")
     attendances = relationship("Attendance", back_populates="employee")
-    regularizations = relationship("Regularization", foreign_keys="[Regularization.fk_employee_id]", back_populates="employee")
+    regularizations = relationship(
+        "Regularization",
+        foreign_keys="[Regularization.fk_employee_id]",
+        back_populates="employee",
+    )
     leaves = relationship("Leave", back_populates="employee")
-    leave_applications = relationship("LeaveApplication", foreign_keys="[LeaveApplication.fk_employee_id]", back_populates="employee")
-    expense_claims = relationship("ExpenseClaim", foreign_keys="[ExpenseClaim.fk_employee_id]", back_populates="employee")
+    leave_applications = relationship(
+        "LeaveApplication",
+        foreign_keys="[LeaveApplication.fk_employee_id]",
+        back_populates="employee",
+    )
+    expense_claims = relationship(
+        "ExpenseClaim",
+        foreign_keys="[ExpenseClaim.fk_employee_id]",
+        back_populates="employee",
+    )
 
 
 # -------------------------
 # Expense Claim Table
 # -------------------------
 class ExpenseClaim(Base):
-    __tablename__ = 'expense_claim'
+    __tablename__ = "expense_claim"
 
     claim_id = Column(Integer, primary_key=True, autoincrement=True)
     claim_date = Column(DateTime, nullable=False)
@@ -81,10 +103,12 @@ class ExpenseClaim(Base):
     description = Column(String(500), nullable=False)
     claim_status = Column(Enum(Status), nullable=False, default=Status.Pending)
 
-    fk_employee_id = Column(Integer, ForeignKey('employee.employee_id'))
-    fk_manager_id = Column(Integer, ForeignKey('employee.employee_id'))
+    fk_employee_id = Column(Integer, ForeignKey("employee.employee_id"))
+    fk_manager_id = Column(Integer, ForeignKey("employee.employee_id"))
 
-    employee = relationship("Employee", foreign_keys=[fk_employee_id], back_populates="expense_claims")
+    employee = relationship(
+        "Employee", foreign_keys=[fk_employee_id], back_populates="expense_claims"
+    )
     manager = relationship("Employee", foreign_keys=[fk_manager_id])
 
 
@@ -92,7 +116,7 @@ class ExpenseClaim(Base):
 # Payslip Table
 # -------------------------
 class Payslip(Base):
-    __tablename__ = 'payslip'
+    __tablename__ = "payslip"
 
     payslip_id = Column(Integer, primary_key=True, autoincrement=True)
     basic_amount = Column(Float, nullable=False)
@@ -101,7 +125,7 @@ class Payslip(Base):
     internet_allowance = Column(Float)
     payslip_month = Column(DateTime, nullable=False)
 
-    fk_employee_id = Column(Integer, ForeignKey('employee.employee_id'))
+    fk_employee_id = Column(Integer, ForeignKey("employee.employee_id"))
     employee = relationship("Employee", back_populates="payslips")
 
 
@@ -109,13 +133,13 @@ class Payslip(Base):
 # Salary Table
 # -------------------------
 class Salary(Base):
-    __tablename__ = 'salary'
+    __tablename__ = "salary"
 
     salary_id = Column(Integer, primary_key=True, autoincrement=True)
     lpa = Column(Float, nullable=False)
     salary_year = Column(Integer, nullable=False)
 
-    fk_employee_id = Column(Integer, ForeignKey('employee.employee_id'))
+    fk_employee_id = Column(Integer, ForeignKey("employee.employee_id"))
     employee = relationship("Employee", back_populates="salaries")
 
 
@@ -123,12 +147,12 @@ class Salary(Base):
 # Attendance Table
 # -------------------------
 class Attendance(Base):
-    __tablename__ = 'attendance'
+    __tablename__ = "attendance"
 
     attendance_id = Column(Integer, primary_key=True, autoincrement=True)
     punch_time = Column(DateTime, nullable=False)
 
-    fk_employee_id = Column(Integer, ForeignKey('employee.employee_id'))
+    fk_employee_id = Column(Integer, ForeignKey("employee.employee_id"))
     employee = relationship("Employee", back_populates="attendances")
 
 
@@ -136,7 +160,7 @@ class Attendance(Base):
 # Regularization Table
 # -------------------------
 class Regularization(Base):
-    __tablename__ = 'regularization'
+    __tablename__ = "regularization"
 
     regularization_id = Column(Integer, primary_key=True, autoincrement=True)
     regularization_start_time = Column(DateTime, nullable=False)
@@ -144,10 +168,12 @@ class Regularization(Base):
     regularization_reason = Column(String(255))
     regularization_status = Column(Enum(Status), nullable=False, default=Status.Pending)
 
-    fk_employee_id = Column(Integer, ForeignKey('employee.employee_id'))
-    fk_manager_id = Column(Integer, ForeignKey('employee.employee_id'))
+    fk_employee_id = Column(Integer, ForeignKey("employee.employee_id"))
+    fk_manager_id = Column(Integer, ForeignKey("employee.employee_id"))
 
-    employee = relationship("Employee", foreign_keys=[fk_employee_id], back_populates="regularizations")
+    employee = relationship(
+        "Employee", foreign_keys=[fk_employee_id], back_populates="regularizations"
+    )
     manager = relationship("Employee", foreign_keys=[fk_manager_id])
 
 
@@ -155,7 +181,7 @@ class Regularization(Base):
 # Leave Table
 # -------------------------
 class Leave(Base):
-    __tablename__ = 'leave'
+    __tablename__ = "leave"
 
     leave_id = Column(Integer, primary_key=True, autoincrement=True)
     assign_year = Column(Integer)
@@ -166,7 +192,7 @@ class Leave(Base):
     total_leave = Column(Integer)
     balance_leave = Column(Integer)
 
-    fk_employee_id = Column(Integer, ForeignKey('employee.employee_id'))
+    fk_employee_id = Column(Integer, ForeignKey("employee.employee_id"))
     employee = relationship("Employee", back_populates="leaves")
 
 
@@ -174,7 +200,7 @@ class Leave(Base):
 # Leave Application Table
 # -------------------------
 class LeaveApplication(Base):
-    __tablename__ = 'leave_application'
+    __tablename__ = "leave_application"
 
     leave_application_id = Column(Integer, primary_key=True, autoincrement=True)
     from_date = Column(DateTime, nullable=False)
@@ -182,7 +208,9 @@ class LeaveApplication(Base):
     total_days = Column(Integer)
     leave_status = Column(Enum(Status), nullable=False, default=Status.Pending)
     leave_reason = Column(String(255))
-    fk_employee_id = Column(Integer, ForeignKey('employee.employee_id'))
-    fk_manager_id = Column(Integer, ForeignKey('employee.employee_id'))
+    fk_employee_id = Column(Integer, ForeignKey("employee.employee_id"))
+    fk_manager_id = Column(Integer, ForeignKey("employee.employee_id"))
 
-    employee = relationship("Employee", foreign_keys=[fk_employee_id], back_populates="leave_applications")
+    employee = relationship(
+        "Employee", foreign_keys=[fk_employee_id], back_populates="leave_applications"
+    )

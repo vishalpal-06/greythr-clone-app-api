@@ -12,7 +12,7 @@ def get_salaries_by_year(db: Session, year: int) -> List[Salary]:
     if not salaries:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No salary records found for year {year}"
+            detail=f"No salary records found for year {year}",
         )
     return salaries
 
@@ -26,7 +26,7 @@ def get_salary_by_employee_and_year(db: Session, employee_id: int, year: int) ->
     if not salary:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Salary record not found for employee in year {year}"
+            detail=f"Salary record not found for employee in year {year}",
         )
     return salary
 
@@ -36,7 +36,7 @@ def get_salaries_by_employee_id(db: Session, employee_id: int) -> List[Salary]:
     if not salaries:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No salary records found for employee {employee_id}"
+            detail=f"No salary records found for employee {employee_id}",
         )
     return salaries
 
@@ -48,14 +48,14 @@ def create_salary(db: Session, salary: SalaryCreate) -> Salary:
         db.query(Salary)
         .filter(
             Salary.fk_employee_id == salary.fk_employee_id,
-            Salary.salary_year == salary.salary_year
+            Salary.salary_year == salary.salary_year,
         )
         .first()
     )
     if exists:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"Salary record already exists for employee {salary.fk_employee_id} in year {salary.salary_year}"
+            detail=f"Salary record already exists for employee {salary.fk_employee_id} in year {salary.salary_year}",
         )
 
     db_salary = Salary(**salary.model_dump())
@@ -71,18 +71,20 @@ def delete_salary(db: Session, salary_id: int) -> None:
     if not db_salary:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Salary record with ID {salary_id} not found"
+            detail=f"Salary record with ID {salary_id} not found",
         )
     db.delete(db_salary)
     db.commit()
 
 
-def delete_salary_by_employee_and_year(db: Session, employee_id: int, year: int) -> None:
+def delete_salary_by_employee_and_year(
+    db: Session, employee_id: int, year: int
+) -> None:
     """
     Deletes salary record for a specific employee in a specific year.
     Raises HTTPException if not found.
     """
     salary = get_salary_by_employee_and_year(db, employee_id, year)
-    
+
     db.delete(salary)
     db.commit()

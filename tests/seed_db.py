@@ -6,7 +6,19 @@ import datetime
 from datetime import date
 import pytest
 from sqlalchemy.orm import Session
-from database.models import Department, Role, Employee, Attendance, Salary, Leave, LeaveApplication, Regularization, Payslip, ExpenseClaim 
+from database.models import (
+    Department,
+    Role,
+    Employee,
+    Attendance,
+    Salary,
+    Leave,
+    LeaveApplication,
+    Regularization,
+    Payslip,
+    ExpenseClaim,
+)
+
 
 def load_json_data(base_path: str, filename: str):
     """Helper function to load a JSON file from the specified directory."""
@@ -31,7 +43,9 @@ def seed_all_tables(session: Session, test_data_dir: str):
 
     # --- Seed Departments ---
     departments_data = load_json_data(test_data_dir, "departments.json")
-    session.add_all([Department(department_name=d["department_name"]) for d in departments_data])
+    session.add_all(
+        [Department(department_name=d["department_name"]) for d in departments_data]
+    )
     session.commit()
 
     # --- Seed Roles ---
@@ -47,7 +61,7 @@ def seed_all_tables(session: Session, test_data_dir: str):
             last_name=e["last_name"],
             email=e["email"],
             password=e["password"],
-            joining_date=date.fromisoformat(e["joining_date"]), 
+            joining_date=date.fromisoformat(e["joining_date"]),
             address=e["address"],
             fk_department_id=e["fk_department_id"],
             fk_role_id=e["fk_role_id"],
@@ -64,15 +78,15 @@ def seed_all_tables(session: Session, test_data_dir: str):
     attendance_to_add = [
         Attendance(
             punch_time=datetime.datetime.fromisoformat(e["punch_time"]),
-            fk_employee_id=e['fk_employee_id']
+            fk_employee_id=e["fk_employee_id"],
         )
         for e in attendance_data
     ]
     session.add_all(attendance_to_add)
     session.commit()
-    
-    # ... Continue with all other seeding blocks, replacing `load_json_data("filename")` 
-    #     with `load_json_data(test_data_dir, "filename")` 
+
+    # ... Continue with all other seeding blocks, replacing `load_json_data("filename")`
+    #     with `load_json_data(test_data_dir, "filename")`
     #     and ensuring all necessary imports are at the top (datetime, date, models, etc.).
 
     # --- Seed Salary ---
@@ -80,8 +94,8 @@ def seed_all_tables(session: Session, test_data_dir: str):
     salary_to_add = [
         Salary(
             salary_year=e["salary_year"],
-            lpa=e['lpa'],
-            fk_employee_id=e['fk_employee_id']
+            lpa=e["lpa"],
+            fk_employee_id=e["fk_employee_id"],
         )
         for e in salary_data
     ]
@@ -92,14 +106,14 @@ def seed_all_tables(session: Session, test_data_dir: str):
     leaves_data = load_json_data(test_data_dir, "leaves.json")
     leaves_to_add = [
         Leave(
-            assign_year=e['assign_year'],
-            casual_leave= e['casual_leave'],
-            plan_leave= e['plan_leave'],
-            probation_leave= e['probation_leave'],
-            sick_leave= e['sick_leave'],
-            total_leave= e['total_leave'],
-            balance_leave= e['balance_leave'],
-            fk_employee_id= e['fk_employee_id']
+            assign_year=e["assign_year"],
+            casual_leave=e["casual_leave"],
+            plan_leave=e["plan_leave"],
+            probation_leave=e["probation_leave"],
+            sick_leave=e["sick_leave"],
+            total_leave=e["total_leave"],
+            balance_leave=e["balance_leave"],
+            fk_employee_id=e["fk_employee_id"],
         )
         for e in leaves_data
     ]
@@ -109,14 +123,14 @@ def seed_all_tables(session: Session, test_data_dir: str):
     # --- Seed Leave Applications ---
     applications_data = load_json_data(test_data_dir, "leave_applications.json")
     applications_to_add = [
-        LeaveApplication( 
+        LeaveApplication(
             from_date=datetime.datetime.fromisoformat(e["from_date"]),
             end_date=datetime.datetime.fromisoformat(e["end_date"]),
             total_days=e["total_days"],
-            leave_status=e["leave_status"], 
+            leave_status=e["leave_status"],
             leave_reason=e["leave_reason"],
             fk_employee_id=e["fk_employee_id"],
-            fk_manager_id=e["fk_manager_id"]
+            fk_manager_id=e["fk_manager_id"],
         )
         for e in applications_data
     ]
@@ -126,9 +140,13 @@ def seed_all_tables(session: Session, test_data_dir: str):
     # --- Seed Regularizations ---
     regularizations_data = load_json_data(test_data_dir, "regularizations.json")
     regularizations_to_add = [
-        Regularization( 
-            regularization_start_time=datetime.datetime.fromisoformat(e["regularization_start_time"]),
-            regularization_end_time=datetime.datetime.fromisoformat(e["regularization_end_time"]),
+        Regularization(
+            regularization_start_time=datetime.datetime.fromisoformat(
+                e["regularization_start_time"]
+            ),
+            regularization_end_time=datetime.datetime.fromisoformat(
+                e["regularization_end_time"]
+            ),
             regularization_reason=e["regularization_reason"],
             regularization_status=e["regularization_status"],
             fk_employee_id=e["fk_employee_id"],
@@ -138,7 +156,7 @@ def seed_all_tables(session: Session, test_data_dir: str):
     ]
     session.add_all(regularizations_to_add)
     session.commit()
-    
+
     # --- Seed Payslips ---
     payslips_data = load_json_data(test_data_dir, "payslips.json")
     payslips_to_add = [
@@ -158,7 +176,7 @@ def seed_all_tables(session: Session, test_data_dir: str):
     # --- Seed Expense Claims ---
     expense_claims_data = load_json_data(test_data_dir, "expense_claims.json")
     expense_claims_to_add = [
-        ExpenseClaim( 
+        ExpenseClaim(
             claim_date=datetime.datetime.fromisoformat(claim["claim_date"]),
             amount=claim["amount"],
             description=claim["description"],
