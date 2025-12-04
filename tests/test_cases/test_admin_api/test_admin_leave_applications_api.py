@@ -25,7 +25,7 @@ def test_admin_create_leave_application_fail(client, admin_user):
         headers={"Authorization": f"Bearer {admin_user}"},
     )
     assert response.status_code == 400
-    assert response.json() == {"detail":"No manager assigned"}
+    assert response.json() == {"detail": "No manager assigned"}
 
 
 def test_admin_delete_my_leave_application_by_id_success(client, admin_user):
@@ -42,7 +42,7 @@ def test_admin_delete_my_leave_application_by_id_not_allow(client, admin_user):
         headers={"Authorization": f"Bearer {admin_user}"},
     )
     assert response.status_code == 400
-    assert response.json() == {"detail":"Cannot delete approved/rejected leave"}
+    assert response.json() == {"detail": "Cannot delete approved/rejected leave"}
 
 
 def test_admin_delete_others_leave_application_by_id_forbidden(client, admin_user):
@@ -208,7 +208,8 @@ def test_admin_admin_access_get_employee_leave_application_by_id_not_found(
     client, admin_user
 ):
     response = client.get(
-        "/admin/leave-applications/30", headers={"Authorization": f"Bearer {admin_user}"}
+        "/admin/leave-applications/30",
+        headers={"Authorization": f"Bearer {admin_user}"},
     )
     assert response.status_code == 404
     assert response.json() == {"detail": "Leave application not found"}
@@ -282,4 +283,4 @@ def test_admin_admin_access_update_employee_leave_application_status_by_id_not_f
         headers={"Authorization": f"Bearer {admin_user}"},
     )
     assert response.status_code == 404
-    assert response.json() == {"detail":"Leave application not found"}
+    assert response.json() == {"detail": "Leave application not found"}
