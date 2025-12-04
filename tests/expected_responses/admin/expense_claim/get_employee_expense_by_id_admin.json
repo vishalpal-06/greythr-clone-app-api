@@ -3,7 +3,7 @@
   "amount": 150,
   "description": "Coffee supplies for A1 team pantry.",
   "claim_id": 5,
-  "claim_status": "Rejected",
+  "claim_status": "Approved",
   "fk_employee_id": 4,
   "fk_manager_id": 2
 }

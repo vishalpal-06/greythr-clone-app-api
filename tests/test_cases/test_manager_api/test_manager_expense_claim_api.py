@@ -120,7 +120,7 @@ def test_manager_manager_access_get_subordinate_expense_claim_by_id_success(
         "/manager/expense-claims/5",
         headers={"Authorization": f"Bearer {manager_A}"},
     )
-    expected = read_json("get_expense_by_id_for_manager_A.json")
+    expected = read_json("get_subordinate_expense_by_id_manager_A.json")
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -168,7 +168,9 @@ def test_manager_manager_access_get_subordinate_expense_claims_by_empid_year__an
         "manager/expense-claims/employee/4/month/2025/4",
         headers={"Authorization": f"Bearer {manager_A}"},
     )
-    expected = read_json("get_expense_by_empid_year_and_month_for_manager_A.json")
+    expected = read_json(
+        "get_subordinate_expense_by_empid_year_and_month_manager_A.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 

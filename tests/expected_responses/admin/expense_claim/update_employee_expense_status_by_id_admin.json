@@ -1,0 +1,9 @@
+{
+  "claim_date": "2025-01-12T15:00:00",
+  "amount": 1450.75,
+  "description": "Team lunch for Q1 planning session.",
+  "claim_id": 1,
+  "claim_status": "Pending",
+  "fk_employee_id": 2,
+  "fk_manager_id": 1
+}

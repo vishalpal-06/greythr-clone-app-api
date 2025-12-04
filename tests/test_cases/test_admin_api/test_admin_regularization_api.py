@@ -13,6 +13,22 @@ def read_json(filename):
 
 
 # -------------------------------------------------Test Manager API ---------------------------------------------------
+def test_admin_create_my_regularization_fail(client, admin_user):
+    payload = {
+        "regularization_start_time": "2025-11-30T10:00:00.000Z",
+        "regularization_end_time": "2025-11-30T19:00:00.000Z",
+        "regularization_reason": "mera man nahi tha kam kerne ka",
+    }
+    response = client.post(
+        "/user/my/regularizations/",
+        json=payload,
+        headers={"Authorization": f"Bearer {admin_user}"},
+    )
+    assert response.status_code == 400
+    assert response.json() == {"detail": "You have no manager assigned"}
+
+
+# -------------------------------------------------Test Manager API ---------------------------------------------------
 def test_admin_access_manager_get_subordinate_regularization_by_status_success(
     client, admin_user
 ):

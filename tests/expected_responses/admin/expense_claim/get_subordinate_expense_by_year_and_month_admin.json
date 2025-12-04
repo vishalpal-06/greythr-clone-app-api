@@ -1,0 +1,20 @@
+[
+  {
+    "claim_date": "2025-03-10T14:00:00",
+    "amount": 45.5,
+    "description": "Office supplies purchase (pens, paper).",
+    "claim_id": 4,
+    "claim_status": "Pending",
+    "fk_employee_id": 3,
+    "fk_manager_id": 1
+  },
+  {
+    "claim_date": "2025-03-01T09:00:00",
+    "amount": 999,
+    "description": "New software license subscription (monthly).",
+    "claim_id": 3,
+    "claim_status": "Approved",
+    "fk_employee_id": 3,
+    "fk_manager_id": 1
+  }
+]

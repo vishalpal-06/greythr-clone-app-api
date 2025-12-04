@@ -92,12 +92,12 @@ def test_user_get_expense_claims_by_status_success(client, user_A1):
     assert response.json() == expected
 
 
-def test_user_get_expense_claims_by_year_month_success(client, user_A1):
+def test_user_get_my_expense_claims_by_year_month_success(client, user_A1):
     response = client.get(
         "user/my/expense-claims/month/2025/04",
         headers={"Authorization": f"Bearer {user_A1}"},
     )
-    expected = read_json("get_expense_using_year_month_userA1.json")
+    expected = read_json("get_my_expense_using_year_month_userA1.json")
     assert response.status_code == 200
     assert response.json() == expected
 

@@ -1,0 +1,11 @@
+[
+  {
+    "claim_date": "2025-02-05T10:00:00",
+    "amount": 350,
+    "description": "Taxi fare for client meeting downtown.",
+    "claim_id": 2,
+    "claim_status": "Pending",
+    "fk_employee_id": 2,
+    "fk_manager_id": 1
+  }
+]
