@@ -39,4 +39,4 @@ jobs:
 
       - name: Run tests and coverage check
         run: |
-          pytest --disable-warnings --maxfail=1 --cov=.
+          pytest --disable-warnings --maxfail=1 --cov=. --cov-fail-under=100
