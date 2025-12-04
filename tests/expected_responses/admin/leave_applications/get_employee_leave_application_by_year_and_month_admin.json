@@ -1,0 +1,32 @@
+[
+  {
+    "from_date": "2025-05-10T09:00:00",
+    "end_date": "2025-05-12T18:00:00",
+    "leave_reason": "Family vacation in Goa.",
+    "leave_application_id": 1,
+    "total_days": 3,
+    "leave_status": "Pending",
+    "fk_employee_id": 4,
+    "fk_manager_id": 2
+  },
+  {
+    "from_date": "2025-05-10T09:00:00",
+    "end_date": "2025-05-12T18:00:00",
+    "leave_reason": "Urgent client deadline during these dates.",
+    "leave_application_id": 3,
+    "total_days": 3,
+    "leave_status": "Rejected",
+    "fk_employee_id": 6,
+    "fk_manager_id": 3
+  },
+  {
+    "from_date": "2025-05-10T09:00:00",
+    "end_date": "2025-05-12T18:00:00",
+    "leave_reason": "Family vacation in Goa.",
+    "leave_application_id": 6,
+    "total_days": 3,
+    "leave_status": "Pending",
+    "fk_employee_id": 3,
+    "fk_manager_id": 1
+  }
+]

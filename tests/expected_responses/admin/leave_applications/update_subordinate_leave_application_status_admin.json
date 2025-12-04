@@ -1,0 +1,10 @@
+{
+  "from_date": "2025-05-10T09:00:00",
+  "end_date": "2025-05-12T18:00:00",
+  "leave_reason": "Family vacation in Goa.",
+  "leave_application_id": 6,
+  "total_days": 3,
+  "leave_status": "Rejected",
+  "fk_employee_id": 3,
+  "fk_manager_id": 1
+}
