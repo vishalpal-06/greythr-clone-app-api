@@ -1,5 +1,5 @@
 # schema/regularization_schema.py
-from pydantic import BaseModel, Field, ConfigDict, validator
+from pydantic import BaseModel, Field, ConfigDict, field_validator
 from typing import Optional
 from datetime import datetime
 from enum import Enum
@@ -20,11 +20,12 @@ class RegularizationBase(BaseModel):
     )
     regularization_reason: str = Field(..., min_length=5, max_length=255)
 
-    @validator("regularization_end_time")
-    def end_must_be_after_start(cls, v, values):
+    @field_validator("regularization_end_time")
+    def end_must_be_after_start(cls, v: datetime, info: dict) -> datetime:
+        # Access the start_time from the info.data dictionary
         if (
-            "regularization_start_time" in values
-            and v <= values["regularization_start_time"]
+            "regularization_start_time" in info.data
+            and v <= info.data["regularization_start_time"]
         ):
             raise ValueError("end_time must be after start_time")  # pragma: no cover
         return v

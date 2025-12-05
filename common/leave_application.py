@@ -7,7 +7,7 @@ from schema.leave_application_schema import (
     Status,
 )
 from fastapi import HTTPException, status
-from datetime import datetime, timedelta
+from datetime import datetime, UTC
 from typing import List
 from sqlalchemy import extract
 
@@ -131,7 +131,7 @@ def admin_update_status(
 ) -> LeaveApplication:
     app = _get_leave_app_or_404(db, app_id)
     app.leave_status = update.leave_status
-    app.updated_at = datetime.utcnow()
+    app.updated_at = datetime.now(UTC)
     db.commit()
     db.refresh(app)
     return app
@@ -196,7 +196,7 @@ def manager_update_status(
 ) -> LeaveApplication:
     app = get_manager_application_by_id(db, app_id, user)
     app.leave_status = update.leave_status
-    app.updated_at = datetime.utcnow()
+    app.updated_at = datetime.now(UTC)
     db.commit()
     db.refresh(app)
     return app

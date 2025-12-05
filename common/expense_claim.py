@@ -7,7 +7,7 @@ from schema.expense_claim_schema import (
     Status,
 )
 from fastapi import HTTPException, status
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import List
 from sqlalchemy import extract
 
@@ -153,7 +153,7 @@ def admin_update_status(
 ) -> ExpenseClaim:
     claim = _get_claim_or_404(db, claim_id)
     claim.claim_status = update.claim_status
-    claim.updated_at = datetime.utcnow()
+    claim.updated_at = datetime.now(UTC)
     db.commit()
     db.refresh(claim)
     return claim
@@ -222,7 +222,7 @@ def manager_update_status(
 ) -> ExpenseClaim:
     claim = get_manager_claim_by_id(db, claim_id, user)
     claim.claim_status = update.claim_status
-    claim.updated_at = datetime.utcnow()
+    claim.updated_at = datetime.now(UTC)
     db.commit()
     db.refresh(claim)
     return claim

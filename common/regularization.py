@@ -7,7 +7,7 @@ from schema.regularization_schema import (
     Status,
 )
 from fastapi import HTTPException, status
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import List
 from sqlalchemy import extract
 
@@ -84,7 +84,7 @@ def admin_update_status(
 ) -> Regularization:
     reg = _get_regularization_or_404(db, reg_id)
     reg.regularization_status = status_update.regularization_status
-    reg.updated_at = datetime.utcnow()
+    reg.updated_at = datetime.now(UTC)
     db.commit()
     db.refresh(reg)
     return reg
@@ -135,7 +135,7 @@ def manager_update_regularization_status(
 ) -> Regularization:
     reg = get_manager_regularization_by_id(reg_id, db=db, user=user)
     reg.regularization_status = status_update.regularization_status
-    reg.updated_at = datetime.utcnow()
+    reg.updated_at = datetime.now(UTC)
     db.commit()
     db.refresh(reg)
     return reg
