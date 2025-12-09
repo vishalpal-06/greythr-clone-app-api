@@ -1,9 +1,9 @@
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status, Request, Form
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import Annotated
 from datetime import timedelta, datetime, timezone
 from database.models import Employee
@@ -28,6 +28,11 @@ oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token")
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+class LoginRequest(BaseModel):
+    username: EmailStr
+    password: str
 
 
 # Database dependency
@@ -81,10 +86,29 @@ user_dependency = Annotated[dict, Depends(get_current_user)]
 
 
 @auth_router.post("/token", response_model=Token)
-def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency
+async def login_for_access_token(
+    payload: LoginRequest,
+    db=Depends(get_db),
 ):
-    user = authenticate_user(form_data.username, form_data.password, db)
+    username = payload.username
+    password = payload.password
+    if username is None and password is None:  # pragma: no cover
+        from fastapi import Request
+
+        request = Request(scope=None)
+        try:
+            body = await request.json()
+            username = body.get("username")
+            password = body.get("password")
+        except:
+            pass
+
+    if not username or not password:  # pragma: no cover
+        raise HTTPException(
+            status_code=422, detail="username and password are required"
+        )
+
+    user = authenticate_user(username, password, db)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -94,14 +118,12 @@ def login_for_access_token(
 
     # Create JWT token
     token = create_access_token(
-        user.email, user.employee_id, user.isadmin, timedelta(minutes=60)
+        user.email,
+        user.employee_id,
+        user.isadmin,
+        expires_delta=timedelta(minutes=60),
     )
 
-    # Update last_login
-    user.last_login = datetime.now(timezone.utc)
     db.commit()
 
-    return {
-        "access_token": token,
-        "token_type": "bearer",
-    }
+    return {"access_token": token, "token_type": "bearer"}

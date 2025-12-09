@@ -75,7 +75,7 @@ def get_auth_token(client, email: str, password: str) -> str:
     """Generate JWT token using /auth/token."""
     response = client.post(
         "/auth/token",
-        data={"username": email, "password": password},
+        json={"username": email, "password": password},
     )
     assert response.status_code == 200, "Failed to get token"
     return response.json()["access_token"]

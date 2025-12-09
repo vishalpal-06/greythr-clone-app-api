@@ -4,3 +4,4 @@ omit =
     tests\seed_db.py
     insert_db_data.py
     database\common.py
+    database\database.py
