@@ -5,3 +5,6 @@ omit =
     insert_db_data.py
     database\common.py
     database\database.py
+    mcp_server.py
+    mcp_client.py
+    ui_app.py
