@@ -86,7 +86,7 @@ jobs:
           script: |
             # --- Commands run ON the EC2 instance ---
 
-            # Define variables on the EC2 instance using the secrets passed in
+            # Define variables on the EC2 instance using the secrets passed
             export AWS_REGION="${{ secrets.AWS_REGION }}"
             ECR_REPO_NAME="${{ secrets.ECR_REPOSITORY }}" # e.g., greythr_ws/greythr-api
             IMAGE_TAG="latest"
