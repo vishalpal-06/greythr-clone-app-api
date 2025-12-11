@@ -96,11 +96,10 @@ jobs:
             AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
             
             # Construct the full, correct Docker image path
-            FULL_IMAGE_PATH="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_region.amazonaws.com"
+            FULL_IMAGE_PATH="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
             REGISTRY_URL="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
 
             # Login to ECR on the EC2 instance using the correct registry URL
-            # The 'aws ecr get-login-password' command requires the AWS CLI to be installed
             aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URL
 
             # Pull the latest image
