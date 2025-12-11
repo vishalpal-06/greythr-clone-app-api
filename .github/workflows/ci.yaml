@@ -84,25 +84,25 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Define environment variables on the EC2 instance
-            export AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}"
-            export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+            # --- Commands run ON the EC2 instance ---
+
+            # Define variables on the EC2 instance using the secrets passed in
             export AWS_REGION="${{ secrets.AWS_REGION }}"
-            ECR_REPO="${{ secrets.ECR_REPOSITORY }}"
-            # Use "latest" as the fixed tag
+            ECR_REPO_NAME="${{ secrets.ECR_REPOSITORY }}" # e.g., greythr_ws/greythr-api
             IMAGE_TAG="latest"
 
-            # Get the AWS Account ID
+            # Get the AWS Account ID and REGISTRY URL from AWS CLI commands 
+            # Note: AWS CLI MUST be installed on the EC2 instance
             AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-            
-            # Construct the full Docker image path using the fixed "latest" tag
-            FULL_IMAGE_PATH="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
             REGISTRY_URL="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
+            
+            # Construct the FULL image path correctly
+            FULL_IMAGE_PATH="$REGISTRY_URL/$ECR_REPO_NAME:$IMAGE_TAG"
 
-            # Login to ECR on the EC2 instance using the correct registry URL
+            # Login to ECR on the EC2 instance
             aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URL
 
-            # Pull the latest image
+            # Pull the image using the correct full path
             docker pull $FULL_IMAGE_PATH
 
             # Stop and remove the old container (if running)
@@ -110,4 +110,6 @@ jobs:
             docker rm fastapi-app || true
 
             # Run the new container
+            # Maps port 80 on EC2 to port 8000 inside the Docker container
             docker run -d --name fastapi-app -p 80:8000 $FULL_IMAGE_PATH
+            # ----------------------------------------
