@@ -1,0 +1,20 @@
+# Ignore Python virtual environment folders
+venv/
+.venv/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore test and coverage specific files/folders
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Ignore editor/OS specific files
+.idea/
+.vscode/
+.DS_Store
+
+# Ignore local environment file
+.env

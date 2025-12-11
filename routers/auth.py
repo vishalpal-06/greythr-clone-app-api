@@ -85,30 +85,15 @@ db_dependency = Annotated[Session, Depends(get_db)]
 user_dependency = Annotated[dict, Depends(get_current_user)]
 
 
-@auth_router.post("/token", response_model=Token)
-async def login_for_access_token(
-    payload: LoginRequest,
-    db=Depends(get_db),
+# --- Endpoint 1: Supports Swagger UI (Form Data) ---
+@auth_router.post(
+    "/token", response_model=Token, summary="Login using form data (for Swagger UI)"
+)
+async def login_for_access_token_form(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency
 ):
-    username = payload.username
-    password = payload.password
-    if username is None and password is None:  # pragma: no cover
-        from fastapi import Request
+    user = authenticate_user(form_data.username, form_data.password, db)
 
-        request = Request(scope=None)
-        try:
-            body = await request.json()
-            username = body.get("username")
-            password = body.get("password")
-        except:
-            pass
-
-    if not username or not password:  # pragma: no cover
-        raise HTTPException(
-            status_code=422, detail="username and password are required"
-        )
-
-    user = authenticate_user(username, password, db)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -125,5 +110,31 @@ async def login_for_access_token(
     )
 
     db.commit()
+    return {"access_token": token, "token_type": "bearer"}
 
+
+# --- Endpoint 2: Supports raw JSON body requests (API Clients) ---
+@auth_router.post(
+    "/login_json", response_model=Token, summary="Login using JSON payload"
+)
+async def login_for_access_token_json(
+    payload: LoginRequest, db: db_dependency
+):  # pragma: no cover
+    user = authenticate_user(payload.username, payload.password, db)
+
+    if not user:
+        # Note: We don't include WWW-Authenticate header here as it's not the OAuth2 standard token URL
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password",
+        )
+
+    token = create_access_token(
+        user.email,
+        user.employee_id,
+        user.isadmin,
+        expires_delta=timedelta(minutes=60),
+    )
+
+    db.commit()
     return {"access_token": token, "token_type": "bearer"}
