@@ -16,7 +16,7 @@ app = FastAPI(
 origins = ["http://localhost:3000"]
 
 
-@app.get("/health")
+@app.get("/")
 def health_check():
     return {"status": "pass"}
 
