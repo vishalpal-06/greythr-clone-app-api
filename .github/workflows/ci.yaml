@@ -73,43 +73,37 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$LATEST_TAG
 
-  deploy-to-ec2:
+  deploy-to-ecs:
     runs-on: ubuntu-latest
-    needs: [push-to-ecr]
+    needs: push-to-ecr
+
     steps:
-      - name: Deploy to EC2 via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            # --- Commands run ON the EC2 instance ---
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-            # Define variables on the EC2 instance using the secrets passed
-            export AWS_REGION="${{ secrets.AWS_REGION }}"
-            ECR_REPO_NAME="${{ secrets.ECR_REPOSITORY }}" # e.g., greythr_ws/greythr-api
-            IMAGE_TAG="latest"
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
 
-            # Get the AWS Account ID and REGISTRY URL from AWS CLI commands 
-            # Note: AWS CLI MUST be installed on the EC2 instance
-            AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-            REGISTRY_URL="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
-            
-            # Construct the FULL image path correctly
-            FULL_IMAGE_PATH="$REGISTRY_URL/$ECR_REPO_NAME:$IMAGE_TAG"
+      - name: Render ECS task definition with new image
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ecs-task-def.json
+          container-name: ${{ secrets.ECS_CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}
 
-            # Login to ECR on the EC2 instance
-            aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URL
-
-            # Pull the image using the correct full path
-            docker pull $FULL_IMAGE_PATH
-
-            # Stop and remove the old container (if running)
-            docker stop fastapi-app || true
-            docker rm fastapi-app || true
-
-            # Run the new container
-            # Maps port 80 on EC2 to port 8000 inside the Docker container
-            docker run -d --name fastapi-app -p 80:8000 $FULL_IMAGE_PATH
-            # ----------------------------------------
+      - name: Deploy ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ secrets.ECS_SERVICE_NAME }}
+          cluster: ${{ secrets.ECS_CLUSTER_NAME }}
+          wait-for-service-stability: true
