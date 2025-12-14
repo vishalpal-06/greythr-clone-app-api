@@ -4,7 +4,7 @@
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
   "memory": "512",
-  "executionRoleArn": "arn:aws:iam::681526277210:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
+  "executionRoleArn": "arn:aws:iam::681526277210:role/ecsTaskExecutionRole",
   "containerDefinitions": [
     {
       "name": "greythr-dev-con",
