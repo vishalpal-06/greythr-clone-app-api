@@ -18,7 +18,7 @@ origins = ["http://localhost:3000"]
 
 @app.get("/")
 def health_check():
-    return {"status": "pass"}
+    return {"status": "passed"}
 
 
 app.add_middleware(
