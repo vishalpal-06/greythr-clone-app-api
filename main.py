@@ -10,7 +10,7 @@ from routers.user.user_api import user_router
 app = FastAPI(
     title="Grethr Clone API",
     description="A simplified version of the Grethr API built with FastAPI.",
-    version="1.1.1",
+    version="1.2.0",
 )
 
 origins = ["http://localhost:3000"]
