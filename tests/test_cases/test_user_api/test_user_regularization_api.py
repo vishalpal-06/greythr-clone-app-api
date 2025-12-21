@@ -1,28 +1,16 @@
-import json
-from pathlib import Path
-
-BASE_PATH = (
-    Path(__file__).resolve().parent.parent.parent
-    / "expected_responses/user/regularization/"
-)
-
-
-def read_json(filename):
-    with open(BASE_PATH / filename, "r") as f:
-        return json.load(f)
-
-
 # -------------------------------------------------Test User API ---------------------------------------------------
-def test_user_get_all_my_regularization_success(client, user_A1):
+def test_user_get_all_my_regularization_success(client, user_A1, read_json):
     response = client.get(
         "/user/my/regularizations/", headers={"Authorization": f"Bearer {user_A1}"}
     )
-    expected = read_json("get_all_my_regularization_userA1.json")
+    expected = read_json(
+        "expected_responses/user/regularization/get_all_my_regularization_userA1.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_user_create_my_regularization_success(client, user_A1):
+def test_user_create_my_regularization_success(client, user_A1, read_json):
     payload = {
         "regularization_start_time": "2025-11-30T10:00:00.000Z",
         "regularization_end_time": "2025-11-30T19:00:00.000Z",
@@ -33,21 +21,25 @@ def test_user_create_my_regularization_success(client, user_A1):
         json=payload,
         headers={"Authorization": f"Bearer {user_A1}"},
     )
-    expected = read_json("create_regularization_userA1.json")
+    expected = read_json(
+        "expected_responses/user/regularization/create_regularization_userA1.json"
+    )
     assert response.status_code == 201
     assert response.json() == expected
 
 
-def test_user_get_my_regularization_by_id_success(client, user_A1):
+def test_user_get_my_regularization_by_id_success(client, user_A1, read_json):
     response = client.get(
         "user/my/regularizations/3", headers={"Authorization": f"Bearer {user_A1}"}
     )
-    expected = read_json("get_my_regularization_by_id_userA1.json")
+    expected = read_json(
+        "expected_responses/user/regularization/get_my_regularization_by_id_userA1.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_user_get_others_regularization_by_id_forbidden(client, user_A1):
+def test_user_get_others_regularization_by_id_forbidden(client, user_A1, read_json):
     response = client.get(
         "user/my/regularizations/1", headers={"Authorization": f"Bearer {user_A1}"}
     )
@@ -55,17 +47,23 @@ def test_user_get_others_regularization_by_id_forbidden(client, user_A1):
     assert response.json() == {"detail": "Not authorized"}
 
 
-def test_user_get_my_regularization_by_year_and_month_success(client, user_A1):
+def test_user_get_my_regularization_by_year_and_month_success(
+    client, user_A1, read_json
+):
     response = client.get(
         "/user/my/regularizations/month/2025/4",
         headers={"Authorization": f"Bearer {user_A1}"},
     )
-    expected = read_json("get_regularization_by_year_month_userA1.json")
+    expected = read_json(
+        "expected_responses/user/regularization/get_regularization_by_year_month_userA1.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_user_get_my_regularization_by_year_and_month_not_found(client, user_A1):
+def test_user_get_my_regularization_by_year_and_month_not_found(
+    client, user_A1, read_json
+):
     response = client.get(
         "/user/my/regularizations/month/2025/1",
         headers={"Authorization": f"Bearer {user_A1}"},
@@ -122,7 +120,9 @@ def test_user_manager_access_update_subordinate_regularization_by_id_not_allowed
 
 
 # -------------------------------------------------Test Admin API ---------------------------------------------------
-def test_user_admin_access_get_employee_regularization_by_id_forbidden(client, user_A1):
+def test_user_admin_access_get_employee_regularization_by_id_forbidden(
+    client, user_A1, read_json
+):
     response = client.get(
         "/admin/regularizations/1", headers={"Authorization": f"Bearer {user_A1}"}
     )

@@ -1,16 +1,3 @@
-import json
-from pathlib import Path
-
-BASE_PATH = (
-    Path(__file__).resolve().parent.parent.parent / "expected_responses/manager/salary/"
-)
-
-
-def read_json(filename):
-    with open(BASE_PATH / filename, "r") as f:
-        return json.load(f)
-
-
 # -------------------------------------------------Test User API ---------------------------------------------------
 def test_user_get_all_my_salary_success(client, manager_A, read_json):
     response = client.get(
