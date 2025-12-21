@@ -1,36 +1,25 @@
-import json
-from pathlib import Path
-
-BASE_PATH = (
-    Path(__file__).resolve().parent.parent.parent / "expected_responses/admin/leave/"
-)
-
-
-def read_json(filename):
-    with open(BASE_PATH / filename, "r") as f:
-        return json.load(f)
-
-
 # -------------------------------------------------Test User API ---------------------------------------------------
-def test_admin_get_my_all_leave_success(client, admin_user):
+def test_admin_get_my_all_leave_success(client, admin_user, read_json):
     response = client.get(
         "user/my/leave/", headers={"Authorization": f"Bearer {admin_user}"}
     )
-    expected = read_json("get_all_my_leave_admin.json")
+    expected = read_json("expected_responses/admin/leave/get_all_my_leave_admin.json")
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_admin_get_my_leave_by_year_success(client, admin_user):
+def test_admin_get_my_leave_by_year_success(client, admin_user, read_json):
     response = client.get(
         "user/my/leave/year/2025", headers={"Authorization": f"Bearer {admin_user}"}
     )
-    expected = read_json("get_my_leave_by_year_admin.json")
+    expected = read_json(
+        "expected_responses/admin/leave/get_my_leave_by_year_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_admin_get_my_leave_by_year_not_found(client, admin_user):
+def test_admin_get_my_leave_by_year_not_found(client, admin_user, read_json):
     response = client.get(
         "user/my/leave/year/2030", headers={"Authorization": f"Bearer {admin_user}"}
     )
@@ -44,19 +33,21 @@ def test_admin_get_my_leave_by_year_not_found(client, admin_user):
 
 
 def test_admin_manager_access_get_subordinates_leave_by_empid_and_year_success(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.get(
         "manager/leaves/employee/2/year/2025",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("get_subordinates_leave_by_empid_and_year_admin.json")
+    expected = read_json(
+        "expected_responses/admin/leave/get_subordinates_leave_by_empid_and_year_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
 def test_admin_manager_access_get_subordinates_leave_by_empid_and_year_nonsubordinate(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.get(
         "manager/leaves/employee/5/year/2025",
@@ -67,12 +58,14 @@ def test_admin_manager_access_get_subordinates_leave_by_empid_and_year_nonsubord
 
 
 def test_admin_manager_access_get_subordinate_leave_by_empid_success(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.get(
         "manager/leaves/employee/2", headers={"Authorization": f"Bearer {admin_user}"}
     )
-    expected = read_json("get_subordinate_leave_by_empid_admin.json")
+    expected = read_json(
+        "expected_responses/admin/leave/get_subordinate_leave_by_empid_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -89,13 +82,15 @@ def test_admin_manager_access_get_subordinate_leave_by_empid_not_found(
 
 # -------------------------------------------------Test Admin API ---------------------------------------------------
 def test_admin_admin_access_get_employee_leave_by_empid_and_years_success(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.get(
         "admin/leaves/employee/1/year/2025",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("get_employee_leave_by_empid_and_years_admin.json")
+    expected = read_json(
+        "expected_responses/admin/leave/get_employee_leave_by_empid_and_years_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -136,16 +131,22 @@ def test_admin_admin_access_delete_employee_leave_by_empid_and_years_not_found(
     }
 
 
-def test_admin_admin_access_get_employee_leaves_by_empid_success(client, admin_user):
+def test_admin_admin_access_get_employee_leaves_by_empid_success(
+    client, admin_user, read_json
+):
     response = client.get(
         "admin/leaves/employee/1", headers={"Authorization": f"Bearer {admin_user}"}
     )
-    expected = read_json("get_employee_leaves_by_empid_admin.json")
+    expected = read_json(
+        "expected_responses/admin/leave/get_employee_leaves_by_empid_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_admin_admin_access_get_employee_leaves_by_empid_not_found(client, admin_user):
+def test_admin_admin_access_get_employee_leaves_by_empid_not_found(
+    client, admin_user, read_json
+):
     response = client.get(
         "admin/leaves/employee/10", headers={"Authorization": f"Bearer {admin_user}"}
     )
@@ -153,7 +154,7 @@ def test_admin_admin_access_get_employee_leaves_by_empid_not_found(client, admin
     assert response.json() == {"detail": "No leave records found for employee 10"}
 
 
-def test_admin_admin_access_create_leave_success(client, admin_user):
+def test_admin_admin_access_create_leave_success(client, admin_user, read_json):
     payloads = {
         "assign_year": 2000,
         "casual_leave": 0,
@@ -169,12 +170,14 @@ def test_admin_admin_access_create_leave_success(client, admin_user):
         json=payloads,
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("create_leave_admin.json")
+    expected = read_json("expected_responses/admin/leave/create_leave_admin.json")
     assert response.status_code == 201
     assert response.json() == expected
 
 
-def test_admin_admin_access_create_duplicate_leave_conflict(client, admin_user):
+def test_admin_admin_access_create_duplicate_leave_conflict(
+    client, admin_user, read_json
+):
     payloads = {
         "assign_year": 2023,
         "casual_leave": 5,
@@ -196,14 +199,14 @@ def test_admin_admin_access_create_duplicate_leave_conflict(client, admin_user):
     }
 
 
-def test_admin_admin_access_delete_leave_by_id_success(client, admin_user):
+def test_admin_admin_access_delete_leave_by_id_success(client, admin_user, read_json):
     response = client.delete(
         "admin/leaves/1", headers={"Authorization": f"Bearer {admin_user}"}
     )
     assert response.status_code == 204
 
 
-def test_admin_admin_access_delete_leave_by_id_not_found(client, admin_user):
+def test_admin_admin_access_delete_leave_by_id_not_found(client, admin_user, read_json):
     response = client.delete(
         "admin/leaves/100", headers={"Authorization": f"Bearer {admin_user}"}
     )

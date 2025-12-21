@@ -1,19 +1,5 @@
-import json
-from pathlib import Path
-
-BASE_PATH = (
-    Path(__file__).resolve().parent.parent.parent
-    / "expected_responses/admin/leave_applications/"
-)
-
-
-def read_json(filename):
-    with open(BASE_PATH / filename, "r") as f:
-        return json.load(f)
-
-
 # -------------------------------------------------Test User API ---------------------------------------------------
-def test_admin_create_leave_application_fail(client, admin_user):
+def test_admin_create_leave_application_fail(client, admin_user, read_json):
     payload = {
         "from_date": "2025-11-30T10:00:00.000Z",
         "end_date": "2025-11-30T19:00:00.000Z",
@@ -28,7 +14,7 @@ def test_admin_create_leave_application_fail(client, admin_user):
     assert response.json() == {"detail": "No manager assigned"}
 
 
-def test_admin_delete_my_leave_application_by_id_success(client, admin_user):
+def test_admin_delete_my_leave_application_by_id_success(client, admin_user, read_json):
     response = client.delete(
         "/user/my/leave-applications/7",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -36,7 +22,9 @@ def test_admin_delete_my_leave_application_by_id_success(client, admin_user):
     assert response.status_code == 204
 
 
-def test_admin_delete_my_leave_application_by_id_not_allow(client, admin_user):
+def test_admin_delete_my_leave_application_by_id_not_allow(
+    client, admin_user, read_json
+):
     response = client.delete(
         "/user/my/leave-applications/8",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -45,7 +33,9 @@ def test_admin_delete_my_leave_application_by_id_not_allow(client, admin_user):
     assert response.json() == {"detail": "Cannot delete approved/rejected leave"}
 
 
-def test_admin_delete_others_leave_application_by_id_forbidden(client, admin_user):
+def test_admin_delete_others_leave_application_by_id_forbidden(
+    client, admin_user, read_json
+):
     response = client.delete(
         "/user/my/leave-applications/4",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -54,7 +44,9 @@ def test_admin_delete_others_leave_application_by_id_forbidden(client, admin_use
     assert response.json() == {"detail": "Not authorized"}
 
 
-def test_admin_delete_leave_application_not_exist_by_id_not_found(client, admin_user):
+def test_admin_delete_leave_application_not_exist_by_id_not_found(
+    client, admin_user, read_json
+):
     response = client.delete(
         "/user/my/leave-applications/14",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -63,7 +55,9 @@ def test_admin_delete_leave_application_not_exist_by_id_not_found(client, admin_
     assert response.json() == {"detail": "Leave application not found"}
 
 
-def test_admin_get_others_leave_application_by_id_forbidden(client, admin_user):
+def test_admin_get_others_leave_application_by_id_forbidden(
+    client, admin_user, read_json
+):
     response = client.get(
         "/user/my/leave-applications/5",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -72,7 +66,9 @@ def test_admin_get_others_leave_application_by_id_forbidden(client, admin_user):
     assert response.json() == {"detail": "Not authorized"}
 
 
-def test_admin_get_leave_application_not_exist_by_id_not_found(client, admin_user):
+def test_admin_get_leave_application_not_exist_by_id_not_found(
+    client, admin_user, read_json
+):
     response = client.get(
         "/user/my/leave-applications/15",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -83,14 +79,16 @@ def test_admin_get_leave_application_not_exist_by_id_not_found(client, admin_use
 
 # -------------------------------------------------Test Manager API ---------------------------------------------------
 def test_admin_manager_access_update_subordinate_leave_application_status_by_id_success(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.put(
         "manager/leave-applications/6/status",
         json={"leave_status": "Rejected"},
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("update_subordinate_leave_application_status_admin.json")
+    expected = read_json(
+        "expected_responses/admin/leave_applications/update_subordinate_leave_application_status_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -122,26 +120,28 @@ def test_admin_manager_access_update_subordinate_leave_application_not_exist_sta
 
 
 def test_admin_manager_access_get_subordinate_leave_applications_by_status_success(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.get(
         "/manager/leave-applications/status/Pending",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("get_subordinate_leave_application_by_status_admin.json")
+    expected = read_json(
+        "expected_responses/admin/leave_applications/get_subordinate_leave_application_by_status_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
 def test_admin_manager_access_get_leave_applications_by_year_and_month_success(
-    client, manager_B
+    client, manager_B, read_json
 ):
     response = client.get(
         "/manager/leave-applications/month/2025/5",
         headers={"Authorization": f"Bearer {manager_B}"},
     )
     expected = read_json(
-        "get_subordinate_leave_application_by_year_and_month_admin.json"
+        "expected_responses/admin/leave_applications/get_subordinate_leave_application_by_year_and_month_admin.json"
     )
     assert response.status_code == 200
     assert response.json() == expected
@@ -159,13 +159,15 @@ def test_admin_manager_access_get_leave_applications_by_year_and_month_not_found
 
 
 def test_admin_manager_access_get_subordinate_leave_applications_by_empid_success(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.get(
         "/manager/leave-applications/employee/3",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("get_subordinate_leave_application_by_empid_admin.json")
+    expected = read_json(
+        "expected_responses/admin/leave_applications/get_subordinate_leave_application_by_empid_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -194,12 +196,14 @@ def test_admin_manager_access_get_subordinate_leave_applications_by_empid_not_ex
 
 # -------------------------------------------------Test Admin API ---------------------------------------------------
 def test_admin_admin_access_get_employee_leave_application_by_id_success(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.get(
         "/admin/leave-applications/1", headers={"Authorization": f"Bearer {admin_user}"}
     )
-    expected = read_json("get_employee_leave_application_by_id_admin.json")
+    expected = read_json(
+        "expected_responses/admin/leave_applications/get_employee_leave_application_by_id_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -216,13 +220,15 @@ def test_admin_admin_access_get_employee_leave_application_by_id_not_found(
 
 
 def test_admin_admin_access_get_employee_leave_application_by_empid_success(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.get(
         "/admin/leave-applications/employee/4",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("get_employee_leave_application_by_empid_admin.json")
+    expected = read_json(
+        "expected_responses/admin/leave_applications/get_employee_leave_application_by_empid_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -239,13 +245,15 @@ def test_admin_admin_access_get_employee_leave_application_by_empid_not_found(
 
 
 def test_admin_admin_access_get_employee_leave_application_by_year_and_month_success(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.get(
         "/admin/leave-applications/month/2025/5",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("get_employee_leave_application_by_year_and_month_admin.json")
+    expected = read_json(
+        "expected_responses/admin/leave_applications/get_employee_leave_application_by_year_and_month_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -262,14 +270,16 @@ def test_admin_admin_access_get_employee_leave_application_by_year_and_month_not
 
 
 def test_admin_admin_access_update_employee_leave_application_status_by_id_success(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.put(
         "/admin/leave-applications/1/status",
         json={"leave_status": "Approved"},
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("update_employee_leave_application_status_by_id_admin.json")
+    expected = read_json(
+        "expected_responses/admin/leave_applications/update_employee_leave_application_status_by_id_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 

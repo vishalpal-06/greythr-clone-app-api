@@ -6,7 +6,8 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from .seed_db import seed_all_tables
-
+import json
+from pathlib import Path
 from main import app
 from database.models import Base
 from routers.auth import get_db
@@ -117,3 +118,13 @@ def user_B1(client):
 @pytest.fixture
 def user_B2(client):
     return get_auth_token(client, "userB2@test.com", "pass123")
+
+
+@pytest.fixture
+def read_json():
+    def _read_json(file_name: str):
+        file_path = Path(__file__).parent / file_name
+        with open(file_path) as f:
+            return json.load(f)
+
+    return _read_json

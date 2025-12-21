@@ -1,19 +1,5 @@
-import json
-from pathlib import Path
-
-BASE_PATH = (
-    Path(__file__).resolve().parent.parent.parent
-    / "expected_responses/admin/expense_claim"
-)
-
-
-def read_json(filename):
-    with open(BASE_PATH / filename, "r") as f:
-        return json.load(f)
-
-
 # -------------------------------------------------Test User API ---------------------------------------------------
-def test_admin_create_expense_claim_fail(client, admin_user):
+def test_admin_create_expense_claim_fail(client, admin_user, read_json):
     response = client.post(
         "user/my/expense-claims/",
         json={
@@ -27,7 +13,7 @@ def test_admin_create_expense_claim_fail(client, admin_user):
     assert response.json() == {"detail": "No manager assigned"}
 
 
-def test_admin_delete_my_expense_claim_fail(client, admin_user):
+def test_admin_delete_my_expense_claim_fail(client, admin_user, read_json):
     response = client.delete(
         "user/my/expense-claims/2",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -38,13 +24,15 @@ def test_admin_delete_my_expense_claim_fail(client, admin_user):
 
 # -------------------------------------------------Test Manager API ---------------------------------------------------
 def test_admin_manager_access_get_subordinate_expense_claim_by_id_success(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.get(
         "/manager/expense-claims/1",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("get_subordinate_expense_by_id_admin.json")
+    expected = read_json(
+        "expected_responses/admin/expense_claim/get_subordinate_expense_by_id_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -63,13 +51,15 @@ def test_admin_manager_access_get_subordinate_expense_claim_by_id_forbidden(
 
 
 def test_admin_manager_access_get_subordinate_expense_claims_by_year_month_success(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.get(
         "manager/expense-claims/month/2025/3",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("get_subordinate_expense_by_year_and_month_admin.json")
+    expected = read_json(
+        "expected_responses/admin/expense_claim/get_subordinate_expense_by_year_and_month_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -86,25 +76,29 @@ def test_admin_manager_access_get_subordinate_expense_claims_by_year_month_empty
 
 
 def test_admin_manager_access_get_subordinate_expense_claims_by_status_success(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.get(
         "manager/expense-claims/status/Pending",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("get_subordinate_expense_by_status_admin.json")
+    expected = read_json(
+        "expected_responses/admin/expense_claim/get_subordinate_expense_by_status_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
 def test_admin_manager_access_get_subordinate_expense_claims_by_empid_year_and_month_success(
-    client, manager_A
+    client, manager_A, read_json
 ):
     response = client.get(
         "manager/expense-claims/employee/4/month/2025/4",
         headers={"Authorization": f"Bearer {manager_A}"},
     )
-    expected = read_json("get_subordinate_expense_by_empid_year_and_month_admin.json")
+    expected = read_json(
+        "expected_responses/admin/expense_claim/get_subordinate_expense_by_empid_year_and_month_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -121,14 +115,16 @@ def test_admin_manager_access_get_subordinate_expense_claims_by_empid_year_and_m
 
 
 def test_admin_manager_access_update_subordinate_expense_claim_status_success(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.put(
         "/manager/expense-claims/1/status",
         json={"claim_status": "Approved"},
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("update_subordinate_expense_by_id_admin.json")
+    expected = read_json(
+        "expected_responses/admin/expense_claim/update_subordinate_expense_by_id_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -147,7 +143,9 @@ def test_admin_manager_access_update_subordinate_expense_claim_status_forbidden(
     }
 
 
-def test_admin_manager_access_update_expense_claim_status_not_found(client, admin_user):
+def test_admin_manager_access_update_expense_claim_status_not_found(
+    client, admin_user, read_json
+):
     response = client.put(
         "/manager/expense-claims/20/status",
         json={"claim_status": "Approved"},
@@ -158,16 +156,22 @@ def test_admin_manager_access_update_expense_claim_status_not_found(client, admi
 
 
 # -------------------------------------------------Test Admin API ---------------------------------------------------
-def test_admin_admin_access_get_expense_claim_by_id_success(client, admin_user):
+def test_admin_admin_access_get_expense_claim_by_id_success(
+    client, admin_user, read_json
+):
     response = client.get(
         "admin/expense-claims/5", headers={"Authorization": f"Bearer {admin_user}"}
     )
-    expected = read_json("get_employee_expense_by_id_admin.json")
+    expected = read_json(
+        "expected_responses/admin/expense_claim/get_employee_expense_by_id_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_admin_admin_access_get_expense_claim_by_id_not_found(client, admin_user):
+def test_admin_admin_access_get_expense_claim_by_id_not_found(
+    client, admin_user, read_json
+):
     response = client.get(
         "admin/expense-claims/30", headers={"Authorization": f"Bearer {admin_user}"}
     )
@@ -175,17 +179,23 @@ def test_admin_admin_access_get_expense_claim_by_id_not_found(client, admin_user
     assert response.json() == {"detail": "Expense claim not found"}
 
 
-def test_admin_admin_access_get_expense_claims_by_empid_success(client, admin_user):
+def test_admin_admin_access_get_expense_claims_by_empid_success(
+    client, admin_user, read_json
+):
     response = client.get(
         "admin/expense-claims/employee/3",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("get_employee_expense_empid_admin.json")
+    expected = read_json(
+        "expected_responses/admin/expense_claim/get_employee_expense_empid_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_admin_admin_access_get_expense_claims_by_empid_not_found(client, admin_user):
+def test_admin_admin_access_get_expense_claims_by_empid_not_found(
+    client, admin_user, read_json
+):
     response = client.get(
         "admin/expense-claims/employee/100",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -194,17 +204,23 @@ def test_admin_admin_access_get_expense_claims_by_empid_not_found(client, admin_
     assert response.json() == {"detail": "No claims found"}
 
 
-def test_admin_admin_access_get_expense_claims_by_status_success(client, admin_user):
+def test_admin_admin_access_get_expense_claims_by_status_success(
+    client, admin_user, read_json
+):
     response = client.get(
         "/admin/expense-claims/status/Pending",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("get_employee_expense_by_status_admin.json")
+    expected = read_json(
+        "expected_responses/admin/expense_claim/get_employee_expense_by_status_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_admin_admin_access_get_expense_claims_by_status_not_found(client, admin_user):
+def test_admin_admin_access_get_expense_claims_by_status_not_found(
+    client, admin_user, read_json
+):
     response = client.get(
         "/admin/expense-claims/status/Rejected",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -214,13 +230,15 @@ def test_admin_admin_access_get_expense_claims_by_status_not_found(client, admin
 
 
 def test_admin_admin_access_get_expense_claims_by_year_month_success(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.get(
         "admin/expense-claims/month/2025/2",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("get_employee_expense_by_year_month_admin.json")
+    expected = read_json(
+        "expected_responses/admin/expense_claim/get_employee_expense_by_year_month_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -237,14 +255,14 @@ def test_admin_admin_access_get_expense_claims_by_year_month_not_found(
 
 
 def test_admin_admin_access_get_expense_claims_by_empid_year_and_month_success(
-    client, admin_user
+    client, admin_user, read_json
 ):
     response = client.get(
         "admin/expense-claims/employee/2/month/2025/2",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
     expected = read_json(
-        "get_employee_expense_claims_by_empid_year_and_month_admin.json"
+        "expected_responses/admin/expense_claim/get_employee_expense_claims_by_empid_year_and_month_admin.json"
     )
     assert response.status_code == 200
     assert response.json() == expected
@@ -263,18 +281,24 @@ def test_admin_admin_access_get_expense_claims_by_empid_year_and_month_not_found
     }
 
 
-def test_admin_admin_access_update_expense_claim_status_success(client, admin_user):
+def test_admin_admin_access_update_expense_claim_status_success(
+    client, admin_user, read_json
+):
     response = client.put(
         "admin/expense-claims/1/status",
         json={"claim_status": "Pending"},
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json("update_employee_expense_status_by_id_admin.json")
+    expected = read_json(
+        "expected_responses/admin/expense_claim/update_employee_expense_status_by_id_admin.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_admin_admin_access_update_expense_claim_status_not_found(client, admin_user):
+def test_admin_admin_access_update_expense_claim_status_not_found(
+    client, admin_user, read_json
+):
     response = client.put(
         "admin/expense-claims/30/status",
         json={"claim_status": "Pending"},

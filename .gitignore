@@ -6,3 +6,4 @@ test_db.sqlite3-journal
 .pytest_cache
 htmlcov
 .coverage
+/local_code
