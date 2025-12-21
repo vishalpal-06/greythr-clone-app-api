@@ -1,38 +1,32 @@
-import json
-from pathlib import Path
-
-BASE_PATH = (
-    Path(__file__).resolve().parent.parent.parent
-    / "expected_responses/manager/payslips/"
-)
-
-
-def read_json(filename):
-    with open(BASE_PATH / filename, "r") as f:
-        return json.load(f)
-
-
 # -------------------------------------------------Test User API ---------------------------------------------------
-def test_manager_get_all_my_payslips_success(client, manager_A):
+def test_manager_get_all_my_payslips_success(client, manager_A, read_json):
     response = client.get(
         "/user/my/payslips/", headers={"Authorization": f"Bearer {manager_A}"}
     )
-    expected = read_json("get_all_my_payslips_manager_A.json")
+    expected = read_json(
+        "expected_responses/manager/payslips/get_all_my_payslips_manager_A.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_manager_get_my_payslips_by_year_and_month_success(client, manager_A):
+def test_manager_get_my_payslips_by_year_and_month_success(
+    client, manager_A, read_json
+):
     response = client.get(
         "/user/my/payslips/month/2025/1",
         headers={"Authorization": f"Bearer {manager_A}"},
     )
-    expected = read_json("get_my_payslips_by_year_and_month_manager_A.json")
+    expected = read_json(
+        "expected_responses/manager/payslips/get_my_payslips_by_year_and_month_manager_A.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_manager_get_my_payslips_by_year_and_month_fot_found(client, manager_A):
+def test_manager_get_my_payslips_by_year_and_month_fot_found(
+    client, manager_A, read_json
+):
     response = client.get(
         "/user/my/payslips/month/2025/11",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -42,7 +36,7 @@ def test_manager_get_my_payslips_by_year_and_month_fot_found(client, manager_A):
 
 
 # -------------------------------------------------Test Admin API ---------------------------------------------------
-def test_manager_admin_access_create_payslips_forbidden(client, manager_A):
+def test_manager_admin_access_create_payslips_forbidden(client, manager_A, read_json):
     payload = {
         "basic_amount": 1,
         "hra": 0,
@@ -60,7 +54,9 @@ def test_manager_admin_access_create_payslips_forbidden(client, manager_A):
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_manager_admin_access_get_payslips_by_id_forbidden(client, manager_A):
+def test_manager_admin_access_get_payslips_by_id_forbidden(
+    client, manager_A, read_json
+):
     response = client.get(
         "/admin/payslips/employee/1", headers={"Authorization": f"Bearer {manager_A}"}
     )
@@ -100,7 +96,9 @@ def test_manager_admin_access_delete_payslips_by_empid_year_and_month_forbidden(
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_manager_admin_access_delete_payslips_by_id_forbidden(client, manager_A):
+def test_manager_admin_access_delete_payslips_by_id_forbidden(
+    client, manager_A, read_json
+):
     response = client.delete(
         "/admin/payslips/1", headers={"Authorization": f"Bearer {manager_A}"}
     )

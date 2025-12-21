@@ -1,19 +1,5 @@
-import json
-from pathlib import Path
-
-BASE_PATH = (
-    Path(__file__).resolve().parent.parent.parent
-    / "expected_responses/manager/expense_claim"
-)
-
-
-def read_json(filename):
-    with open(BASE_PATH / filename, "r") as f:
-        return json.load(f)
-
-
 # -------------------------------------------------Test User API ---------------------------------------------------
-def test_manager_create_expense_claim_success(client, manager_A):
+def test_manager_create_expense_claim_success(client, manager_A, read_json):
     response = client.post(
         "user/my/expense-claims/",
         json={
@@ -23,12 +9,14 @@ def test_manager_create_expense_claim_success(client, manager_A):
         },
         headers={"Authorization": f"Bearer {manager_A}"},
     )
-    expected = read_json("create_expense_manager_A.json")
+    expected = read_json(
+        "expected_responses/manager/expense_claim/create_expense_manager_A.json"
+    )
     assert response.status_code == 201
     assert response.json() == expected
 
 
-def test_manager_delete_my_expense_claim_success(client, manager_A):
+def test_manager_delete_my_expense_claim_success(client, manager_A, read_json):
     response = client.delete(
         "user/my/expense-claims/2",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -36,7 +24,9 @@ def test_manager_delete_my_expense_claim_success(client, manager_A):
     assert response.status_code == 204
 
 
-def test_manager_delete_my_expense_claim_rejected_or_approved_fails(client, manager_A):
+def test_manager_delete_my_expense_claim_rejected_or_approved_fails(
+    client, manager_A, read_json
+):
     response = client.delete(
         "user/my/expense-claims/1",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -45,7 +35,9 @@ def test_manager_delete_my_expense_claim_rejected_or_approved_fails(client, mana
     assert response.json() == {"detail": "Cannot delete approved/rejected claim"}
 
 
-def test_manager_delete_other_user_expense_claim_forbidden(client, manager_A):
+def test_manager_delete_other_user_expense_claim_forbidden(
+    client, manager_A, read_json
+):
     response = client.delete(
         "user/my/expense-claims/6",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -54,17 +46,21 @@ def test_manager_delete_other_user_expense_claim_forbidden(client, manager_A):
     assert response.json() == {"detail": "Not authorized"}
 
 
-def test_manager_get_my_expense_claim_by_id_success(client, manager_A):
+def test_manager_get_my_expense_claim_by_id_success(client, manager_A, read_json):
     response = client.get(
         "/user/my/expense-claims/1",
         headers={"Authorization": f"Bearer {manager_A}"},
     )
-    expected = read_json("get_my_expense_by_id_manager_A.json")
+    expected = read_json(
+        "expected_responses/manager/expense_claim/get_my_expense_by_id_manager_A.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_manager_get_other_user_expense_claim_by_id_forbidden(client, manager_A):
+def test_manager_get_other_user_expense_claim_by_id_forbidden(
+    client, manager_A, read_json
+):
     response = client.get(
         "/user/my/expense-claims/6",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -73,7 +69,7 @@ def test_manager_get_other_user_expense_claim_by_id_forbidden(client, manager_A)
     assert response.json() == {"detail": "Not authorized"}
 
 
-def test_manager_get_expense_claim_by_id_not_found(client, manager_A):
+def test_manager_get_expense_claim_by_id_not_found(client, manager_A, read_json):
     response = client.get(
         "/user/my/expense-claims/16",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -82,28 +78,34 @@ def test_manager_get_expense_claim_by_id_not_found(client, manager_A):
     assert response.json() == {"detail": "Expense claim not found"}
 
 
-def test_manager_get_expense_claims_by_status_success(client, manager_A):
+def test_manager_get_expense_claims_by_status_success(client, manager_A, read_json):
     response = client.get(
         "/user/my/expense-claims/status/Pending",
         headers={"Authorization": f"Bearer {manager_A}"},
     )
 
-    expected = read_json("get_my_expense_by_status_manager_A.json")
+    expected = read_json(
+        "expected_responses/manager/expense_claim/get_my_expense_by_status_manager_A.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_manager_get_expense_claims_by_year_month_success(client, manager_A):
+def test_manager_get_expense_claims_by_year_month_success(client, manager_A, read_json):
     response = client.get(
         "user/my/expense-claims/month/2025/2",
         headers={"Authorization": f"Bearer {manager_A}"},
     )
-    expected = read_json("get_my_expense_using_year_and_month_manager_A.json")
+    expected = read_json(
+        "expected_responses/manager/expense_claim/get_my_expense_using_year_and_month_manager_A.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_manager_get_expense_claims_by_year_and_month_not_found(client, manager_A):
+def test_manager_get_expense_claims_by_year_and_month_not_found(
+    client, manager_A, read_json
+):
     response = client.get(
         "user/my/expense-claims/month/2025/06",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -114,13 +116,15 @@ def test_manager_get_expense_claims_by_year_and_month_not_found(client, manager_
 
 # -------------------------------------------------Test Manager API ---------------------------------------------------
 def test_manager_manager_access_get_subordinate_expense_claim_by_id_success(
-    client, manager_A
+    client, manager_A, read_json
 ):
     response = client.get(
         "/manager/expense-claims/5",
         headers={"Authorization": f"Bearer {manager_A}"},
     )
-    expected = read_json("get_subordinate_expense_by_id_manager_A.json")
+    expected = read_json(
+        "expected_responses/manager/expense_claim/get_subordinate_expense_by_id_manager_A.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -150,26 +154,28 @@ def test_manager_manager_accessget_subordinate_expense_claims_by_year_month_empt
 
 
 def test_manager_manager_access_get_subordinate_expense_claims_by_status_empty(
-    client, manager_A
+    client, manager_A, read_json
 ):
     response = client.get(
         "manager/expense-claims/status/Pending",
         headers={"Authorization": f"Bearer {manager_A}"},
     )
-    expected = read_json("get_employee_expense_by_status_manager_A.json")
+    expected = read_json(
+        "expected_responses/manager/expense_claim/get_employee_expense_by_status_manager_A.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
 
 def test_manager_manager_access_get_subordinate_expense_claims_by_empid_year__and_month_success(
-    client, manager_A
+    client, manager_A, read_json
 ):
     response = client.get(
         "manager/expense-claims/employee/4/month/2025/4",
         headers={"Authorization": f"Bearer {manager_A}"},
     )
     expected = read_json(
-        "get_subordinate_expense_by_empid_year_and_month_manager_A.json"
+        "expected_responses/manager/expense_claim/get_subordinate_expense_by_empid_year_and_month_manager_A.json"
     )
     assert response.status_code == 200
     assert response.json() == expected
@@ -187,14 +193,16 @@ def test_manager_manager_access_get_subordinate_expense_claims_by_empid_year_and
 
 
 def test_manager_manager_access_update_subordinate_expense_claim_status_success(
-    client, manager_A
+    client, manager_A, read_json
 ):
     response = client.put(
         "/manager/expense-claims/6/status",
         json={"claim_status": "Approved"},
         headers={"Authorization": f"Bearer {manager_A}"},
     )
-    expected = read_json("update_subordinate_expense_by_id_manager_A.json")
+    expected = read_json(
+        "expected_responses/manager/expense_claim/update_subordinate_expense_by_id_manager_A.json"
+    )
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -226,7 +234,9 @@ def test_manager_manager_access_update_expense_claim_status_not_found(
 
 
 # -------------------------------------------------Test Admin API ---------------------------------------------------
-def test_manager_admin_access_get_expense_claim_by_id_forbidden(client, manager_A):
+def test_manager_admin_access_get_expense_claim_by_id_forbidden(
+    client, manager_A, read_json
+):
     response = client.get(
         "admin/expense-claims/1", headers={"Authorization": f"Bearer {manager_A}"}
     )
@@ -234,7 +244,9 @@ def test_manager_admin_access_get_expense_claim_by_id_forbidden(client, manager_
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_manager_admin_access_get_expense_claims_by_empid_forbidden(client, manager_A):
+def test_manager_admin_access_get_expense_claims_by_empid_forbidden(
+    client, manager_A, read_json
+):
     response = client.get(
         "admin/expense-claims/employee/100",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -243,7 +255,9 @@ def test_manager_admin_access_get_expense_claims_by_empid_forbidden(client, mana
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_manager_admin_access_get_expense_claims_by_status_forbidden(client, manager_A):
+def test_manager_admin_access_get_expense_claims_by_status_forbidden(
+    client, manager_A, read_json
+):
     response = client.get(
         "/admin/expense-claims/status/Pending",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -274,7 +288,9 @@ def test_manager_admin_access_get_expense_claims_by_empid_year_and_month_forbidd
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_manager_admin_access_update_expense_claim_status_forbidden(client, manager_A):
+def test_manager_admin_access_update_expense_claim_status_forbidden(
+    client, manager_A, read_json
+):
     response = client.put(
         "admin/expense-claims/1/status",
         json={"claim_status": "Approved"},
