@@ -1,27 +1,27 @@
 [
   {
-    "basic_amount": 60000,
-    "hra": 30000,
-    "special_allowance": 8000,
-    "internet_allowance": 1000,
+    "basic_amount": 60000.0,
+    "hra": 30000.0,
+    "special_allowance": 8000.0,
+    "internet_allowance": 1000.0,
     "payslip_month": "2025-03-01T00:00:00",
     "payslip_id": 6,
     "fk_employee_id": 2
   },
   {
-    "basic_amount": 60000,
-    "hra": 30000,
-    "special_allowance": 8000,
-    "internet_allowance": 1000,
+    "basic_amount": 60000.0,
+    "hra": 30000.0,
+    "special_allowance": 8000.0,
+    "internet_allowance": 1000.0,
     "payslip_month": "2025-02-01T00:00:00",
     "payslip_id": 5,
     "fk_employee_id": 2
   },
   {
-    "basic_amount": 60000,
-    "hra": 30000,
-    "special_allowance": 8000,
-    "internet_allowance": 1000,
+    "basic_amount": 60000.0,
+    "hra": 30000.0,
+    "special_allowance": 8000.0,
+    "internet_allowance": 1000.0,
     "payslip_month": "2025-01-01T00:00:00",
     "payslip_id": 4,
     "fk_employee_id": 2

@@ -1,7 +1,5 @@
-
 [
   {
-    "employee_id": 1,
     "first_name": "admin",
     "last_name": "Pal",
     "email": "admin@test.com",
@@ -10,10 +8,10 @@
     "isadmin": true,
     "fk_department_id": 1,
     "fk_role_id": 1,
-    "fk_manager_id": null
+    "fk_manager_id": null,
+    "employee_id": 1
   },
   {
-    "employee_id": 2,
     "first_name": "managerA",
     "last_name": "Pal",
     "email": "managerA@test.com",
@@ -22,10 +20,10 @@
     "isadmin": false,
     "fk_department_id": 3,
     "fk_role_id": 2,
-    "fk_manager_id": 1
+    "fk_manager_id": 1,
+    "employee_id": 2
   },
   {
-    "employee_id": 3,
     "first_name": "managerB",
     "last_name": "Pal",
     "email": "managerB@test.com",
@@ -34,10 +32,10 @@
     "isadmin": false,
     "fk_department_id": 4,
     "fk_role_id": 2,
-    "fk_manager_id": 1
+    "fk_manager_id": 1,
+    "employee_id": 3
   },
   {
-    "employee_id": 4,
     "first_name": "userA1",
     "last_name": "Pal",
     "email": "userA1@test.com",
@@ -46,10 +44,10 @@
     "isadmin": false,
     "fk_department_id": 3,
     "fk_role_id": 4,
-    "fk_manager_id": 2
+    "fk_manager_id": 2,
+    "employee_id": 4
   },
   {
-    "employee_id": 5,
     "first_name": "userA2",
     "last_name": "Pal",
     "email": "userA2@test.com",
@@ -58,10 +56,10 @@
     "isadmin": false,
     "fk_department_id": 3,
     "fk_role_id": 4,
-    "fk_manager_id": 2
+    "fk_manager_id": 2,
+    "employee_id": 5
   },
   {
-    "employee_id": 6,
     "first_name": "userB1",
     "last_name": "Pal",
     "email": "userB1@test.com",
@@ -70,10 +68,10 @@
     "isadmin": false,
     "fk_department_id": 4,
     "fk_role_id": 3,
-    "fk_manager_id": 3
+    "fk_manager_id": 3,
+    "employee_id": 6
   },
   {
-    "employee_id": 7,
     "first_name": "userB2",
     "last_name": "Pal",
     "email": "userB2@test.com",
@@ -82,6 +80,7 @@
     "isadmin": false,
     "fk_department_id": 4,
     "fk_role_id": 3,
-    "fk_manager_id": 3
+    "fk_manager_id": 3,
+    "employee_id": 7
   }
 ]

@@ -1,5 +1,5 @@
 {
-    "punch_time": "2025-10-10T04:30:00", 
-    "attendance_id": 29, 
-    "fk_employee_id": 2
+  "punch_time": "2025-10-10T04:30:00",
+  "attendance_id": 29,
+  "fk_employee_id": 2
 }

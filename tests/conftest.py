@@ -1,6 +1,3 @@
-import sys, os
-
-# Remove unused imports (e.g., json, datetime, date, all models except Base)
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -11,6 +8,8 @@ from pathlib import Path
 from main import app
 from database.models import Base
 from routers.auth import get_db
+import os
+import inspect
 
 # ... (rest of the initial setup and imports remain the same)
 
@@ -121,10 +120,53 @@ def user_B2(client):
 
 
 @pytest.fixture
-def read_json():
+def read_json(request: pytest.FixtureRequest):  # pragma: no cover
+    """
+    Smart read_json that:
+    - Loads expected JSON from file (normal mode)
+    - OR saves the current 'response.json()' to the file if UPDATE_TEST_DATA=1
+
+    Usage (no changes needed in your 500+ tests):
+        expected = read_json("path/to/expected.json")
+    """
+    update_mode = os.getenv("UPDATE_TEST_DATA") in ("1", "true", "True", "yes", "YES")
+
     def _read_json(file_name: str):
         file_path = Path(__file__).parent / file_name
-        with open(file_path) as f:
+
+        # Try to find the 'response' object in the calling test
+        response_data = None
+
+        # Walk up the call stack to find the test function frame
+        frame = inspect.currentframe()
+        while frame:
+            if "response" in frame.f_locals:
+                resp_obj = frame.f_locals["response"]
+                if hasattr(resp_obj, "json"):
+                    try:
+                        response_data = resp_obj.json()
+                        break
+                    except:
+                        pass
+            frame = frame.f_back
+
+        # Update mode: save if we found response data
+        if update_mode and response_data is not None:
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(file_path, "w", encoding="utf-8") as f:
+                json.dump(response_data, f, indent=2, ensure_ascii=False)
+                f.write("\n")
+            print(f"\nUPDATED test data: {file_path}")
+            return response_data
+
+        # Normal mode: just load the file
+        if not file_path.exists():
+            raise FileNotFoundError(
+                f"Expected file not found: {file_path}\n"
+                "Run tests with UPDATE_TEST_DATA=1 to generate it automatically."
+            )
+
+        with open(file_path, "r", encoding="utf-8") as f:
             return json.load(f)
 
     return _read_json

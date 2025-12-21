@@ -1,9 +1,9 @@
 {
-  "claim_id": 5,
-  "fk_employee_id": 4,
-  "fk_manager_id": 2,
   "claim_date": "2025-04-02T11:00:00",
   "amount": 150.0,
   "description": "Coffee supplies for A1 team pantry.",
-  "claim_status": "Approved"
+  "claim_id": 5,
+  "claim_status": "Approved",
+  "fk_employee_id": 4,
+  "fk_manager_id": 2
 }

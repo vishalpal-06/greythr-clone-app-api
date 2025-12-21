@@ -1,7 +1,7 @@
 [
   {
     "claim_date": "2025-02-05T10:00:00",
-    "amount": 350,
+    "amount": 350.0,
     "description": "Taxi fare for client meeting downtown.",
     "claim_id": 2,
     "claim_status": "Pending",
@@ -19,7 +19,7 @@
   },
   {
     "claim_date": "2025-04-25T16:00:00",
-    "amount": 2500,
+    "amount": 2500.0,
     "description": "Travel expenses for industry conference in Pune.",
     "claim_id": 6,
     "claim_status": "Pending",
@@ -28,7 +28,7 @@
   },
   {
     "claim_date": "2025-04-30T18:00:00",
-    "amount": 80,
+    "amount": 80.0,
     "description": "Parking fee during site visit.",
     "claim_id": 9,
     "claim_status": "Pending",

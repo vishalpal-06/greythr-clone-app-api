@@ -1,7 +1,7 @@
 [
   {
     "claim_date": "2025-04-25T16:00:00",
-    "amount": 2500,
+    "amount": 2500.0,
     "description": "Travel expenses for industry conference in Pune.",
     "claim_id": 6,
     "claim_status": "Pending",
@@ -10,7 +10,7 @@
   },
   {
     "claim_date": "2025-04-02T11:00:00",
-    "amount": 150,
+    "amount": 150.0,
     "description": "Coffee supplies for A1 team pantry.",
     "claim_id": 5,
     "claim_status": "Approved",

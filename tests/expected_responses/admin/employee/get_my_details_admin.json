@@ -1,12 +1,12 @@
 {
-  "first_name": "admin", 
-  "last_name": "Pal", 
-  "email": "admin@test.com", 
-  "joining_date": "2023-01-01", 
-  "address": "Kalyan", 
-  "isadmin": true, 
-  "fk_department_id": 1, 
-  "fk_role_id": 1, 
+  "first_name": "admin",
+  "last_name": "Pal",
+  "email": "admin@test.com",
+  "joining_date": "2023-01-01",
+  "address": "Kalyan",
+  "isadmin": true,
+  "fk_department_id": 1,
+  "fk_role_id": 1,
   "fk_manager_id": null,
   "employee_id": 1
 }

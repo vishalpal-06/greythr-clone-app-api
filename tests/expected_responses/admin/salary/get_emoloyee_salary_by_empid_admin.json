@@ -1,18 +1,18 @@
 [
   {
-    "lpa": 4,
+    "lpa": 4.0,
     "salary_year": 2023,
     "salary_id": 13,
     "fk_employee_id": 5
   },
   {
-    "lpa": 5,
+    "lpa": 5.0,
     "salary_year": 2024,
     "salary_id": 14,
     "fk_employee_id": 5
   },
   {
-    "lpa": 7,
+    "lpa": 7.0,
     "salary_year": 2025,
     "salary_id": 15,
     "fk_employee_id": 5

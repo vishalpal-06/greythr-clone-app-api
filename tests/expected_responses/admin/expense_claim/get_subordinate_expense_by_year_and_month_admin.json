@@ -10,7 +10,7 @@
   },
   {
     "claim_date": "2025-03-01T09:00:00",
-    "amount": 999,
+    "amount": 999.0,
     "description": "New software license subscription (monthly).",
     "claim_id": 3,
     "claim_status": "Approved",

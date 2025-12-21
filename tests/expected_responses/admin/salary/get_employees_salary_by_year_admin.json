@@ -1,42 +1,42 @@
 [
   {
-    "lpa": 25,
+    "lpa": 25.0,
     "salary_year": 2025,
     "salary_id": 3,
     "fk_employee_id": 1
   },
   {
-    "lpa": 15,
+    "lpa": 15.0,
     "salary_year": 2025,
     "salary_id": 6,
     "fk_employee_id": 2
   },
   {
-    "lpa": 15,
+    "lpa": 15.0,
     "salary_year": 2025,
     "salary_id": 9,
     "fk_employee_id": 3
   },
   {
-    "lpa": 5,
+    "lpa": 5.0,
     "salary_year": 2025,
     "salary_id": 12,
     "fk_employee_id": 4
   },
   {
-    "lpa": 7,
+    "lpa": 7.0,
     "salary_year": 2025,
     "salary_id": 15,
     "fk_employee_id": 5
   },
   {
-    "lpa": 9,
+    "lpa": 9.0,
     "salary_year": 2025,
     "salary_id": 18,
     "fk_employee_id": 6
   },
   {
-    "lpa": 5,
+    "lpa": 5.0,
     "salary_year": 2025,
     "salary_id": 21,
     "fk_employee_id": 7

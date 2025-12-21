@@ -1,8 +1,8 @@
 {
-  "basic_amount": 80000,
-  "hra": 40000,
-  "special_allowance": 10000,
-  "internet_allowance": 1500,
+  "basic_amount": 80000.0,
+  "hra": 40000.0,
+  "special_allowance": 10000.0,
+  "internet_allowance": 1500.0,
   "payslip_month": "2025-01-01T00:00:00",
   "payslip_id": 1,
   "fk_employee_id": 1
