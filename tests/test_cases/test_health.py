@@ -3,4 +3,6 @@ import json
 
 def test_health(client):
     response = client.get("/")
-    assert response.json() == {"status": "Welcome to My Grehthrapp"}
+    assert response.json() == {
+        "status": "Welcome to My Grehthrapp build by Vishal Kumar!"
+    }
