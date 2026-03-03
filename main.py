@@ -8,7 +8,7 @@ from routers.manager.manager_api import manager_router
 from routers.user.user_api import user_router
 
 app = FastAPI(
-    title="Grethr Clone API",
+    title="Grethr Clone API 12345",
     description="A simplified version of the Grethr API built with FastAPI.",
     version="1.2.0",
 )
@@ -18,7 +18,7 @@ origins = ["http://localhost:3000"]
 
 @app.get("/")
 def health_check():
-    return {"status": "Welcome to My Grehthrapp"}
+    return {"status": "Welcome to My Grehthrapp build by Vishal Kumar!"}
 
 
 app.add_middleware(
