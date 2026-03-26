@@ -9,13 +9,15 @@ on:
 jobs:
   format-check:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Run Black code formatter check
         uses: psf/black@stable
         with:
+          version: "25.11.0" 
           options: "--check"
   
   test:
