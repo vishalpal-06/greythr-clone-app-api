@@ -18,7 +18,7 @@ origins = ["http://localhost:3000"]
 
 @app.get("/")
 def health_check():
-    return {"status": "Welcome to My Grehthrapp build by Vishal Kumar Pal!"}
+    return {"status": "Welcome to My Grehthrapp build by Vishal Kumar Pall!"}
 
 
 app.add_middleware(
