@@ -16,7 +16,7 @@ jobs:
       - name: Run Black code formatter check
         uses: psf/black@stable
         with:
-          check: true
+          options: "--check"
   
   test:
     runs-on: ubuntu-latest
