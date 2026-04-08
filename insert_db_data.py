@@ -1,14 +1,22 @@
 import bcrypt
 from datetime import date
 from database.database import sessionlocal as SessionLocal
-from database.models import Department, Role, Employee, ExpenseClaim, Salary, Regularization  # Import your SQLAlchemy models
+from database.models import (
+    Department,
+    Role,
+    Employee,
+    ExpenseClaim,
+    Salary,
+    Regularization,
+)  # Import your SQLAlchemy models
+
 
 def seed_data():
     """Seed initial data into RDS MySQL"""
-    
+
     # Create session
     db = SessionLocal()
-    
+
     try:
         # Clear existing data (in reverse foreign key order)
         db.query(ExpenseClaim).delete()
@@ -19,7 +27,7 @@ def seed_data():
         db.query(Department).delete()
         db.commit()
         print("🗑️  Cleared all tables")
-        
+
         # 1. Insert Departments
         departments = [
             Department(department_name="Human Resources"),
@@ -30,7 +38,7 @@ def seed_data():
         db.add_all(departments)
         db.commit()
         print(f"✅ Inserted {len(departments)} departments")
-        
+
         # 2. Insert Roles
         roles = [
             Role(role="Manager"),
@@ -41,7 +49,7 @@ def seed_data():
         db.add_all(roles)
         db.commit()
         print(f"✅ Inserted {len(roles)} roles")
-        
+
         # 3. Insert Employees
         employees_data = [
             Employee(
@@ -51,10 +59,10 @@ def seed_data():
                 joining_date=date(2023, 5, 18),
                 address="Kalyan(E) Thane, Maharastra",
                 fk_department_id=2,  # Engineering
-                fk_role_id=1,        # Developer
+                fk_role_id=1,  # Developer
                 fk_manager_id=None,
                 isadmin=1,
-                password="Testing"   # Use bcrypt.hashpw in production
+                password="Testing",  # Use bcrypt.hashpw in production
             ),
             Employee(
                 first_name="John",
@@ -63,10 +71,10 @@ def seed_data():
                 joining_date=date(2023, 1, 15),
                 address="123 Main Street, New York",
                 fk_department_id=1,  # HR
-                fk_role_id=2,        # Manager
+                fk_role_id=2,  # Manager
                 fk_manager_id=1,
                 isadmin=0,
-                password="Testing"
+                password="Testing",
             ),
             Employee(
                 first_name="Alice",
@@ -78,7 +86,7 @@ def seed_data():
                 fk_role_id=1,
                 fk_manager_id=1,
                 isadmin=0,
-                password="Testing"
+                password="Testing",
             ),
             Employee(
                 first_name="Robert",
@@ -90,7 +98,7 @@ def seed_data():
                 fk_role_id=3,
                 fk_manager_id=2,
                 isadmin=0,
-                password="Testing"
+                password="Testing",
             ),
             Employee(
                 first_name="Emily",
@@ -102,7 +110,7 @@ def seed_data():
                 fk_role_id=2,
                 fk_manager_id=2,
                 isadmin=0,
-                password="Testing"
+                password="Testing",
             ),
             Employee(
                 first_name="David",
@@ -114,10 +122,10 @@ def seed_data():
                 fk_role_id=1,
                 fk_manager_id=1,
                 isadmin=0,
-                password="Testing"
+                password="Testing",
             ),
         ]
-        
+
         inserted_count = 0
         for emp in employees_data:
             # Check duplicate email
@@ -125,20 +133,21 @@ def seed_data():
             if existing:
                 print(f"⏭️  Skipping duplicate: {emp.email}")
                 continue
-            
+
             db.add(emp)
             inserted_count += 1
-        
+
         db.commit()
         print(f"✅ Inserted {inserted_count} employees")
-        
+
         print("🎉 Seeding complete!")
-        
+
     except Exception as e:
         print(f"❌ Error: {e}")
         db.rollback()
     finally:
         db.close()
+
 
 if __name__ == "__main__":
     seed_data()

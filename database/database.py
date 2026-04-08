@@ -21,10 +21,10 @@ SQLALCHEMY_DATABASE_URL = (
 # Production-ready MySQL engine (no SQLite-specific args)
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
-    pool_pre_ping=True,           # Validates connections before use
-    pool_recycle=3600,            # Recycle connections every hour
+    pool_pre_ping=True,  # Validates connections before use
+    pool_recycle=3600,  # Recycle connections every hour
     pool_size=int(os.getenv("DB_POOL_SIZE", 10)),
-    max_overflow=int(os.getenv("DB_MAX_OVERFLOW", 20))
+    max_overflow=int(os.getenv("DB_MAX_OVERFLOW", 20)),
 )
 
 # sessionlocal = sessionmaker(autocommit=True, autoflush=True, bind=engine)
