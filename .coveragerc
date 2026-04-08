@@ -3,6 +3,7 @@
 omit =
     tests\seed_db.py
     insert_db_data.py
+    test_db_conn.py
     database\common.py
     database\database.py
     mcp_server.py
