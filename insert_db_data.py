@@ -1,144 +1,144 @@
-import sqlite3
 import bcrypt
 from datetime import date
+from database.database import sessionlocal as SessionLocal
+from database.models import Department, Role, Employee, ExpenseClaim, Salary, Regularization  # Import your SQLAlchemy models
 
-# Connect to the SQLite database
-conn = sqlite3.connect("greythr.db")
-cursor = conn.cursor()
-cursor.execute("DELETE FROM department")
-cursor.execute("DELETE FROM role")
-cursor.execute("DELETE FROM employee")
-cursor.execute("DELETE FROM regularization")
-cursor.execute("DELETE FROM salary")
-cursor.execute("DELETE FROM expense_claim")
-# -------------------------
-# 1. Insert Departments
-# -------------------------
-departments = [("Human Resources",), ("Finance",), ("Engineering",), ("Sales",)]
+def seed_data():
+    """Seed initial data into RDS MySQL"""
+    
+    # Create session
+    db = SessionLocal()
+    
+    try:
+        # Clear existing data (in reverse foreign key order)
+        db.query(ExpenseClaim).delete()
+        db.query(Salary).delete()
+        db.query(Regularization).delete()
+        db.query(Employee).delete()
+        db.query(Role).delete()
+        db.query(Department).delete()
+        db.commit()
+        print("🗑️  Cleared all tables")
+        
+        # 1. Insert Departments
+        departments = [
+            Department(department_name="Human Resources"),
+            Department(department_name="Finance"),
+            Department(department_name="Engineering"),
+            Department(department_name="Sales"),
+        ]
+        db.add_all(departments)
+        db.commit()
+        print(f"✅ Inserted {len(departments)} departments")
+        
+        # 2. Insert Roles
+        roles = [
+            Role(role="Manager"),
+            Role(role="Developer"),
+            Role(role="Accountant"),
+            Role(role="HR Executive"),
+        ]
+        db.add_all(roles)
+        db.commit()
+        print(f"✅ Inserted {len(roles)} roles")
+        
+        # 3. Insert Employees
+        employees_data = [
+            Employee(
+                first_name="Vishu",
+                last_name="Pal",
+                email="vishalpal0602@gmail.com",
+                joining_date=date(2023, 5, 18),
+                address="Kalyan(E) Thane, Maharastra",
+                fk_department_id=2,  # Engineering
+                fk_role_id=1,        # Developer
+                fk_manager_id=None,
+                isadmin=1,
+                password="Testing"   # Use bcrypt.hashpw in production
+            ),
+            Employee(
+                first_name="John",
+                last_name="Doe",
+                email="john.doe123@example.com",
+                joining_date=date(2023, 1, 15),
+                address="123 Main Street, New York",
+                fk_department_id=1,  # HR
+                fk_role_id=2,        # Manager
+                fk_manager_id=1,
+                isadmin=0,
+                password="Testing"
+            ),
+            Employee(
+                first_name="Alice",
+                last_name="Smith",
+                email="alice.smith@example.com",
+                joining_date=date(2023, 2, 10),
+                address="456 Park Avenue, Chicago",
+                fk_department_id=2,
+                fk_role_id=1,
+                fk_manager_id=1,
+                isadmin=0,
+                password="Testing"
+            ),
+            Employee(
+                first_name="Robert",
+                last_name="Brown",
+                email="robert.brown@example.com",
+                joining_date=date(2023, 3, 5),
+                address="789 Broadway, Los Angeles",
+                fk_department_id=1,
+                fk_role_id=3,
+                fk_manager_id=2,
+                isadmin=0,
+                password="Testing"
+            ),
+            Employee(
+                first_name="Emily",
+                last_name="Johnson",
+                email="emily.johnson@example.com",
+                joining_date=date(2023, 4, 20),
+                address="101 Pine Street, San Francisco",
+                fk_department_id=3,
+                fk_role_id=2,
+                fk_manager_id=2,
+                isadmin=0,
+                password="Testing"
+            ),
+            Employee(
+                first_name="David",
+                last_name="Williams",
+                email="david.williams@example.com",
+                joining_date=date(2023, 5, 18),
+                address="202 Oak Street, Seattle",
+                fk_department_id=2,
+                fk_role_id=1,
+                fk_manager_id=1,
+                isadmin=0,
+                password="Testing"
+            ),
+        ]
+        
+        inserted_count = 0
+        for emp in employees_data:
+            # Check duplicate email
+            existing = db.query(Employee).filter(Employee.email == emp.email).first()
+            if existing:
+                print(f"⏭️  Skipping duplicate: {emp.email}")
+                continue
+            
+            db.add(emp)
+            inserted_count += 1
+        
+        db.commit()
+        print(f"✅ Inserted {inserted_count} employees")
+        
+        print("🎉 Seeding complete!")
+        
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        db.rollback()
+    finally:
+        db.close()
 
-cursor.executemany("INSERT INTO department (department_name) VALUES (?)", departments)
-print(f"✅ Inserted {len(departments)} departments.")
-
-# -------------------------
-# 2. Insert Roles
-# -------------------------
-roles = [("Manager",), ("Developer",), ("Accountant",), ("HR Executive",)]
-
-cursor.executemany("INSERT INTO role (role) VALUES (?)", roles)
-print(f"✅ Inserted {len(roles)} roles.")
-
-# -------------------------
-# 3. Insert Employees
-# -------------------------
-
-employees_data = [
-    [
-        "Vishu",
-        "Pal",
-        "vishalpal0602@gmail.com",
-        date(2023, 5, 18),
-        "Kalyan(E) Thane, Maharastra",
-        2,
-        1,
-        None,
-        1,
-    ],
-    [
-        "John",
-        "Doe",
-        "john.doe123@example.com",
-        date(2023, 1, 15),
-        "123 Main Street, New York",
-        1,
-        2,
-        1,
-        0,
-    ],
-    [
-        "Alice",
-        "Smith",
-        "alice.smith@example.com",
-        date(2023, 2, 10),
-        "456 Park Avenue, Chicago",
-        2,
-        1,
-        1,
-        0,
-    ],
-    [
-        "Robert",
-        "Brown",
-        "robert.brown@example.com",
-        date(2023, 3, 5),
-        "789 Broadway, Los Angeles",
-        1,
-        2,
-        2,
-        0,
-    ],
-    [
-        "Emily",
-        "Johnson",
-        "emily.johnson@example.com",
-        date(2023, 4, 20),
-        "101 Pine Street, San Francisco",
-        3,
-        2,
-        2,
-        0,
-    ],
-    [
-        "David",
-        "Williams",
-        "david.williams@example.com",
-        date(2023, 5, 18),
-        "202 Oak Street, Seattle",
-        2,
-        1,
-        2,
-        0,
-    ],
-]
-
-
-insert_query = """
-INSERT INTO employee (first_name, last_name, email, joining_date, address, fk_department_id, fk_role_id, fk_manager_id, isadmin, password)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-"""
-
-default_hire_date = date.today().isoformat()
-inserted_count = 0
-skipped_count = 0
-
-for emp in employees_data:
-    # Check for duplicate email
-    # cursor.execute("SELECT email FROM employee WHERE email = ?", (emp[2],))
-    if cursor.fetchone():
-        print(f"Skipping duplicate email: {emp[2]}")
-        skipped_count += 1
-        continue
-
-    # Insert employee
-    cursor.execute(
-        insert_query,
-        (
-            emp[0],
-            emp[1],
-            emp[2],
-            emp[3],
-            emp[4],
-            emp[5],
-            emp[6],
-            emp[7],
-            emp[8],
-            "Testing",
-        ),
-    )
-    inserted_count += 1
-
-# # Commit changes
-conn.commit()
-print(f"✅ Inserted {inserted_count} employees. Skipped {skipped_count} duplicates.")
-
-# Close connection
-conn.close()
+if __name__ == "__main__":
+    seed_data()
