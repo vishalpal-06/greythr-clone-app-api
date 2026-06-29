@@ -35,4 +35,5 @@ app.include_router(admin_router)
 app.include_router(manager_router)
 app.include_router(user_router)
 
-models.Base.metadata.create_all(bind=engine)
+if __name__ == "__main__":
+    models.Base.metadata.create_all(bind=engine)
