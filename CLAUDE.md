@@ -477,7 +477,7 @@ Each module owns one domain and exposes employee/manager/admin variants of read/
 - `fk_manager_id` set to employee's manager at creation (line 33). Fails if employee has no manager (lines 27–28).
 - Only Pending claims are user-deletable (line 46).
 - Manager can update status only if `fk_manager_id == user["id"]`; admin can override.
-- `updated_at = datetime.utcnow()` only on status change.
+- `updated_at = datetime.now(timezone.utc)` only on status change.
 - **No budget/limit validation**. Amount is Float.
 
 ### `common/regularization.py`
