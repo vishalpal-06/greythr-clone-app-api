@@ -1,24 +1,40 @@
-# GitHub README.md for GreytHR Clone API
-
-Here's the extracted and reformatted content for your README.md:
-
-```markdown
 # GreytHR Clone API 🏢
 
-A Greythr/greytHR HR-platform clone exposed as a **FastAPI** service backed by 
-**SQLAlchemy** and validated through **Pydantic**. Covers core HR operations with 
-role-scoped API surfaces authenticated via JWT bearer tokens.
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/) [![FastAPI](https://img.shields.io/badge/FastAPI-0.124.0-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/) [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/) [![AWS ECS](https://img.shields.io/badge/AWS-ECS%20Fargate-FF9900?logo=amazonaws&logoColor=white)](https://aws.amazon.com/ecs/) 
 
-> Built by **Vishal Kumar Pal**
+A **GreytHR/greytHR HR-platform clone** exposed as a **FastAPI** service, backed by **SQLAlchemy** and validated through **Pydantic**.
+
+The project provides role-scoped HR APIs for **Admin, Manager, and User** workflows, secured with **JWT bearer authentication**, with an additional **MCP + LangGraph AI agent** integration and a **Streamlit chatbot UI**.
+
+> **Built by Vishal Kumar Pal**
 
 ---
 
-## 🚀 Live Demo & Docs
+## 🚀 Local Demo & Docs
 
-- **API Base**: `http://localhost:8000`
-- **Swagger UI**: `http://localhost:8000/docs`
-- **Health Check**: `GET /` → `{"status": "Welcome to My Grehthrapp By Vishal Kumar Pal"}`
-- **Streamlit UI**: `http://localhost:8501`
+- 🌐 **API Base**: `http://localhost:8000`
+- 📚 **Swagger UI**: `http://localhost:8000/docs`
+- ❤️ **Health Check**: `GET /` → `{"status": "Welcome to My Grehthrapp By Vishal Kumar Pal"}`
+- 💬 **Streamlit UI**: `http://localhost:8501`
+
+---
+
+## 📌 Overview
+
+This project covers core HR operations including:
+
+- 👥 Employee management
+- 🏛️ Department and role management
+- ⏰ Attendance tracking
+- 📝 Leave management and approvals
+- 💰 Salary and payslip management
+- 🧾 Expense claims
+- 🔄 Attendance regularization
+- 🔐 JWT-based authentication
+- 🤖 AI agent integration through MCP, LangGraph, Claude, and Gemini
+- 🐳 Docker-based deployment
+- ☁️ AWS ECS Fargate deployment
+- ⚙️ GitHub Actions CI/CD
 
 ---
 
@@ -100,23 +116,58 @@ greythr-clone-app-api/
 
 ## 🏗️ Architecture
 
+```mermaid
+flowchart LR
+    A[Client / Swagger / Streamlit] --> B[FastAPI]
+    B --> C[Role-Based Routers]
+    C --> D[Common Business Logic]
+    D --> E[SQLAlchemy]
+    E --> F[(SQLite / MySQL)]
+
+    G[AI Agent] --> H[MCP Client]
+    H --> I[MCP Server]
+    I --> B
+
+    J[GitHub Actions] --> K[Docker Image]
+    K --> L[AWS ECR]
+    L --> M[AWS ECS Fargate]
 ```
-┌─────────────┐    ┌──────────────┐    ┌──────────────────┐
-│   Routers   │───▶│   Common     │───▶│    Database      │
-│  (HTTP +    │    │  (Business   │    │  (SQLAlchemy     │
-│   Auth DI)  │    │   Logic)     │    │   Models)        │
-└─────────────┘    └──────────────┘    └──────────────────┘
+
+### Three-Layer Application Design
+
+```text
+┌──────────────────────────┐
+│        Routers           │
+│ HTTP + Auth + DI         │
+└────────────┬─────────────┘
+             │
+             ▼
+┌──────────────────────────┐
+│        Common            │
+│ Business Logic           │
+│ Authorization / CRUD     │
+└────────────┬─────────────┘
+             │
+             ▼
+┌──────────────────────────┐
+│        Database          │
+│ SQLAlchemy + ORM Models  │
+└──────────────────────────┘
 ```
 
-**Three-layer design:**
-1. **Routers** — HTTP concerns, dependency injection, role-based routing
-2. **Common** — Authorization, CRUD orchestration, computed fields
-3. **Database** — SQLAlchemy engine, session, and ORM models
+1. **Routers** — HTTP concerns, dependency injection, and role-based routing
+2. **Common** — Authorization, CRUD orchestration, and computed fields
+3. **Database** — SQLAlchemy engine, sessions, and ORM models
 
-### Role-Based API Surfaces
+### Role-Based API Access
 
-| Mount | Role | Access Scope |
-|-------|------|-------------|
+| API Mount | Role | Access Scope |
+|---|---|---|
+| `/admin` | 👑 Admin (`is_admin=True`) | All records across all employees |
+| `/manager` | 👔 Manager (authenticated user) | Direct reports only |
+| `/user` | 👤 User (authenticated user) | Own records only (`/user/my/*`) |
+
+-------|------|-------------|
 | `/admin` | Admin (`is_admin=True`) | All records across all employees |
 | `/manager` | Manager (any auth user) | Direct reports only |
 | `/user` | User (any auth user) | Own records only (`/user/my/*`) |
@@ -203,6 +254,8 @@ greythr-clone-app-api/
 
 </details>
 
+> 💡 For complete request/response schemas and interactive documentation, run the API and open `http://localhost:8000/docs`.
+
 ---
 
 ## ⚙️ Setup & Installation
@@ -230,6 +283,8 @@ pip install -r requirements.txt
 ```bash
 cp .env.example .env   # create from example
 ```
+
+> 🔐 **Security:** Never commit real API keys, database passwords, or production secrets to GitHub.
 
 Edit `.env`:
 
@@ -426,45 +481,12 @@ Deploy to AWS ECS (Fargate)
 | Synchronous SQLAlchemy blocks async event loop | 🟡 Medium |
 | CORS allows only `http://localhost:3000` | 🟡 Medium |
 
----
-
-## 📄 License
-
-MIT License — see [LICENSE](LICENSE) for details.
-
----
 
 ## 👨‍💻 Author
 
 **Vishal Kumar Pal** — GreytHR Clone API
 
----
 
-*Generated with Claude Code* 🤖
-```
-
----
-
-## 💡 Tips for Your README
-
-| Section | Action |
-|---------|--------|
-| Add **badges** | shields.io for build status, coverage, Python version |
-| Add **screenshots** | Swagger UI, Streamlit UI screenshots |
-| Add **contributing guide** | `CONTRIBUTING.md` link |
-| Remove known limitations | Or move to `ISSUES.md` if public repo |
-| Add `.env.example` | So users know what vars to set |
-
-
-
-```
-pytest --disable-warnings
-pytest --cov=.
-coverage html
-```
-
-## 🎥 MCP Demo Video
-<a href="https://youtu.be/mjdOBh3INZs" target="_blank">
-  <img src="https://img.youtube.com/vi/mjdOBh3INZs/0.jpg" width="100%" />
-</a>
-
+<div align="center">
+⭐ If you find this project useful, consider giving it a star!
+</div>
