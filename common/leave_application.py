@@ -37,7 +37,7 @@ def create_leave_application(
         total_days=total_days,
         fk_employee_id=user["id"],
         fk_manager_id=emp.fk_manager_id,
-        leave_status=Status.Pending
+        leave_status=Status.Pending,
     )
     db.add(app)
     db.commit()

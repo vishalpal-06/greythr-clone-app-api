@@ -35,7 +35,7 @@ def create_regularization(
         **reg_in.model_dump(),
         fk_employee_id=user["id"],
         fk_manager_id=emp.fk_manager_id,
-        regularization_status=Status.Pending
+        regularization_status=Status.Pending,
     )
     db.add(reg)
     db.commit()

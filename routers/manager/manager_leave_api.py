@@ -10,7 +10,6 @@ import schema.leave_schema as leave_schema
 from routers.auth import db_dependency, user_dependency
 from common.employee import get_subordinate_by_id
 
-
 router = APIRouter(prefix="/leaves", tags=["Manager - Leave"])
 
 
