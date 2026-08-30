@@ -95,12 +95,10 @@ jobs:
           response=$(curl -s http://localhost:8000/)
           echo "Response: $response"
 
-          echo "$response" | grep -q '"status": "Welcome to My Grehthrapp By Vishal K. Pal"'
-
-          if [ $? -eq 0 ]; then
+          if echo "$response" | grep -q '"status":"Welcome to My Grehthrapp By Vishal K. Pal"'; then
             echo "✅ Health check passed"
           else
-            echo "❌ Health check failed – unexpected response"
+            echo "❌ Health check failed - unexpected response"
             docker logs fastapi-app
             exit 1
           fi
