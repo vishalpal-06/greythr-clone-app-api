@@ -1,23 +1,20 @@
 # common/leave_application.py
+from datetime import UTC, datetime
+
+from fastapi import HTTPException
+from sqlalchemy import extract
 from sqlalchemy.orm import Session
-from database.models import LeaveApplication, Employee
+
+from database.models import Employee, LeaveApplication
 from schema.leave_application_schema import (
     LeaveApplicationCreate,
     LeaveApplicationStatusUpdate,
     Status,
 )
-from fastapi import HTTPException, status
-from datetime import datetime, timezone
-from typing import List
-from sqlalchemy import extract
 
 
 def _get_leave_app_or_404(db: Session, app_id: int) -> LeaveApplication:
-    app = (
-        db.query(LeaveApplication)
-        .filter(LeaveApplication.leave_application_id == app_id)
-        .first()
-    )
+    app = db.query(LeaveApplication).filter(LeaveApplication.leave_application_id == app_id).first()
     if not app:
         raise HTTPException(status_code=404, detail="Leave application not found")
     return app
@@ -50,16 +47,14 @@ def delete_leave_application(db: Session, app_id: int, user: dict) -> None:
     if app.fk_employee_id != user["id"]:
         raise HTTPException(status_code=403, detail="Not authorized")
     if app.leave_status != Status.Pending:
-        raise HTTPException(
-            status_code=400, detail="Cannot delete approved/rejected leave"
-        )
+        raise HTTPException(status_code=400, detail="Cannot delete approved/rejected leave")
     db.delete(app)
     db.commit()
 
 
 def get_my_applications_by_status(
     db: Session, user: dict, status: Status
-) -> List[LeaveApplication]:
+) -> list[LeaveApplication]:
     return (
         db.query(LeaveApplication)
         .filter(
@@ -80,7 +75,7 @@ def get_my_application_by_id(db: Session, app_id: int, user: dict) -> LeaveAppli
 
 def get_my_applications_by_month(
     db: Session, year: int, month: int, user: dict
-) -> List[LeaveApplication]:
+) -> list[LeaveApplication]:
     return (
         db.query(LeaveApplication)
         .filter(
@@ -98,7 +93,7 @@ def get_application_by_id_admin(db: Session, app_id: int) -> LeaveApplication:
     return _get_leave_app_or_404(db, app_id)
 
 
-def get_all_by_employee_admin(db: Session, emp_id: int) -> List[LeaveApplication]:
+def get_all_by_employee_admin(db: Session, emp_id: int) -> list[LeaveApplication]:
     apps = (
         db.query(LeaveApplication)
         .filter(LeaveApplication.fk_employee_id == emp_id)
@@ -110,9 +105,7 @@ def get_all_by_employee_admin(db: Session, emp_id: int) -> List[LeaveApplication
     return apps
 
 
-def get_all_by_month_admin(
-    db: Session, year: int, month: int
-) -> List[LeaveApplication]:
+def get_all_by_month_admin(db: Session, year: int, month: int) -> list[LeaveApplication]:
     apps = (
         db.query(LeaveApplication)
         .filter(
@@ -131,16 +124,14 @@ def admin_update_status(
 ) -> LeaveApplication:
     app = _get_leave_app_or_404(db, app_id)
     app.leave_status = update.leave_status
-    app.updated_at = datetime.now(timezone.utc)
+    app.updated_at = datetime.now(UTC)
     db.commit()
     db.refresh(app)
     return app
 
 
 # Manager
-def get_manager_application_by_id(
-    db: Session, app_id: int, user: dict
-) -> LeaveApplication:
+def get_manager_application_by_id(db: Session, app_id: int, user: dict) -> LeaveApplication:
     app = _get_leave_app_or_404(db, app_id)
     if app.fk_manager_id != user["id"]:
         raise HTTPException(
@@ -151,7 +142,7 @@ def get_manager_application_by_id(
 
 def get_manager_applications_by_status(
     db: Session, status: Status, user: dict
-) -> List[LeaveApplication]:
+) -> list[LeaveApplication]:
     return (
         db.query(LeaveApplication)
         .filter(
@@ -165,7 +156,7 @@ def get_manager_applications_by_status(
 
 def get_manager_applications_by_month(
     db: Session, year: int, month: int, user: dict
-) -> List[LeaveApplication]:
+) -> list[LeaveApplication]:
     return (
         db.query(LeaveApplication)
         .filter(
@@ -179,7 +170,7 @@ def get_manager_applications_by_month(
 
 def get_manager_applications_by_employee(
     db: Session, emp_id: int, user: dict
-) -> List[LeaveApplication]:
+) -> list[LeaveApplication]:
     from common.employee import get_subordinate_by_id
 
     get_subordinate_by_id(employee_id=emp_id, db=db, user=user)
@@ -196,7 +187,7 @@ def manager_update_status(
 ) -> LeaveApplication:
     app = get_manager_application_by_id(db, app_id, user)
     app.leave_status = update.leave_status
-    app.updated_at = datetime.now(timezone.utc)
+    app.updated_at = datetime.now(UTC)
     db.commit()
     db.refresh(app)
     return app

@@ -1,13 +1,11 @@
-# -------------------------------------------------Test User API ---------------------------------------------------
+# -----------------------------------Test User API -----------------------------------
 def test_manager_create_my_attendance_success(client, manager_A, read_json):
     response = client.post(
         "user/my/attendance/",
         json={"punch_time": "2025-10-10T04:30:00.000Z"},
         headers={"Authorization": f"Bearer {manager_A}"},
     )
-    expected = read_json(
-        "expected_responses/manager/attendance/create_attendance_manager_A.json"
-    )
+    expected = read_json("expected_responses/manager/attendance/create_attendance_manager_A.json")
     assert response.status_code == 201
     assert response.json() == expected
 
@@ -45,7 +43,7 @@ def test_manager_get_my_attendance_by_date_not_found(client, manager_A, read_jso
     assert response.json() == []
 
 
-# -------------------------------------------------Test Manager API ---------------------------------------------------
+# -----------------------------------Test Manager API -----------------------------------
 
 
 def test_manager_manager_access_get_subordinate_attendance_by_date_success(
@@ -62,9 +60,7 @@ def test_manager_manager_access_get_subordinate_attendance_by_date_success(
     assert response.json() == expected
 
 
-def test_manager_manager_access_get_subordinate_attendance_by_date_success_empty(
-    client, manager_A
-):
+def test_manager_manager_access_get_subordinate_attendance_by_date_success_empty(client, manager_A):
     response = client.get(
         "manager/attendance/date/2023-04-22",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -98,9 +94,7 @@ def test_manager_manager_access_get_subordinate_attendance_by_empid_and_date_non
     assert response.json() == []
 
 
-def test_manager_manager_access_get_attendance_by_empid_and_date_nonsubordinate(
-    client, manager_A
-):
+def test_manager_manager_access_get_attendance_by_empid_and_date_nonsubordinate(client, manager_A):
     response = client.get(
         "manager/attendance/employee/6/date/2025-11-25",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -109,12 +103,10 @@ def test_manager_manager_access_get_attendance_by_empid_and_date_nonsubordinate(
     assert response.json() == {"detail": "Employee not found under your management"}
 
 
-# -------------------------------------------------Test Admin API ---------------------------------------------------
+# ------------------------------Test Admin API -------------------------------
 
 
-def test_manager_admin_access_get_all_attendance_list_forbidden(
-    client, manager_A, read_json
-):
+def test_manager_admin_access_get_all_attendance_list_forbidden(client, manager_A, read_json):
     response = client.get(
         "/admin/attendance/",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -123,9 +115,7 @@ def test_manager_admin_access_get_all_attendance_list_forbidden(
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_manager_admin_access_get_attendance_by_date_forbidden(
-    client, manager_A, read_json
-):
+def test_manager_admin_access_get_attendance_by_date_forbidden(client, manager_A, read_json):
     response = client.get(
         "admin/attendance/date/2025-11-27",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -134,9 +124,7 @@ def test_manager_admin_access_get_attendance_by_date_forbidden(
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_manager_admin_access_get_attendance_by_empid_and_date_forbidden(
-    client, manager_A
-):
+def test_manager_admin_access_get_attendance_by_empid_and_date_forbidden(client, manager_A):
     response = client.get(
         "admin/attendance/employee/120/date/2025-11-27",
         headers={"Authorization": f"Bearer {manager_A}"},
@@ -145,9 +133,7 @@ def test_manager_admin_access_get_attendance_by_empid_and_date_forbidden(
     assert response.json() == {"detail": "Admin privileges required"}
 
 
-def test_manager_admin_access_get_attendance_by_empid_forbidden(
-    client, manager_A, read_json
-):
+def test_manager_admin_access_get_attendance_by_empid_forbidden(client, manager_A, read_json):
     response = client.get(
         "/admin/attendance/employee/3",
         headers={"Authorization": f"Bearer {manager_A}"},

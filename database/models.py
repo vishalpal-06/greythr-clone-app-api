@@ -1,20 +1,21 @@
-import enum
+from enum import StrEnum
+
 from sqlalchemy import (
+    Boolean,
     Column,
-    Integer,
-    String,
     DateTime,
+    Enum,
     Float,
     ForeignKey,
-    Boolean,
-    Enum,
+    Integer,
+    String,
 )
-from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 
 
-class Status(str, enum.Enum):
+class Status(StrEnum):
     Pending = "Pending"
     Approved = "Approved"
     Rejected = "Rejected"
@@ -65,9 +66,7 @@ class Employee(Base):
 
     department = relationship("Department", back_populates="employees")
     role = relationship("Role", back_populates="employees")
-    manager = relationship(
-        "Employee", remote_side=[employee_id], backref="subordinates"
-    )
+    manager = relationship("Employee", remote_side=[employee_id], backref="subordinates")
 
     # Relationships to other tables
     payslips = relationship("Payslip", back_populates="employee")

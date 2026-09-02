@@ -1,7 +1,7 @@
 # schema/attendance_schema.py
-from pydantic import BaseModel, ConfigDict
 from datetime import datetime
-from typing import Optional
+
+from pydantic import BaseModel, ConfigDict
 
 
 class AttendanceBase(BaseModel):

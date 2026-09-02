@@ -1,4 +1,4 @@
-# -------------------------------------------------Test Manager API ---------------------------------------------------
+# -----------------------------------Test Manager API -----------------------------------
 def test_admin_create_my_regularization_fail(client, admin_user, read_json):
     payload = {
         "regularization_start_time": "2025-11-30T10:00:00.000Z",
@@ -14,7 +14,7 @@ def test_admin_create_my_regularization_fail(client, admin_user, read_json):
     assert response.json() == {"detail": "You have no manager assigned"}
 
 
-# -------------------------------------------------Test Manager API ---------------------------------------------------
+# -----------------------------------Test Manager API -----------------------------------
 def test_admin_access_manager_get_subordinate_regularization_by_status_success(
     client, admin_user, read_json
 ):
@@ -51,9 +51,7 @@ def test_admin_access_manager_get_subordinate_regularization_by_id_forbidden(
         headers={"Authorization": f"Bearer {admin_user}"},
     )
     assert response.status_code == 403
-    assert response.json() == {
-        "detail": "Regularization not found under your management"
-    }
+    assert response.json() == {"detail": "Regularization not found under your management"}
 
 
 def test_admin_access_manager_get_subordinate_regularization_by_id_not_found(
@@ -127,9 +125,7 @@ def test_admin_access_manager_update_regularization_status_by_id_forbidden(
         headers={"Authorization": f"Bearer {admin_user}"},
     )
     assert response.status_code == 403
-    assert response.json() == {
-        "detail": "Regularization not found under your management"
-    }
+    assert response.json() == {"detail": "Regularization not found under your management"}
 
 
 def test_admin_access_manager_update_regularization_status_by_id_not_found(
@@ -144,10 +140,8 @@ def test_admin_access_manager_update_regularization_status_by_id_not_found(
     assert response.json() == {"detail": "Regularization request not found"}
 
 
-# -------------------------------------------------Test Admin API ---------------------------------------------------
-def test_admin_access_admin_get_regularization_by_id_success(
-    client, admin_user, read_json
-):
+# ------------------------------Test Admin API -------------------------------
+def test_admin_access_admin_get_regularization_by_id_success(client, admin_user, read_json):
     response = client.get(
         "/admin/regularizations/1", headers={"Authorization": f"Bearer {admin_user}"}
     )
@@ -158,9 +152,7 @@ def test_admin_access_admin_get_regularization_by_id_success(
     assert response.json() == expected
 
 
-def test_admin_access_admin_get_regularization_by_id_not_found(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_get_regularization_by_id_not_found(client, admin_user, read_json):
     response = client.get(
         "/admin/regularizations/100", headers={"Authorization": f"Bearer {admin_user}"}
     )
@@ -168,9 +160,7 @@ def test_admin_access_admin_get_regularization_by_id_not_found(
     assert response.json() == {"detail": "Regularization request not found"}
 
 
-def test_admin_access_admin_update_regularization_by_id_success(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_update_regularization_by_id_success(client, admin_user, read_json):
     response = client.put(
         "/admin/regularizations/1/status",
         json={"regularization_status": "Rejected"},
@@ -183,9 +173,7 @@ def test_admin_access_admin_update_regularization_by_id_success(
     assert response.json() == expected
 
 
-def test_admin_access_admin_update_regularization_by_id_not_found(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_update_regularization_by_id_not_found(client, admin_user, read_json):
     response = client.put(
         "/admin/regularizations/100/status",
         json={"regularization_status": "Rejected"},

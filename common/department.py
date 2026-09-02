@@ -1,16 +1,14 @@
 # common/department.py
-from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
-from database.models import Department
-from typing import Dict, Any
-from routers.auth import db_dependency, user_dependency
+
+from fastapi import HTTPException
+
 from common.common import _require_admin
+from database.models import Department
+from routers.auth import db_dependency, user_dependency
 
 
 def _get_department_by_id(db: db_dependency, department_id: int) -> Department:
-    department = (
-        db.query(Department).filter(Department.department_id == department_id).first()
-    )
+    department = db.query(Department).filter(Department.department_id == department_id).first()
     if not department:
         raise HTTPException(status_code=404, detail="Department not found")
     return department
@@ -37,16 +35,10 @@ def get_department_by_id(db: db_dependency, department_id: int):
 
 
 # === ADMIN: CREATE ===
-def create_department(
-    db: db_dependency, department_name: str, user: dict
-) -> Department:
+def create_department(db: db_dependency, department_name: str, user: dict) -> Department:
     _require_admin(user)
     department_name = department_name.strip()
-    if (
-        db.query(Department)
-        .filter(Department.department_name.ilike(department_name))
-        .first()
-    ):
+    if db.query(Department).filter(Department.department_name.ilike(department_name)).first():
         raise HTTPException(status_code=400, detail="Department already exists")
 
     new_department = Department(department_name=department_name)
@@ -71,9 +63,7 @@ def update_department_by_id(
         )
         .first()
     ):
-        raise HTTPException(
-            status_code=400, detail="Department with this name already exists"
-        )
+        raise HTTPException(status_code=400, detail="Department with this name already exists")
 
     department.department_name = new_name
     db.commit()
@@ -92,9 +82,7 @@ def update_department_by_name(
 
     new_name = new_department_name.strip()
     if db.query(Department).filter(Department.department_name.ilike(new_name)).first():
-        raise HTTPException(
-            status_code=400, detail="Department with this name already exists"
-        )
+        raise HTTPException(status_code=400, detail="Department with this name already exists")
 
     department.department_name = new_name
     db.commit()
@@ -102,9 +90,7 @@ def update_department_by_name(
 
 
 # === ADMIN: DELETE BY ID ===
-def delete_department_by_id(
-    db: db_dependency, department_id: int, user: dict
-) -> Dict[str, str]:
+def delete_department_by_id(db: db_dependency, department_id: int, user: dict) -> dict[str, str]:
     _require_admin(user)
     department = _get_department_by_id(db, department_id)
     db.delete(department)
@@ -115,7 +101,7 @@ def delete_department_by_id(
 # === ADMIN: DELETE BY NAME ===
 def delete_department_by_name(
     db: db_dependency, department_name: str, user: dict
-) -> Dict[str, str]:
+) -> dict[str, str]:
     _require_admin(user)
     department = _get_department_by_name(db, department_name)
     db.delete(department)

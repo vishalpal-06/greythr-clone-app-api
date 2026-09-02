@@ -1,11 +1,11 @@
 # common/payslip.py
+
+from fastapi import HTTPException
+from sqlalchemy import extract
 from sqlalchemy.orm import Session
+
 from database.models import Payslip
 from schema.payslip_schema import PayslipCreate
-from fastapi import HTTPException, status
-from typing import List
-from datetime import datetime
-from sqlalchemy import extract
 
 
 def _get_payslip_or_404(db: Session, payslip_id: int) -> Payslip:
@@ -28,7 +28,10 @@ def create_payslip(db: Session, payslip_in: PayslipCreate) -> Payslip:
     if exists:
         raise HTTPException(
             status_code=409,
-            detail=f"Payslip already exists for employee {payslip_in.fk_employee_id} in {payslip_in.payslip_month.strftime('%B %Y')}",
+            detail=(
+                f"Payslip already exists for employee "
+                f"{payslip_in.fk_employee_id} in {payslip_in.payslip_month.strftime('%B %Y')}",
+            ),
         )
 
     db_payslip = Payslip(**payslip_in.model_dump())
@@ -38,7 +41,7 @@ def create_payslip(db: Session, payslip_in: PayslipCreate) -> Payslip:
     return db_payslip
 
 
-def get_payslips_by_employee(db: Session, employee_id: int) -> List[Payslip]:
+def get_payslips_by_employee(db: Session, employee_id: int) -> list[Payslip]:
     payslips = (
         db.query(Payslip)
         .filter(Payslip.fk_employee_id == employee_id)
@@ -46,13 +49,11 @@ def get_payslips_by_employee(db: Session, employee_id: int) -> List[Payslip]:
         .all()
     )
     if not payslips:
-        raise HTTPException(
-            status_code=404, detail="No payslips found for this employee"
-        )
+        raise HTTPException(status_code=404, detail="No payslips found for this employee")
     return payslips
 
 
-def get_payslips_by_month(db: Session, year: int, month: int) -> List[Payslip]:
+def get_payslips_by_month(db: Session, year: int, month: int) -> list[Payslip]:
     payslips = (
         db.query(Payslip)
         .filter(
@@ -62,9 +63,7 @@ def get_payslips_by_month(db: Session, year: int, month: int) -> List[Payslip]:
         .all()
     )
     if not payslips:
-        raise HTTPException(
-            status_code=404, detail=f"No payslips found for {year}-{month:02d}"
-        )
+        raise HTTPException(status_code=404, detail=f"No payslips found for {year}-{month:02d}")
     return payslips
 
 

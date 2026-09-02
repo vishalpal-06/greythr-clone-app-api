@@ -1,22 +1,23 @@
 # api/manager_regularization_api.py
+
 from fastapi import APIRouter
-from typing import List
+
+from common.regularization import (
+    get_manager_pending_regularizations,
+    get_manager_regularization_by_id,
+    get_manager_regularizations_for_employee,
+    manager_update_regularization_status,
+)
+from routers.auth import db_dependency, user_dependency
 from schema.regularization_schema import (
     RegularizationResponse,
     RegularizationStatusUpdate,
-)
-from routers.auth import db_dependency, user_dependency
-from common.regularization import (
-    get_manager_regularization_by_id,
-    get_manager_regularizations_for_employee,
-    get_manager_pending_regularizations,
-    manager_update_regularization_status,
 )
 
 router = APIRouter(prefix="/regularizations", tags=["Manager - Regularization"])
 
 
-@router.get("/pending", response_model=List[RegularizationResponse])
+@router.get("/pending", response_model=list[RegularizationResponse])
 def get_pending(db: db_dependency, user: user_dependency):
     return get_manager_pending_regularizations(db=db, user=user)
 
@@ -26,11 +27,9 @@ def get_by_id(reg_id: int, db: db_dependency, user: user_dependency):
     return get_manager_regularization_by_id(reg_id=reg_id, db=db, user=user)
 
 
-@router.get("/employee/{employee_id}", response_model=List[RegularizationResponse])
+@router.get("/employee/{employee_id}", response_model=list[RegularizationResponse])
 def get_by_employee(employee_id: int, db: db_dependency, user: user_dependency):
-    return get_manager_regularizations_for_employee(
-        employee_id=employee_id, db=db, user=user
-    )
+    return get_manager_regularizations_for_employee(employee_id=employee_id, db=db, user=user)
 
 
 @router.put("/{reg_id}/status", response_model=RegularizationResponse)

@@ -1,7 +1,7 @@
 # schema/payslip_schema.py
-from pydantic import BaseModel, Field, ConfigDict, field_validator
-from typing import Optional
 from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class PayslipBase(BaseModel):
@@ -9,9 +9,7 @@ class PayslipBase(BaseModel):
     hra: float = Field(0.0, ge=0)
     special_allowance: float = Field(0.0, ge=0)
     internet_allowance: float = Field(0.0, ge=0)
-    payslip_month: datetime = Field(
-        ..., description="Must be first day of month: YYYY-MM-01"
-    )
+    payslip_month: datetime = Field(..., description="Must be first day of month: YYYY-MM-01")
 
     @field_validator("payslip_month")
     @classmethod

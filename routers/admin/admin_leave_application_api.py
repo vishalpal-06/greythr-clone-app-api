@@ -1,17 +1,18 @@
 # api/admin_leave_application_api.py
+
 from fastapi import APIRouter
-from typing import List
+
+from common.common import _require_admin
+from common.leave_application import (
+    admin_update_status,
+    get_all_by_employee_admin,
+    get_all_by_month_admin,
+    get_application_by_id_admin,
+)
+from routers.auth import db_dependency, user_dependency
 from schema.leave_application_schema import (
     LeaveApplicationResponse,
     LeaveApplicationStatusUpdate,
-)
-from routers.auth import db_dependency, user_dependency
-from common.common import _require_admin
-from common.leave_application import (
-    get_application_by_id_admin,
-    get_all_by_employee_admin,
-    get_all_by_month_admin,
-    admin_update_status,
 )
 
 router = APIRouter(prefix="/leave-applications", tags=["Admin - Leave Applications"])
@@ -23,16 +24,14 @@ def get_application_by_id(app_id: int, db: db_dependency, user: user_dependency)
     return get_application_by_id_admin(db=db, app_id=app_id)
 
 
-@router.get("/employee/{emp_id}", response_model=List[LeaveApplicationResponse])
+@router.get("/employee/{emp_id}", response_model=list[LeaveApplicationResponse])
 def get_all_leave_by_employeeid(emp_id: int, db: db_dependency, user: user_dependency):
     _require_admin(user)
     return get_all_by_employee_admin(db=db, emp_id=emp_id)
 
 
-@router.get("/month/{year}/{month}", response_model=List[LeaveApplicationResponse])
-def get_all_leave_by_month(
-    year: int, month: int, db: db_dependency, user: user_dependency
-):
+@router.get("/month/{year}/{month}", response_model=list[LeaveApplicationResponse])
+def get_all_leave_by_month(year: int, month: int, db: db_dependency, user: user_dependency):
     _require_admin(user)
     return get_all_by_month_admin(db=db, year=year, month=month)
 

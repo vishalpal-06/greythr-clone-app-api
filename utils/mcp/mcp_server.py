@@ -1,6 +1,7 @@
 # server.py
-from main import app
 from fastmcp import FastMCP
+
+from main import app
 
 # Header you were passing (Bearer token / secret)
 headers = {"Authorization": "Bearer <YOUR_JWT_OR_SECRET_TOKEN>"}

@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from database.database import engine
+
 from database import models
-from routers.auth import auth_router
+from database.database import engine
 from routers.admin.admin_api import admin_router
+from routers.auth import auth_router
 from routers.manager.manager_api import manager_router
 from routers.user.user_api import user_router
 

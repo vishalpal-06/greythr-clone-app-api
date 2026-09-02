@@ -1,23 +1,22 @@
 # api/admin_leave_api.py
-from fastapi import APIRouter, HTTPException, status
-from typing import Annotated, List
+
+from fastapi import APIRouter
+
+import schema.leave_schema as leave_schema
+from common.common import _require_admin
 from common.leave import (
-    get_leave_by_employee_and_year,
-    get_all_leaves_by_employee_id,
     create_leave,
     delete_leave,
     delete_leave_by_employee_and_year,
+    get_all_leaves_by_employee_id,
+    get_leave_by_employee_and_year,
 )
-import schema.leave_schema as leave_schema
 from routers.auth import db_dependency, user_dependency
-from common.common import _require_admin
 
 router = APIRouter(prefix="/leaves", tags=["Admin - Leave"])
 
 
-@router.get(
-    "/employee/{employee_id}/year/{year}", response_model=leave_schema.LeaveResponse
-)
+@router.get("/employee/{employee_id}/year/{year}", response_model=leave_schema.LeaveResponse)
 def get_employee_leave_by_year_endpoint(
     employee_id: int, year: int, db: db_dependency, user: user_dependency
 ):
@@ -25,10 +24,8 @@ def get_employee_leave_by_year_endpoint(
     return get_leave_by_employee_and_year(db, employee_id, year)
 
 
-@router.get("/employee/{employee_id}", response_model=List[leave_schema.LeaveResponse])
-def get_all_leave_by_empid_endpoint(
-    employee_id: int, db: db_dependency, user: user_dependency
-):
+@router.get("/employee/{employee_id}", response_model=list[leave_schema.LeaveResponse])
+def get_all_leave_by_empid_endpoint(employee_id: int, db: db_dependency, user: user_dependency):
     _require_admin(user)
     return get_all_leaves_by_employee_id(db, employee_id)
 

@@ -1,11 +1,7 @@
-# -------------------------------------------------Test User API ---------------------------------------------------
+# -----------------------------------Test User API -----------------------------------
 def test_admin_get_all_my_payslips_success(client, admin_user, read_json):
-    response = client.get(
-        "/user/my/payslips/", headers={"Authorization": f"Bearer {admin_user}"}
-    )
-    expected = read_json(
-        "expected_responses/admin/payslips/get_all_my_payslips_admin.json"
-    )
+    response = client.get("/user/my/payslips/", headers={"Authorization": f"Bearer {admin_user}"})
+    expected = read_json("expected_responses/admin/payslips/get_all_my_payslips_admin.json")
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -22,9 +18,7 @@ def test_admin_get_my_payslips_by_year_and_month_success(client, admin_user, rea
     assert response.json() == expected
 
 
-def test_admin_get_my_payslips_by_year_and_month_not_found(
-    client, admin_user, read_json
-):
+def test_admin_get_my_payslips_by_year_and_month_not_found(client, admin_user, read_json):
     response = client.get(
         "/user/my/payslips/month/2025/11",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -33,7 +27,7 @@ def test_admin_get_my_payslips_by_year_and_month_not_found(
     assert response.json() == {"detail": "Payslip not found for this month"}
 
 
-# -------------------------------------------------Test Admin API ---------------------------------------------------
+# ------------------------------Test Admin API -------------------------------
 def test_admin_admin_access_create_payslips_success(client, admin_user, read_json):
     payload = {
         "basic_amount": 1,
@@ -68,18 +62,14 @@ def test_admin_admin_access_create_payslips_conflict(client, admin_user, read_js
         headers={"Authorization": f"Bearer {admin_user}"},
     )
     assert response.status_code == 409
-    assert response.json() == {
-        "detail": "Payslip already exists for employee 1 in February 2025"
-    }
+    assert response.json() == {"detail": ["Payslip already exists for employee 1 in February 2025"]}
 
 
 def test_admin_admin_access_get_payslips_by_id_success(client, admin_user, read_json):
     response = client.get(
         "/admin/payslips/employee/1", headers={"Authorization": f"Bearer {admin_user}"}
     )
-    expected = read_json(
-        "expected_responses/admin/payslips/get_payslip_by_id_admin.json"
-    )
+    expected = read_json("expected_responses/admin/payslips/get_payslip_by_id_admin.json")
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -93,9 +83,7 @@ def test_admin_admin_access_get_payslips_by_id_not_found(client, admin_user, rea
     assert response.json() == {"detail": "No payslips found for this employee"}
 
 
-def test_admin_admin_access_get_payslips_by_year_and_month_success(
-    client, admin_user, read_json
-):
+def test_admin_admin_access_get_payslips_by_year_and_month_success(client, admin_user, read_json):
     response = client.get(
         "/admin/payslips/month/2025/2",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -107,9 +95,7 @@ def test_admin_admin_access_get_payslips_by_year_and_month_success(
     assert response.json() == expected
 
 
-def test_admin_admin_access_get_payslips_by_year_and_month_not_found(
-    client, admin_user
-):
+def test_admin_admin_access_get_payslips_by_year_and_month_not_found(client, admin_user):
     response = client.get(
         "/admin/payslips/month/2025/4",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -132,9 +118,7 @@ def test_admin_admin_access_get_payslips_by_empid_year_and_month_success(
     assert response.json() == expected
 
 
-def test_admin_admin_access_get_payslips_by_empid_year_and_month_not_found(
-    client, admin_user
-):
+def test_admin_admin_access_get_payslips_by_empid_year_and_month_not_found(client, admin_user):
     response = client.get(
         "/admin/payslips/employee/2/month/2025/4",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -143,9 +127,7 @@ def test_admin_admin_access_get_payslips_by_empid_year_and_month_not_found(
     assert response.json() == {"detail": "Payslip not found for this month"}
 
 
-def test_admin_admin_access_delete_payslips_by_empid_year_and_month_success(
-    client, admin_user
-):
+def test_admin_admin_access_delete_payslips_by_empid_year_and_month_success(client, admin_user):
     response = client.delete(
         "/admin/payslips/employee/1/month/2025/3",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -164,18 +146,12 @@ def test_admin_admin_access_delete_payslips_by_empid_year_and_month_emp_not_foun
     assert response.json() == {"detail": "Payslip not found for this month"}
 
 
-def test_admin_admin_access_delete_payslips_by_id_success(
-    client, admin_user, read_json
-):
-    response = client.delete(
-        "/admin/payslips/1", headers={"Authorization": f"Bearer {admin_user}"}
-    )
+def test_admin_admin_access_delete_payslips_by_id_success(client, admin_user, read_json):
+    response = client.delete("/admin/payslips/1", headers={"Authorization": f"Bearer {admin_user}"})
     assert response.status_code == 204
 
 
-def test_admin_admin_access_delete_payslips_by_id_not_found(
-    client, admin_user, read_json
-):
+def test_admin_admin_access_delete_payslips_by_id_not_found(client, admin_user, read_json):
     response = client.delete(
         "/admin/payslips/100", headers={"Authorization": f"Bearer {admin_user}"}
     )

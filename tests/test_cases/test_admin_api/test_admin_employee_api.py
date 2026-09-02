@@ -1,18 +1,14 @@
-# -------------------------------------------------Test User API ---------------------------------------------------
+# -----------------------------------Test User API -----------------------------------
 def test_admin_get_my_profile_success(client, admin_user, read_json):
-    response = client.get(
-        "/user/my/me/", headers={"Authorization": f"Bearer {admin_user}"}
-    )
+    response = client.get("/user/my/me/", headers={"Authorization": f"Bearer {admin_user}"})
     expected = read_json("expected_responses/admin/employee/get_my_details_admin.json")
 
     assert response.status_code == 200
     assert response.json() == expected
 
 
-# -------------------------------------------------Test Manager API ---------------------------------------------------
-def test_admin_access_manager_subordinate_by_id_under_manager(
-    client, admin_user, read_json
-):
+# -----------------------------------Test Manager API -----------------------------------
+def test_admin_access_manager_subordinate_by_id_under_manager(client, admin_user, read_json):
     response = client.get(
         "/manager/subordinates/id/2", headers={"Authorization": f"Bearer {admin_user}"}
     )
@@ -24,9 +20,7 @@ def test_admin_access_manager_subordinate_by_id_under_manager(
     assert response.json() == expected
 
 
-def test_admin_access_manager_subordinate_by_id_not_under_manager(
-    client, admin_user, read_json
-):
+def test_admin_access_manager_subordinate_by_id_not_under_manager(client, admin_user, read_json):
     response = client.get(
         "/manager/subordinates/id/6", headers={"Authorization": f"Bearer {admin_user}"}
     )
@@ -35,9 +29,7 @@ def test_admin_access_manager_subordinate_by_id_not_under_manager(
     assert response.json() == {"detail": "Employee not found under your management"}
 
 
-def test_admin_access_manager_subordinate_by_id_not_found(
-    client, admin_user, read_json
-):
+def test_admin_access_manager_subordinate_by_id_not_found(client, admin_user, read_json):
     response = client.get(
         "/manager/subordinates/id/10", headers={"Authorization": f"Bearer {admin_user}"}
     )
@@ -46,9 +38,7 @@ def test_admin_access_manager_subordinate_by_id_not_found(
     assert response.json() == {"detail": "Employee not found"}
 
 
-def test_admin_access_manager_subordinate_by_email_under_manager(
-    client, admin_user, read_json
-):
+def test_admin_access_manager_subordinate_by_email_under_manager(client, admin_user, read_json):
     response = client.get(
         "/manager/subordinates/email/managerA@test.com/",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -61,9 +51,7 @@ def test_admin_access_manager_subordinate_by_email_under_manager(
     assert response.json() == expected
 
 
-def test_admin_access_manager_subordinate_by_email_not_under_manager(
-    client, admin_user
-):
+def test_admin_access_manager_subordinate_by_email_not_under_manager(client, admin_user):
     response = client.get(
         "/manager/subordinates/email/userB2@test.com/",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -73,9 +61,7 @@ def test_admin_access_manager_subordinate_by_email_not_under_manager(
     assert response.json() == {"detail": "Employee not found under your management"}
 
 
-def test_admin_access_manager_subordinate_by_email_not_found(
-    client, admin_user, read_json
-):
+def test_admin_access_manager_subordinate_by_email_not_found(client, admin_user, read_json):
     response = client.get(
         "/manager/subordinates/email/altufaltu@test.com/",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -85,14 +71,10 @@ def test_admin_access_manager_subordinate_by_email_not_found(
     assert response.json() == {"detail": "Employee not found"}
 
 
-# -------------------------------------------------Test Admin API ---------------------------------------------------
+# ------------------------------Test Admin API -------------------------------
 def test_admin_access_admin_get_all_employees_success(client, admin_user, read_json):
-    response = client.get(
-        "/admin/employees/", headers={"Authorization": f"Bearer {admin_user}"}
-    )
-    expected = read_json(
-        "expected_responses/admin/employee/get_all_employee_admin.json"
-    )
+    response = client.get("/admin/employees/", headers={"Authorization": f"Bearer {admin_user}"})
+    expected = read_json("expected_responses/admin/employee/get_all_employee_admin.json")
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -122,9 +104,7 @@ def test_admin_access_admin_create_employee_success(client, admin_user, read_jso
     assert response.json() == expected
 
 
-def test_admin_access_admin_create_employee_duplicate_email_conflict(
-    client, admin_user
-):
+def test_admin_access_admin_create_employee_duplicate_email_conflict(client, admin_user):
     payload = {
         "first_name": "string",
         "last_name": "string",
@@ -151,9 +131,7 @@ def test_admin_access_admin_get_employee_by_id_success(client, admin_user, read_
     response = client.get(
         "/admin/employees/id/1", headers={"Authorization": f"Bearer {admin_user}"}
     )
-    expected = read_json(
-        "expected_responses/admin/employee/get_employee_details_by_id.json"
-    )
+    expected = read_json("expected_responses/admin/employee/get_employee_details_by_id.json")
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -166,9 +144,7 @@ def test_admin_access_admin_get_employee_by_id_not_found(client, admin_user, rea
     assert response.json() == {"detail": "Employee not found"}
 
 
-def test_admin_access_admin_update_employee_by_id_success(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_update_employee_by_id_success(client, admin_user, read_json):
     payload = {
         "first_name": "string",
         "last_name": "string",
@@ -184,16 +160,12 @@ def test_admin_access_admin_update_employee_by_id_success(
         json=payload,
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json(
-        "expected_responses/admin/employee/update_employee_details_by_id.json"
-    )
+    expected = read_json("expected_responses/admin/employee/update_employee_details_by_id.json")
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_admin_access_admin_update_employee_by_id_not_found(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_update_employee_by_id_not_found(client, admin_user, read_json):
     payload = {
         "first_name": "string",
         "last_name": "string",
@@ -216,9 +188,7 @@ def test_admin_access_admin_update_employee_by_id_not_found(
     assert response.json() == {"detail": "Employee not found"}
 
 
-def test_admin_access_admin_delete_employee_by_id_success(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_delete_employee_by_id_success(client, admin_user, read_json):
     response = client.delete(
         "/admin/employees/id/3", headers={"Authorization": f"Bearer {admin_user}"}
     )
@@ -227,9 +197,7 @@ def test_admin_access_admin_delete_employee_by_id_success(
     assert response.json() == {"detail": "Employee deleted successfully"}
 
 
-def test_admin_access_admin_delete_employee_by_id_not_found(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_delete_employee_by_id_not_found(client, admin_user, read_json):
     response = client.delete(
         "/admin/employees/id/13", headers={"Authorization": f"Bearer {admin_user}"}
     )
@@ -238,23 +206,17 @@ def test_admin_access_admin_delete_employee_by_id_not_found(
     assert response.json() == {"detail": "Employee not found"}
 
 
-def test_admin_access_admin_get_employee_by_email_success(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_get_employee_by_email_success(client, admin_user, read_json):
     response = client.get(
         "/admin/employees/email/admin@test.com",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json(
-        "expected_responses/admin/employee/get_employee_details_by_email.json"
-    )
+    expected = read_json("expected_responses/admin/employee/get_employee_details_by_email.json")
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_admin_access_admin_get_employee_by_email_not_found(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_get_employee_by_email_not_found(client, admin_user, read_json):
     response = client.get(
         "/admin/employees/email/admin2@test.com",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -263,9 +225,7 @@ def test_admin_access_admin_get_employee_by_email_not_found(
     assert response.json() == {"detail": "Employee not found"}
 
 
-def test_admin_access_admin_update_employee_by_email_success(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_update_employee_by_email_success(client, admin_user, read_json):
     payload = {
         "first_name": "string",
         "last_name": "string",
@@ -281,16 +241,12 @@ def test_admin_access_admin_update_employee_by_email_success(
         json=payload,
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json(
-        "expected_responses/admin/employee/update_employee_details_by_email.json"
-    )
+    expected = read_json("expected_responses/admin/employee/update_employee_details_by_email.json")
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_admin_access_admin_update_employee_by_email_not_found(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_update_employee_by_email_not_found(client, admin_user, read_json):
     payload = {
         "first_name": "string",
         "last_name": "string",
@@ -311,9 +267,7 @@ def test_admin_access_admin_update_employee_by_email_not_found(
     assert response.json() == {"detail": "Employee not found"}
 
 
-def test_admin_access_admin_delete_employee_by_email_success(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_delete_employee_by_email_success(client, admin_user, read_json):
     response = client.delete(
         "/admin/employees/email/userA1@test.com",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -323,9 +277,7 @@ def test_admin_access_admin_delete_employee_by_email_success(
     assert response.json() == {"detail": "Employee deleted successfully"}
 
 
-def test_admin_access_admin_delete_employee_by_email_not_found(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_delete_employee_by_email_not_found(client, admin_user, read_json):
     response = client.delete(
         "/admin/employees/email/user_A5@test.com",
         headers={"Authorization": f"Bearer {admin_user}"},

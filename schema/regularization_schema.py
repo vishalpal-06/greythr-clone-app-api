@@ -1,11 +1,11 @@
 # schema/regularization_schema.py
-from pydantic import BaseModel, Field, ConfigDict, model_validator
-from typing import Optional
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
+
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
-class Status(str, Enum):
+class Status(StrEnum):
     Pending = "Pending"
     Approved = "Approved"
     Rejected = "Rejected"

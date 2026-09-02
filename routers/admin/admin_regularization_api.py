@@ -1,12 +1,13 @@
 # api/admin_regularization_api.py
 from fastapi import APIRouter
+
+from common.common import _require_admin
+from common.regularization import admin_update_status, get_regularization_by_id_admin
+from routers.auth import db_dependency, user_dependency
 from schema.regularization_schema import (
     RegularizationResponse,
     RegularizationStatusUpdate,
 )
-from routers.auth import db_dependency, user_dependency
-from common.common import _require_admin
-from common.regularization import get_regularization_by_id_admin, admin_update_status
 
 router = APIRouter(prefix="/regularizations", tags=["Admin - Regularization"])
 

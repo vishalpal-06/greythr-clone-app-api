@@ -1,32 +1,27 @@
 # common/regularization.py
+from datetime import UTC, datetime
+
+from fastapi import HTTPException
+from sqlalchemy import extract
 from sqlalchemy.orm import Session
-from database.models import Regularization, Employee
+
+from database.models import Employee, Regularization
 from schema.regularization_schema import (
     RegularizationCreate,
     RegularizationStatusUpdate,
     Status,
 )
-from fastapi import HTTPException, status
-from datetime import datetime, timezone
-from typing import List
-from sqlalchemy import extract
 
 
 def _get_regularization_or_404(db: Session, reg_id: int) -> Regularization:
-    reg = (
-        db.query(Regularization)
-        .filter(Regularization.regularization_id == reg_id)
-        .first()
-    )
+    reg = db.query(Regularization).filter(Regularization.regularization_id == reg_id).first()
     if not reg:
         raise HTTPException(status_code=404, detail="Regularization request not found")
     return reg
 
 
 # ─── USER ───
-def create_regularization(
-    db: Session, reg_in: RegularizationCreate, user: dict
-) -> Regularization:
+def create_regularization(db: Session, reg_in: RegularizationCreate, user: dict) -> Regularization:
     emp = db.query(Employee).filter(Employee.employee_id == user["id"]).first()
     if not emp or not emp.fk_manager_id:
         raise HTTPException(status_code=400, detail="You have no manager assigned")
@@ -43,7 +38,7 @@ def create_regularization(
     return reg
 
 
-def get_my_regularizations(db: Session, user: dict) -> List[Regularization]:
+def get_my_regularizations(db: Session, user: dict) -> list[Regularization]:
     return (
         db.query(Regularization)
         .filter(Regularization.fk_employee_id == user["id"])
@@ -61,7 +56,7 @@ def get_my_regularization_by_id(reg_id: int, db: Session, user: dict) -> Regular
 
 def get_my_regularizations_by_month(
     year: int, month: int, db: Session, user: dict
-) -> List[Regularization]:
+) -> list[Regularization]:
     return (
         db.query(Regularization)
         .filter(
@@ -84,16 +79,14 @@ def admin_update_status(
 ) -> Regularization:
     reg = _get_regularization_or_404(db, reg_id)
     reg.regularization_status = status_update.regularization_status
-    reg.updated_at = datetime.now(timezone.utc)
+    reg.updated_at = datetime.now(UTC)
     db.commit()
     db.refresh(reg)
     return reg
 
 
 # ─── MANAGER ───
-def get_manager_regularization_by_id(
-    reg_id: int, db: Session, user: dict
-) -> Regularization:
+def get_manager_regularization_by_id(reg_id: int, db: Session, user: dict) -> Regularization:
     reg = _get_regularization_or_404(db, reg_id)
     if reg.fk_manager_id != user["id"]:
         raise HTTPException(
@@ -104,7 +97,7 @@ def get_manager_regularization_by_id(
 
 def get_manager_regularizations_for_employee(
     employee_id: int, db: Session, user: dict
-) -> List[Regularization]:
+) -> list[Regularization]:
     from common.employee import get_subordinate_by_id
 
     get_subordinate_by_id(employee_id=employee_id, db=db, user=user)
@@ -116,9 +109,7 @@ def get_manager_regularizations_for_employee(
     )
 
 
-def get_manager_pending_regularizations(
-    db: Session, user: dict
-) -> List[Regularization]:
+def get_manager_pending_regularizations(db: Session, user: dict) -> list[Regularization]:
     return (
         db.query(Regularization)
         .filter(
@@ -135,7 +126,7 @@ def manager_update_regularization_status(
 ) -> Regularization:
     reg = get_manager_regularization_by_id(reg_id, db=db, user=user)
     reg.regularization_status = status_update.regularization_status
-    reg.updated_at = datetime.now(timezone.utc)
+    reg.updated_at = datetime.now(UTC)
     db.commit()
     db.refresh(reg)
     return reg

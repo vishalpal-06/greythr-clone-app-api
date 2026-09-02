@@ -1,7 +1,6 @@
 # schema/leave_schema.py
-from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional
-from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class LeaveBase(BaseModel):

@@ -1,11 +1,11 @@
 # schema/expense_claim_schema.py
-from pydantic import BaseModel, Field, ConfigDict, validator
-from typing import Optional
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
-class Status(str, Enum):
+class Status(StrEnum):
     Pending = "Pending"
     Approved = "Approved"
     Rejected = "Rejected"

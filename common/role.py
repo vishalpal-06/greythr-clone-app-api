@@ -1,9 +1,10 @@
 # common/role.py
-from fastapi import HTTPException, status
+
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from database.models import Role
-from typing import Dict, Any
+
 from common.common import _require_admin
+from database.models import Role
 
 
 def _get_role_by_id(db: Session, role_id: int) -> Role:
@@ -43,22 +44,14 @@ def create_role(db: Session, role_name: str, user: dict) -> Role:
 
 
 # === ADMIN: UPDATE BY ID ===
-def update_role_by_id(
-    db: Session, role_id: int, new_role_name: str, user: dict
-) -> Role:
+def update_role_by_id(db: Session, role_id: int, new_role_name: str, user: dict) -> Role:
     _require_admin(user)
     role = _get_role_by_id(db, role_id)
 
     new_name = new_role_name.strip()
 
-    if (
-        db.query(Role)
-        .filter(Role.role.ilike(new_name), Role.role_id != role_id)
-        .first()
-    ):
-        raise HTTPException(
-            status_code=400, detail="Role with this name already exists"
-        )
+    if db.query(Role).filter(Role.role.ilike(new_name), Role.role_id != role_id).first():
+        raise HTTPException(status_code=400, detail="Role with this name already exists")
 
     role.role = new_name
     db.commit()
@@ -75,9 +68,7 @@ def update_role_by_name(
     new_name = new_role_name.strip()
 
     if db.query(Role).filter(Role.role.ilike(new_name)).first():
-        raise HTTPException(
-            status_code=400, detail="Role with this name already exists"
-        )
+        raise HTTPException(status_code=400, detail="Role with this name already exists")
 
     role.role = new_name
     db.commit()
@@ -85,7 +76,7 @@ def update_role_by_name(
 
 
 # === ADMIN: DELETE BY ID ===
-def delete_role_by_id(db: Session, role_id: int, user: dict) -> Dict[str, str]:
+def delete_role_by_id(db: Session, role_id: int, user: dict) -> dict[str, str]:
     _require_admin(user)
     role = _get_role_by_id(db, role_id)
     db.delete(role)
@@ -94,7 +85,7 @@ def delete_role_by_id(db: Session, role_id: int, user: dict) -> Dict[str, str]:
 
 
 # === ADMIN: DELETE BY NAME ===
-def delete_role_by_name(db: Session, role_name: str, user: dict) -> Dict[str, str]:
+def delete_role_by_name(db: Session, role_name: str, user: dict) -> dict[str, str]:
     _require_admin(user)
     role = _get_role_by_name(db, role_name)
     db.delete(role)

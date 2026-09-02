@@ -1,6 +1,6 @@
-from pydantic import BaseModel, ConfigDict
-from typing import Optional
 from datetime import date
+
+from pydantic import BaseModel, ConfigDict
 
 
 class EmployeeBase(BaseModel):
@@ -8,11 +8,11 @@ class EmployeeBase(BaseModel):
     last_name: str
     email: str
     joining_date: date
-    address: Optional[str] = None
+    address: str | None = None
     isadmin: bool
     fk_department_id: int
     fk_role_id: int
-    fk_manager_id: Optional[int] = None
+    fk_manager_id: int | None = None
 
 
 class EmployeeCreate(EmployeeBase):
@@ -26,12 +26,12 @@ class EmployeeResponse(EmployeeBase):
 
 
 class EmployeeUpdate(BaseModel):
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    joining_date: Optional[date] = None
-    address: Optional[str] = None
-    isadmin: Optional[bool] = None
-    fk_department_id: Optional[int] = None
-    fk_role_id: Optional[int] = None
-    fk_manager_id: Optional[int] = None
-    password: Optional[str] = None
+    first_name: str | None = None
+    last_name: str | None = None
+    joining_date: date | None = None
+    address: str | None = None
+    isadmin: bool | None = None
+    fk_department_id: int | None = None
+    fk_role_id: int | None = None
+    fk_manager_id: int | None = None
+    password: str | None = None

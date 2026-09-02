@@ -1,16 +1,16 @@
 from fastapi import APIRouter
 
 from . import (
-    user_employee_api,
-    user_role_api,
-    user_department_api,
     user_attendance_api,
-    user_salary_api,
-    user_leave_api,
-    user_regularization_api,
-    user_payslip_api,
-    user_leave_application_api,
+    user_department_api,
+    user_employee_api,
     user_expense_claim_api,
+    user_leave_api,
+    user_leave_application_api,
+    user_payslip_api,
+    user_regularization_api,
+    user_role_api,
+    user_salary_api,
 )
 
 user_router = APIRouter(prefix="/user")

@@ -1,8 +1,6 @@
-# -------------------------------------------------Test User API ---------------------------------------------------
+# -----------------------------------Test User API -----------------------------------
 def test_admin_get_my_all_leave_success(client, admin_user, read_json):
-    response = client.get(
-        "user/my/leave/", headers={"Authorization": f"Bearer {admin_user}"}
-    )
+    response = client.get("user/my/leave/", headers={"Authorization": f"Bearer {admin_user}"})
     expected = read_json("expected_responses/admin/leave/get_all_my_leave_admin.json")
     assert response.status_code == 200
     assert response.json() == expected
@@ -12,9 +10,7 @@ def test_admin_get_my_leave_by_year_success(client, admin_user, read_json):
     response = client.get(
         "user/my/leave/year/2025", headers={"Authorization": f"Bearer {admin_user}"}
     )
-    expected = read_json(
-        "expected_responses/admin/leave/get_my_leave_by_year_admin.json"
-    )
+    expected = read_json("expected_responses/admin/leave/get_my_leave_by_year_admin.json")
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -24,12 +20,10 @@ def test_admin_get_my_leave_by_year_not_found(client, admin_user, read_json):
         "user/my/leave/year/2030", headers={"Authorization": f"Bearer {admin_user}"}
     )
     assert response.status_code == 404
-    assert response.json() == {
-        "detail": "Leave record not found for employee 1 in year 2030"
-    }
+    assert response.json() == {"detail": "Leave record not found for employee 1 in year 2030"}
 
 
-# ------------------------------------------------- Test Manager API ---------------------------------------------------
+# -------------------------------Test Manager API -----------------------------------
 
 
 def test_admin_manager_access_get_subordinates_leave_by_empid_and_year_success(
@@ -57,22 +51,16 @@ def test_admin_manager_access_get_subordinates_leave_by_empid_and_year_nonsubord
     assert response.json() == {"detail": "Employee not found under your management"}
 
 
-def test_admin_manager_access_get_subordinate_leave_by_empid_success(
-    client, admin_user, read_json
-):
+def test_admin_manager_access_get_subordinate_leave_by_empid_success(client, admin_user, read_json):
     response = client.get(
         "manager/leaves/employee/2", headers={"Authorization": f"Bearer {admin_user}"}
     )
-    expected = read_json(
-        "expected_responses/admin/leave/get_subordinate_leave_by_empid_admin.json"
-    )
+    expected = read_json("expected_responses/admin/leave/get_subordinate_leave_by_empid_admin.json")
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_admin_manager_access_get_subordinate_leave_by_empid_not_found(
-    client, admin_user
-):
+def test_admin_manager_access_get_subordinate_leave_by_empid_not_found(client, admin_user):
     response = client.get(
         "manager/leaves/employee/6", headers={"Authorization": f"Bearer {admin_user}"}
     )
@@ -80,7 +68,7 @@ def test_admin_manager_access_get_subordinate_leave_by_empid_not_found(
     assert response.json() == {"detail": "Employee not found under your management"}
 
 
-# -------------------------------------------------Test Admin API ---------------------------------------------------
+# ------------------------------Test Admin API -------------------------------
 def test_admin_admin_access_get_employee_leave_by_empid_and_years_success(
     client, admin_user, read_json
 ):
@@ -95,22 +83,16 @@ def test_admin_admin_access_get_employee_leave_by_empid_and_years_success(
     assert response.json() == expected
 
 
-def test_admin_admin_access_get_employee_leave_by_empid_and_years_not_found(
-    client, admin_user
-):
+def test_admin_admin_access_get_employee_leave_by_empid_and_years_not_found(client, admin_user):
     response = client.get(
         "admin/leaves/employee/1/year/2028",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
     assert response.status_code == 404
-    assert response.json() == {
-        "detail": "Leave record not found for employee 1 in year 2028"
-    }
+    assert response.json() == {"detail": "Leave record not found for employee 1 in year 2028"}
 
 
-def test_admin_admin_access_delete_employee_leave_by_empid_and_years_success(
-    client, admin_user
-):
+def test_admin_admin_access_delete_employee_leave_by_empid_and_years_success(client, admin_user):
     response = client.delete(
         "admin/leaves/employee/1/year/2025",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -118,35 +100,25 @@ def test_admin_admin_access_delete_employee_leave_by_empid_and_years_success(
     assert response.status_code == 204
 
 
-def test_admin_admin_access_delete_employee_leave_by_empid_and_years_not_found(
-    client, admin_user
-):
+def test_admin_admin_access_delete_employee_leave_by_empid_and_years_not_found(client, admin_user):
     response = client.delete(
         "admin/leaves/employee/1/year/2028",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
     assert response.status_code == 404
-    assert response.json() == {
-        "detail": "Leave record not found for employee 1 in year 2028"
-    }
+    assert response.json() == {"detail": "Leave record not found for employee 1 in year 2028"}
 
 
-def test_admin_admin_access_get_employee_leaves_by_empid_success(
-    client, admin_user, read_json
-):
+def test_admin_admin_access_get_employee_leaves_by_empid_success(client, admin_user, read_json):
     response = client.get(
         "admin/leaves/employee/1", headers={"Authorization": f"Bearer {admin_user}"}
     )
-    expected = read_json(
-        "expected_responses/admin/leave/get_employee_leaves_by_empid_admin.json"
-    )
+    expected = read_json("expected_responses/admin/leave/get_employee_leaves_by_empid_admin.json")
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_admin_admin_access_get_employee_leaves_by_empid_not_found(
-    client, admin_user, read_json
-):
+def test_admin_admin_access_get_employee_leaves_by_empid_not_found(client, admin_user, read_json):
     response = client.get(
         "admin/leaves/employee/10", headers={"Authorization": f"Bearer {admin_user}"}
     )
@@ -175,9 +147,7 @@ def test_admin_admin_access_create_leave_success(client, admin_user, read_json):
     assert response.json() == expected
 
 
-def test_admin_admin_access_create_duplicate_leave_conflict(
-    client, admin_user, read_json
-):
+def test_admin_admin_access_create_duplicate_leave_conflict(client, admin_user, read_json):
     payloads = {
         "assign_year": 2023,
         "casual_leave": 5,
@@ -194,21 +164,15 @@ def test_admin_admin_access_create_duplicate_leave_conflict(
         headers={"Authorization": f"Bearer {admin_user}"},
     )
     assert response.status_code == 409
-    assert response.json() == {
-        "detail": "Leave record already exists for employee 2 in year 2023"
-    }
+    assert response.json() == {"detail": "Leave record already exists for employee 2 in year 2023"}
 
 
 def test_admin_admin_access_delete_leave_by_id_success(client, admin_user, read_json):
-    response = client.delete(
-        "admin/leaves/1", headers={"Authorization": f"Bearer {admin_user}"}
-    )
+    response = client.delete("admin/leaves/1", headers={"Authorization": f"Bearer {admin_user}"})
     assert response.status_code == 204
 
 
 def test_admin_admin_access_delete_leave_by_id_not_found(client, admin_user, read_json):
-    response = client.delete(
-        "admin/leaves/100", headers={"Authorization": f"Bearer {admin_user}"}
-    )
+    response = client.delete("admin/leaves/100", headers={"Authorization": f"Bearer {admin_user}"})
     assert response.status_code == 404
     assert response.json() == {"detail": "Leave record with ID 100 not found"}

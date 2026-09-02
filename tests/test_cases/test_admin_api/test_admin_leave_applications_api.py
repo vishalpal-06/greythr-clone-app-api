@@ -1,4 +1,4 @@
-# -------------------------------------------------Test User API ---------------------------------------------------
+# -----------------------------------Test User API -----------------------------------
 def test_admin_create_leave_application_fail(client, admin_user, read_json):
     payload = {
         "from_date": "2025-11-30T10:00:00.000Z",
@@ -22,9 +22,7 @@ def test_admin_delete_my_leave_application_by_id_success(client, admin_user, rea
     assert response.status_code == 204
 
 
-def test_admin_delete_my_leave_application_by_id_not_allow(
-    client, admin_user, read_json
-):
+def test_admin_delete_my_leave_application_by_id_not_allow(client, admin_user, read_json):
     response = client.delete(
         "/user/my/leave-applications/8",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -33,9 +31,7 @@ def test_admin_delete_my_leave_application_by_id_not_allow(
     assert response.json() == {"detail": "Cannot delete approved/rejected leave"}
 
 
-def test_admin_delete_others_leave_application_by_id_forbidden(
-    client, admin_user, read_json
-):
+def test_admin_delete_others_leave_application_by_id_forbidden(client, admin_user, read_json):
     response = client.delete(
         "/user/my/leave-applications/4",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -44,9 +40,7 @@ def test_admin_delete_others_leave_application_by_id_forbidden(
     assert response.json() == {"detail": "Not authorized"}
 
 
-def test_admin_delete_leave_application_not_exist_by_id_not_found(
-    client, admin_user, read_json
-):
+def test_admin_delete_leave_application_not_exist_by_id_not_found(client, admin_user, read_json):
     response = client.delete(
         "/user/my/leave-applications/14",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -55,9 +49,7 @@ def test_admin_delete_leave_application_not_exist_by_id_not_found(
     assert response.json() == {"detail": "Leave application not found"}
 
 
-def test_admin_get_others_leave_application_by_id_forbidden(
-    client, admin_user, read_json
-):
+def test_admin_get_others_leave_application_by_id_forbidden(client, admin_user, read_json):
     response = client.get(
         "/user/my/leave-applications/5",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -66,9 +58,7 @@ def test_admin_get_others_leave_application_by_id_forbidden(
     assert response.json() == {"detail": "Not authorized"}
 
 
-def test_admin_get_leave_application_not_exist_by_id_not_found(
-    client, admin_user, read_json
-):
+def test_admin_get_leave_application_not_exist_by_id_not_found(client, admin_user, read_json):
     response = client.get(
         "/user/my/leave-applications/15",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -77,7 +67,7 @@ def test_admin_get_leave_application_not_exist_by_id_not_found(
     assert response.json() == {"detail": "Leave application not found"}
 
 
-# -------------------------------------------------Test Manager API ---------------------------------------------------
+# -----------------------------------Test Manager API -----------------------------------
 def test_admin_manager_access_update_subordinate_leave_application_status_by_id_success(
     client, admin_user, read_json
 ):
@@ -102,9 +92,7 @@ def test_admin_manager_access_update_subordinate_leave_application_status_by_id_
         headers={"Authorization": f"Bearer {admin_user}"},
     )
     assert response.status_code == 403
-    assert response.json() == {
-        "detail": "Leave Application not found under your management"
-    }
+    assert response.json() == {"detail": "Leave Application not found under your management"}
 
 
 def test_admin_manager_access_update_subordinate_leave_application_not_exist_status_by_id_not_found(
@@ -194,7 +182,7 @@ def test_admin_manager_access_get_subordinate_leave_applications_by_empid_not_ex
     assert response.json() == {"detail": "Employee not found"}
 
 
-# -------------------------------------------------Test Admin API ---------------------------------------------------
+# ------------------------------Test Admin API -------------------------------
 def test_admin_admin_access_get_employee_leave_application_by_id_success(
     client, admin_user, read_json
 ):
@@ -208,9 +196,7 @@ def test_admin_admin_access_get_employee_leave_application_by_id_success(
     assert response.json() == expected
 
 
-def test_admin_admin_access_get_employee_leave_application_by_id_not_found(
-    client, admin_user
-):
+def test_admin_admin_access_get_employee_leave_application_by_id_not_found(client, admin_user):
     response = client.get(
         "/admin/leave-applications/30",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -233,9 +219,7 @@ def test_admin_admin_access_get_employee_leave_application_by_empid_success(
     assert response.json() == expected
 
 
-def test_admin_admin_access_get_employee_leave_application_by_empid_not_found(
-    client, admin_user
-):
+def test_admin_admin_access_get_employee_leave_application_by_empid_not_found(client, admin_user):
     response = client.get(
         "/admin/leave-applications/employee/10",
         headers={"Authorization": f"Bearer {admin_user}"},

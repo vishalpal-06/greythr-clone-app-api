@@ -1,15 +1,17 @@
-from fastapi import APIRouter, HTTPException, Depends, status, Request, Form
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
-from passlib.context import CryptContext
-from sqlalchemy.orm import Session
-from jose import jwt, JWTError
-from pydantic import BaseModel, EmailStr
-from typing import Annotated
-from datetime import timedelta, datetime, timezone
-from database.models import Employee
-from database.database import engine, sessionlocal as SessionLocal
 import os
+from datetime import UTC, datetime, timedelta
+from typing import Annotated
+
 from dotenv import load_dotenv
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+from pydantic import BaseModel, EmailStr
+from sqlalchemy.orm import Session
+
+from database.database import sessionlocal as SessionLocal
+from database.models import Employee
 
 load_dotenv()
 
@@ -53,11 +55,9 @@ def authenticate_user(email: str, password: str, db: Session):
 
 
 # Create JWT token
-def create_access_token(
-    email: str, employee_id: int, is_admin: bool, expires_delta: timedelta
-):
+def create_access_token(email: str, employee_id: int, is_admin: bool, expires_delta: timedelta):
     encode = {"email": email, "emp_id": employee_id, "is_admin": is_admin}
-    expires = datetime.now(timezone.utc) + expires_delta
+    expires = datetime.now(UTC) + expires_delta
     encode.update({"exp": expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -75,10 +75,11 @@ def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
                 detail="Could not validate user.",
             )  # pragma: no cover
         return {"email": email, "id": employee_id, "is_admin": is_admin}
-    except JWTError:  # pragma: no cover
+    except JWTError as err:  # pragma: no cover
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user."
-        )
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate user.",
+        ) from err
 
 
 db_dependency = Annotated[Session, Depends(get_db)]
@@ -86,9 +87,7 @@ user_dependency = Annotated[dict, Depends(get_current_user)]
 
 
 # --- Endpoint 1: Supports Swagger UI (Form Data) ---
-@auth_router.post(
-    "/token", response_model=Token, summary="Login using form data (for Swagger UI)"
-)
+@auth_router.post("/token", response_model=Token, summary="Login using form data (for Swagger UI)")
 async def login_for_access_token_form(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency
 ):
@@ -114,16 +113,12 @@ async def login_for_access_token_form(
 
 
 # --- Endpoint 2: Supports raw JSON body requests (API Clients) ---
-@auth_router.post(
-    "/login_json", response_model=Token, summary="Login using JSON payload"
-)
-async def login_for_access_token_json(
-    payload: LoginRequest, db: db_dependency
-):  # pragma: no cover
+@auth_router.post("/login_json", response_model=Token, summary="Login using JSON payload")
+async def login_for_access_token_json(payload: LoginRequest, db: db_dependency):  # pragma: no cover
     user = authenticate_user(payload.username, payload.password, db)
 
     if not user:
-        # Note: We don't include WWW-Authenticate header here as it's not the OAuth2 standard token URL
+        # Note: WWW-Authenticate is omitted because this endpoint is not the OAuth2 token URL.
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",

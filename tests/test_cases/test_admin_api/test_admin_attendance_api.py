@@ -1,4 +1,4 @@
-# -------------------------------------------------Test User API ---------------------------------------------------
+# -----------------------------------Test User API -----------------------------------
 def test_admin_create_attendance_success(client, admin_user, read_json):
     response = client.post(
         "user/my/attendance/",
@@ -18,9 +18,7 @@ def test_admin_get_all_my_attendance_success(client, admin_user, read_json):
         "user/my/attendance/my",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json(
-        "expected_responses/admin/attendance/get_all_my_attendance_admin.json"
-    )
+    expected = read_json("expected_responses/admin/attendance/get_all_my_attendance_admin.json")
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -46,7 +44,7 @@ def test_admin_get_my_attendance_by_date_not_found(client, admin_user, read_json
     assert response.json() == []
 
 
-# -------------------------------------------------Test Manager API ---------------------------------------------------
+# -----------------------------------Test Manager API -----------------------------------
 
 
 def test_admin_access_manager_attendance_by_date_success(client, admin_user, read_json):
@@ -61,9 +59,7 @@ def test_admin_access_manager_attendance_by_date_success(client, admin_user, rea
     assert response.json() == expected
 
 
-def test_admin_access_manager_attendance_by_date_success_empty(
-    client, admin_user, read_json
-):
+def test_admin_access_manager_attendance_by_date_success_empty(client, admin_user, read_json):
     response = client.get(
         "manager/attendance/date/2023-04-22",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -97,9 +93,7 @@ def test_admin_access_manager_attendance_by_employee_and_date_not_under_manager_
     assert response.json() == []
 
 
-def test_admin_access_manager_attendance_by_employee_date_not_under_manager(
-    client, admin_user
-):
+def test_admin_access_manager_attendance_by_employee_date_not_under_manager(client, admin_user):
     response = client.get(
         "manager/attendance/employee/6/date/2025-11-25",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -108,19 +102,15 @@ def test_admin_access_manager_attendance_by_employee_date_not_under_manager(
     assert response.json() == {"detail": "Employee not found under your management"}
 
 
-# -------------------------------------------------Test Admin API ---------------------------------------------------
+# ------------------------------Test Admin API -------------------------------
 
 
-def test_admin_access_admin_get_all_attendance_list_success(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_get_all_attendance_list_success(client, admin_user, read_json):
     response = client.get(
         "/admin/attendance/",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json(
-        "expected_responses/admin/attendance/get_all_attendance_admin.json"
-    )
+    expected = read_json("expected_responses/admin/attendance/get_all_attendance_admin.json")
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -130,9 +120,7 @@ def test_admin_access_admin_attendance_by_date_success(client, admin_user, read_
         "admin/attendance/date/2023-04-01",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json(
-        "expected_responses/admin/attendance/get_attendance_by_date_admin.json"
-    )
+    expected = read_json("expected_responses/admin/attendance/get_attendance_by_date_admin.json")
     assert response.status_code == 200
     assert response.json() == expected
 
@@ -146,9 +134,7 @@ def test_admin_access_admin_attendance_by_date_not_found(client, admin_user, rea
     assert response.json() == []
 
 
-def test_admin_access_admin_attendance_by_empid_date_success(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_attendance_by_empid_date_success(client, admin_user, read_json):
     response = client.get(
         "admin/attendance/employee/1/date/2023-01-01",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -160,9 +146,7 @@ def test_admin_access_admin_attendance_by_empid_date_success(
     assert response.json() == expected
 
 
-def test_admin_access_admin_attendance_by_empid_date_not_exist(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_attendance_by_empid_date_not_exist(client, admin_user, read_json):
     response = client.get(
         "admin/attendance/employee/10/date/2023-01-07",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -171,9 +155,7 @@ def test_admin_access_admin_attendance_by_empid_date_not_exist(
     assert response.json() == {"detail": "Employee not found"}
 
 
-def test_admin_access_admin_attendance_by_empid_date_not_found(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_attendance_by_empid_date_not_found(client, admin_user, read_json):
     response = client.get(
         "admin/attendance/employee/1/date/2023-01-07",
         headers={"Authorization": f"Bearer {admin_user}"},
@@ -187,16 +169,12 @@ def test_admin_access_admin_attendance_by_empid_success(client, admin_user, read
         "/admin/attendance/employee/3",
         headers={"Authorization": f"Bearer {admin_user}"},
     )
-    expected = read_json(
-        "expected_responses/admin/attendance/get_attendance_by_empid_admin.json"
-    )
+    expected = read_json("expected_responses/admin/attendance/get_attendance_by_empid_admin.json")
     assert response.status_code == 200
     assert response.json() == expected
 
 
-def test_admin_access_admin_attendance_by_empid_employee_not_exist(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_attendance_by_empid_employee_not_exist(client, admin_user, read_json):
     response = client.get(
         "/admin/attendance/employee/13",
         headers={"Authorization": f"Bearer {admin_user}"},

@@ -1,9 +1,10 @@
 # common/leave.py
+
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from database.models import Leave, Employee
+
+from database.models import Leave
 from schema.leave_schema import LeaveCreate
-from typing import List
-from fastapi import HTTPException, status
 
 
 def _get_leave_or_404(db: Session, employee_id: int, year: int) -> Leave:
@@ -24,7 +25,7 @@ def get_leave_by_employee_and_year(db: Session, employee_id: int, year: int) -> 
     return _get_leave_or_404(db, employee_id, year)
 
 
-def get_all_leaves_by_employee_id(db: Session, employee_id: int) -> List[Leave]:
+def get_all_leaves_by_employee_id(db: Session, employee_id: int) -> list[Leave]:
     leaves = (
         db.query(Leave)
         .filter(Leave.fk_employee_id == employee_id)
@@ -51,7 +52,10 @@ def create_leave(db: Session, leave_in: LeaveCreate) -> Leave:
     if exists:
         raise HTTPException(
             status_code=409,
-            detail=f"Leave record already exists for employee {leave_in.fk_employee_id} in year {leave_in.assign_year}",
+            detail=(
+                f"Leave record already exists for employee "
+                f"{leave_in.fk_employee_id} in year {leave_in.assign_year}"
+            ),
         )
 
     db_leave = Leave(**leave_in.model_dump())
@@ -64,9 +68,7 @@ def create_leave(db: Session, leave_in: LeaveCreate) -> Leave:
 def delete_leave(db: Session, leave_id: int) -> None:
     leave = db.query(Leave).filter(Leave.leave_id == leave_id).first()
     if not leave:
-        raise HTTPException(
-            status_code=404, detail=f"Leave record with ID {leave_id} not found"
-        )
+        raise HTTPException(status_code=404, detail=f"Leave record with ID {leave_id} not found")
     db.delete(leave)
     db.commit()
 

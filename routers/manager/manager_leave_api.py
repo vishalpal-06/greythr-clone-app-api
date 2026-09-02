@@ -1,14 +1,14 @@
 # api/manager_leave_api.py
-from fastapi import APIRouter
-from typing import List
 
-from common.leave import (
-    get_leave_by_employee_and_year,
-    get_all_leaves_by_employee_id,
-)
+from fastapi import APIRouter
+
 import schema.leave_schema as leave_schema
-from routers.auth import db_dependency, user_dependency
 from common.employee import get_subordinate_by_id
+from common.leave import (
+    get_all_leaves_by_employee_id,
+    get_leave_by_employee_and_year,
+)
+from routers.auth import db_dependency, user_dependency
 
 router = APIRouter(prefix="/leaves", tags=["Manager - Leave"])
 
@@ -33,7 +33,7 @@ def get_subordinate_leave_by_year_endpoint_endpoint(
 
 @router.get(
     "/employee/{employee_id}",
-    response_model=List[leave_schema.LeaveResponse],
+    response_model=list[leave_schema.LeaveResponse],
     summary="Get all leave records of a subordinate",
 )
 def get_subordinate_all_leaves_endpoint(

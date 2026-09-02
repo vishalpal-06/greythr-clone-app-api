@@ -1,22 +1,24 @@
 # seed_db.py
 
+import datetime
 import json
 import os
-import datetime
 from datetime import date
+
 import pytest
 from sqlalchemy.orm import Session
+
 from database.models import (
-    Department,
-    Role,
-    Employee,
     Attendance,
-    Salary,
+    Department,
+    Employee,
+    ExpenseClaim,
     Leave,
     LeaveApplication,
-    Regularization,
     Payslip,
-    ExpenseClaim,
+    Regularization,
+    Role,
+    Salary,
 )
 
 
@@ -24,7 +26,7 @@ def load_json_data(base_path: str, filename: str):
     """Helper function to load a JSON file from the specified directory."""
     file_path = os.path.join(base_path, filename)
     try:
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             return json.load(f)
     except FileNotFoundError:
         pytest.fail(f"Seed data file not found: {file_path}")
@@ -43,9 +45,7 @@ def seed_all_tables(session: Session, test_data_dir: str):
 
     # --- Seed Departments ---
     departments_data = load_json_data(test_data_dir, "departments.json")
-    session.add_all(
-        [Department(department_name=d["department_name"]) for d in departments_data]
-    )
+    session.add_all([Department(department_name=d["department_name"]) for d in departments_data])
     session.commit()
 
     # --- Seed Roles ---
@@ -144,9 +144,7 @@ def seed_all_tables(session: Session, test_data_dir: str):
             regularization_start_time=datetime.datetime.fromisoformat(
                 e["regularization_start_time"]
             ),
-            regularization_end_time=datetime.datetime.fromisoformat(
-                e["regularization_end_time"]
-            ),
+            regularization_end_time=datetime.datetime.fromisoformat(e["regularization_end_time"]),
             regularization_reason=e["regularization_reason"],
             regularization_status=e["regularization_status"],
             fk_employee_id=e["fk_employee_id"],

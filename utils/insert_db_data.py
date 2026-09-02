@@ -1,17 +1,18 @@
-import bcrypt
-import os, sys
+import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from datetime import date
+
 from database.database import sessionlocal as SessionLocal
 from database.models import (
     Department,
-    Role,
     Employee,
     ExpenseClaim,
-    Salary,
     Regularization,
+    Role,
+    Salary,
 )  # Import your SQLAlchemy models
 
 

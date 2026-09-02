@@ -1,15 +1,18 @@
+import inspect
+import json
+import os
+from pathlib import Path
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from .seed_db import seed_all_tables
-import json
-from pathlib import Path
-from main import app
+
 from database.models import Base
+from main import app
 from routers.auth import get_db
-import os
-import inspect
+
+from .seed_db import seed_all_tables
 
 # ... (rest of the initial setup and imports remain the same)
 
@@ -146,7 +149,7 @@ def read_json(request: pytest.FixtureRequest):  # pragma: no cover
                     try:
                         response_data = resp_obj.json()
                         break
-                    except:
+                    except Exception:
                         pass
             frame = frame.f_back
 
@@ -166,7 +169,7 @@ def read_json(request: pytest.FixtureRequest):  # pragma: no cover
                 "Run tests with UPDATE_TEST_DATA=1 to generate it automatically."
             )
 
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             return json.load(f)
 
     return _read_json

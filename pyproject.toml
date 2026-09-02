@@ -21,12 +21,27 @@ dev = [
     "black>=26.5.1",
     "pytest>=9.1.1",
     "pytest-cov>=7.1.0",
+    "ruff>=0.16.5",
 ]
 
 [tool.black]
-line-length = 88
+line-length = 100
 target-version = ["py312"]
 include = '\.pyi?$'
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # Pyflakes
+    "I",      # isort
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear
+]
 
 [tool.pytest.ini_options]
 minversion = "9.0"

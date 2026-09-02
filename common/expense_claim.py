@@ -1,15 +1,16 @@
 # common/expense_claim.py
+from datetime import UTC, datetime
+
+from fastapi import HTTPException
+from sqlalchemy import extract
 from sqlalchemy.orm import Session
-from database.models import ExpenseClaim, Employee
+
+from database.models import Employee, ExpenseClaim
 from schema.expense_claim_schema import (
     ExpenseClaimCreate,
     ExpenseClaimStatusUpdate,
     Status,
 )
-from fastapi import HTTPException, status
-from datetime import datetime, timezone
-from typing import List
-from sqlalchemy import extract
 
 
 def _get_claim_or_404(db: Session, claim_id: int) -> ExpenseClaim:
@@ -20,9 +21,7 @@ def _get_claim_or_404(db: Session, claim_id: int) -> ExpenseClaim:
 
 
 # USER
-def create_expense_claim(
-    db: Session, claim_in: ExpenseClaimCreate, user: dict
-) -> ExpenseClaim:
+def create_expense_claim(db: Session, claim_in: ExpenseClaimCreate, user: dict) -> ExpenseClaim:
     emp = db.query(Employee).filter(Employee.employee_id == user["id"]).first()
     if not emp or not emp.fk_manager_id:
         raise HTTPException(status_code=400, detail="No manager assigned")
@@ -44,16 +43,12 @@ def delete_expense_claim(db: Session, claim_id: int, user: dict) -> None:
     if claim.fk_employee_id != user["id"]:
         raise HTTPException(status_code=403, detail="Not authorized")
     if claim.claim_status != Status.Pending:
-        raise HTTPException(
-            status_code=400, detail="Cannot delete approved/rejected claim"
-        )
+        raise HTTPException(status_code=400, detail="Cannot delete approved/rejected claim")
     db.delete(claim)
     db.commit()
 
 
-def get_my_claims_by_status(
-    db: Session, status: Status, user: dict
-) -> List[ExpenseClaim]:
+def get_my_claims_by_status(db: Session, status: Status, user: dict) -> list[ExpenseClaim]:
     return (
         db.query(ExpenseClaim)
         .filter(
@@ -72,9 +67,7 @@ def get_my_claim_by_id(db: Session, claim_id: int, user: dict) -> ExpenseClaim:
     return claim
 
 
-def get_my_claims_by_month(
-    db: Session, year: int, month: int, user: dict
-) -> List[ExpenseClaim]:
+def get_my_claims_by_month(db: Session, year: int, month: int, user: dict) -> list[ExpenseClaim]:
     return (
         db.query(ExpenseClaim)
         .filter(
@@ -92,7 +85,7 @@ def get_claim_by_id_admin(db: Session, claim_id: int) -> ExpenseClaim:
     return _get_claim_or_404(db, claim_id)
 
 
-def get_all_claims_by_employee_admin(db: Session, emp_id: int) -> List[ExpenseClaim]:
+def get_all_claims_by_employee_admin(db: Session, emp_id: int) -> list[ExpenseClaim]:
     claims = (
         db.query(ExpenseClaim)
         .filter(ExpenseClaim.fk_employee_id == emp_id)
@@ -104,14 +97,14 @@ def get_all_claims_by_employee_admin(db: Session, emp_id: int) -> List[ExpenseCl
     return claims
 
 
-def get_claims_by_status_admin(db: Session, status: Status) -> List[ExpenseClaim]:
+def get_claims_by_status_admin(db: Session, status: Status) -> list[ExpenseClaim]:
     claims = db.query(ExpenseClaim).filter(ExpenseClaim.claim_status == status).all()
     if not claims:
         raise HTTPException(status_code=404, detail=f"No {status.value} claims")
     return claims
 
 
-def get_claims_by_month_admin(db: Session, year: int, month: int) -> List[ExpenseClaim]:
+def get_claims_by_month_admin(db: Session, year: int, month: int) -> list[ExpenseClaim]:
     claims = (
         db.query(ExpenseClaim)
         .filter(
@@ -127,7 +120,7 @@ def get_claims_by_month_admin(db: Session, year: int, month: int) -> List[Expens
 
 def get_claims_by_employee_and_month_any(
     db: Session, emp_id: int, year: int, month: int
-) -> List[ExpenseClaim]:
+) -> list[ExpenseClaim]:
     from sqlalchemy import extract
 
     claims = (
@@ -153,7 +146,7 @@ def admin_update_status(
 ) -> ExpenseClaim:
     claim = _get_claim_or_404(db, claim_id)
     claim.claim_status = update.claim_status
-    claim.updated_at = datetime.now(timezone.utc)
+    claim.updated_at = datetime.now(UTC)
     db.commit()
     db.refresh(claim)
     return claim
@@ -170,9 +163,7 @@ def get_manager_claim_by_id(db: Session, claim_id: int, user: dict) -> ExpenseCl
     return claim
 
 
-def get_manager_claims_by_status(
-    db: Session, status: Status, user: dict
-) -> List[ExpenseClaim]:
+def get_manager_claims_by_status(db: Session, status: Status, user: dict) -> list[ExpenseClaim]:
     return (
         db.query(ExpenseClaim)
         .filter(
@@ -186,7 +177,7 @@ def get_manager_claims_by_status(
 
 def get_manager_claims_by_month(
     db: Session, year: int, month: int, user: dict
-) -> List[ExpenseClaim]:
+) -> list[ExpenseClaim]:
     return (
         db.query(ExpenseClaim)
         .filter(
@@ -201,7 +192,7 @@ def get_manager_claims_by_month(
 
 def get_manager_claims_by_employee_and_month(
     db: Session, emp_id: int, year: int, month: int, user: dict
-) -> List[ExpenseClaim]:
+) -> list[ExpenseClaim]:
     from common.employee import get_subordinate_by_id
 
     get_subordinate_by_id(employee_id=emp_id, db=db, user=user)
@@ -222,7 +213,7 @@ def manager_update_status(
 ) -> ExpenseClaim:
     claim = get_manager_claim_by_id(db, claim_id, user)
     claim.claim_status = update.claim_status
-    claim.updated_at = datetime.now(timezone.utc)
+    claim.updated_at = datetime.now(UTC)
     db.commit()
     db.refresh(claim)
     return claim

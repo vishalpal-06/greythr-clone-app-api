@@ -1,10 +1,11 @@
 # /employee.py
-from database.models import Employee
+
 from fastapi import HTTPException, status
-from schema.employee_schema import EmployeeCreate, EmployeeUpdate
-from typing import List
-from routers.auth import db_dependency, user_dependency
+
 from common.common import _require_admin
+from database.models import Employee
+from routers.auth import db_dependency, user_dependency
+from schema.employee_schema import EmployeeCreate, EmployeeUpdate
 
 
 # === PUBLIC / SHARED ===
@@ -18,7 +19,7 @@ def get_current_user_employee(db: db_dependency, user: user_dependency) -> Emplo
 
 
 # === ADMIN ONLY ===
-def get_all_employees(db: db_dependency, user: user_dependency) -> List[Employee]:
+def get_all_employees(db: db_dependency, user: user_dependency) -> list[Employee]:
     if not user.get("is_admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Admin privileges required"
@@ -26,9 +27,7 @@ def get_all_employees(db: db_dependency, user: user_dependency) -> List[Employee
     return db.query(Employee).all()
 
 
-def get_employee_by_id(
-    employee_id: int, db: db_dependency, user: user_dependency
-) -> Employee:
+def get_employee_by_id(employee_id: int, db: db_dependency, user: user_dependency) -> Employee:
     _require_admin(user)
     employee = db.query(Employee).filter(Employee.employee_id == employee_id).first()
     if not employee:
@@ -36,9 +35,7 @@ def get_employee_by_id(
     return employee
 
 
-def get_employee_by_email(
-    email: str, db: db_dependency, user: user_dependency
-) -> Employee:
+def get_employee_by_email(email: str, db: db_dependency, user: user_dependency) -> Employee:
     _require_admin(user)
     employee = db.query(Employee).filter(Employee.email == email).first()
     if not employee:
@@ -97,9 +94,7 @@ def update_employee_by_email(
     return employee
 
 
-def delete_employee_by_id(
-    employee_id: int, db: db_dependency, user: user_dependency
-) -> dict:
+def delete_employee_by_id(employee_id: int, db: db_dependency, user: user_dependency) -> dict:
     _require_admin(user)
     employee = _get_employee_or_404(db, employee_id)
     db.delete(employee)
@@ -107,9 +102,7 @@ def delete_employee_by_id(
     return {"detail": "Employee deleted successfully"}
 
 
-def delete_employee_by_email(
-    email: str, db: db_dependency, user: user_dependency
-) -> dict:
+def delete_employee_by_email(email: str, db: db_dependency, user: user_dependency) -> dict:
     _require_admin(user)
     employee = db.query(Employee).filter(Employee.email == email).first()
     if not employee:
@@ -120,27 +113,19 @@ def delete_employee_by_email(
 
 
 # === MANAGER ONLY ===
-def get_subordinate_by_id(
-    employee_id: int, db: db_dependency, user: user_dependency
-) -> Employee:
+def get_subordinate_by_id(employee_id: int, db: db_dependency, user: user_dependency) -> Employee:
     employee = _get_employee_or_404(db, employee_id)
     if employee.fk_manager_id != user["id"]:
-        raise HTTPException(
-            status_code=404, detail="Employee not found under your management"
-        )
+        raise HTTPException(status_code=404, detail="Employee not found under your management")
     return employee
 
 
-def get_subordinate_by_email(
-    email: str, db: db_dependency, user: user_dependency
-) -> Employee:
+def get_subordinate_by_email(email: str, db: db_dependency, user: user_dependency) -> Employee:
     employee = db.query(Employee).filter(Employee.email == email).first()
     if not employee:
         raise HTTPException(status_code=404, detail="Employee not found")
     if employee.fk_manager_id != user["id"]:
-        raise HTTPException(
-            status_code=404, detail="Employee not found under your management"
-        )
+        raise HTTPException(status_code=404, detail="Employee not found under your management")
     return employee
 
 

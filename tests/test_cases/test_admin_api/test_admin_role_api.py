@@ -1,8 +1,6 @@
-# -------------------------------------------------Test User API ---------------------------------------------------
+# -----------------------------------Test User API -----------------------------------
 def test_admin_get_all_roles_success(client, admin_user, read_json):
-    response = client.get(
-        "/user/my/roles/", headers={"Authorization": f"Bearer {admin_user}"}
-    )
+    response = client.get("/user/my/roles/", headers={"Authorization": f"Bearer {admin_user}"})
     expected = read_json("expected_responses/admin/roles/user_get_all_roles.json")
 
     assert response.status_code == 200
@@ -10,9 +8,7 @@ def test_admin_get_all_roles_success(client, admin_user, read_json):
 
 
 def test_admin_get_role_by_id_success(client, admin_user, read_json):
-    response = client.get(
-        "/user/my/roles/id/4", headers={"Authorization": f"Bearer {admin_user}"}
-    )
+    response = client.get("/user/my/roles/id/4", headers={"Authorization": f"Bearer {admin_user}"})
     expected = read_json("expected_responses/admin/roles/user_get_sales_role.json")
 
     assert response.status_code == 200
@@ -20,15 +16,13 @@ def test_admin_get_role_by_id_success(client, admin_user, read_json):
 
 
 def test_admin_get_role_by_id_not_found(client, admin_user, read_json):
-    response = client.get(
-        "/user/my/roles/id/14", headers={"Authorization": f"Bearer {admin_user}"}
-    )
+    response = client.get("/user/my/roles/id/14", headers={"Authorization": f"Bearer {admin_user}"})
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Role not found"}
 
 
-# -------------------------------------------------Test Admin API ---------------------------------------------------
+# ------------------------------Test Admin API -------------------------------
 def test_admin_access_admin_create_role_success(client, admin_user, read_json):
     payload = {"role": "string"}
     response = client.post(
@@ -79,9 +73,7 @@ def test_admin_access_admin_update_role_by_id_not_found(client, admin_user, read
 
 
 def test_admin_access_admin_delete_role_by_id_success(client, admin_user, read_json):
-    response = client.delete(
-        "/admin/roles/id/1", headers={"Authorization": f"Bearer {admin_user}"}
-    )
+    response = client.delete("/admin/roles/id/1", headers={"Authorization": f"Bearer {admin_user}"})
 
     assert response.status_code == 200
     assert response.json() == {"detail": "Role deleted successfully"}
@@ -116,9 +108,7 @@ def test_admin_access_admin_update_role_by_name_conflict(client, admin_user, rea
     assert response.json() == {"detail": "Role with this name already exists"}
 
 
-def test_admin_access_admin_update_role_by_name_not_found(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_update_role_by_name_not_found(client, admin_user, read_json):
     response = client.put(
         "/admin/roles/name/Altu Jalaltu",
         params={"new_name": "HR"},
@@ -139,9 +129,7 @@ def test_admin_access_admin_delete_role_by_name_success(client, admin_user, read
     assert response.json() == {"detail": "Role deleted successfully"}
 
 
-def test_admin_access_admin_delete_role_by_name_not_found(
-    client, admin_user, read_json
-):
+def test_admin_access_admin_delete_role_by_name_not_found(client, admin_user, read_json):
     response = client.delete(
         "/admin/roles/name/Human Resources",
         headers={"Authorization": f"Bearer {admin_user}"},

@@ -1,20 +1,19 @@
 import asyncio
 import logging
 import os
-from typing import TypedDict, Annotated
+from pathlib import Path
+from typing import Annotated, TypedDict
 
 from dotenv import load_dotenv
 from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import BaseMessage, HumanMessage
 from langchain_mcp_adapters.client import MultiServerMCPClient
-from langgraph.graph import StateGraph, START
+from langgraph.graph import START, StateGraph
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 
 # Configure basic logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 logger.info("Starting mcp_client.py script")
@@ -25,11 +24,11 @@ logger.info("Environment variables loaded")
 # llm = ChatOpenAI(model="gpt-5")
 # Ensure the model name is correct for the Anthropic library version you have
 llm = ChatAnthropic(model="claude-sonnet-4-5")
-logger.info(f"LLM initialized with model:")
+logger.info("LLM initialized with model:")
 
 # Define the explicit path to your mcp_server.py script
 # Use an absolute path check to be safe
-server_script_path = r"C:\\Users\\VishalP-ardent\\OneDrive - Ardent\Desktop\\Projects\\greythr-clone-app-api\\mcp_server.py"
+server_script_path = Path(__file__).parent / "utils" / "mcp" / "mcp_server.py"
 
 if not os.path.exists(server_script_path):
     logger.error(f"Server script not found at: {server_script_path}")
@@ -61,9 +60,7 @@ async def build_graph():
     logger.info("Starting build_graph function")
 
     # This is a critical point where the client starts the subprocess and waits for tools
-    logger.info(
-        "Awaiting client.get_tools() - this might take time while server starts"
-    )
+    logger.info("Awaiting client.get_tools() - this might take time while server starts")
     tools = await client.get_tools()
     logger.info(f"Received {len(tools)} tools from server")
 
@@ -106,7 +103,11 @@ async def main():
 
     # running the graph
     user_message = HumanMessage(
-        content="my username and password is vishalpal0602@gmail.com and Testing, Give my full details from hr portal"
+        content=(
+            "my username and password is "
+            "vishalpal0602@gmail.com and Testing, "
+            "Give my full details from hr portal"
+        )
     )
     logger.info(f"Invoking chatbot with message: '{user_message.content}'")
 
@@ -123,5 +124,5 @@ if __name__ == "__main__":
     # Ensure the event loop runs the async main function
     try:
         asyncio.run(main())
-    except Exception as e:
+    except Exception:
         logger.exception("An error occurred during asyncio.run(main())")
