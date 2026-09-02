@@ -24,9 +24,7 @@ def test_user_get_my_salary_by_year_not_found(client, user_A1, read_json):
 
 
 # ------------------------------Test Admin API -------------------------------
-def test_user_admin_access_get_employee_salary_by_years_forbidden(
-    client, user_A1, read_json
-):
+def test_user_admin_access_get_employee_salary_by_years_forbidden(client, user_A1, read_json):
     response = client.get(
         "admin/salaries/year/2025", headers={"Authorization": f"Bearer {user_A1}"}
     )

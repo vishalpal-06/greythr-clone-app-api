@@ -167,9 +167,7 @@ def test_manager_manager_access_get_subordinate_expense_claims_by_empid_year__an
     assert response.json() == expected
 
 
-def test_manager_access_expense_claims_nonsubordinate(
-    client, manager_A
-):
+def test_manager_access_expense_claims_nonsubordinate(client, manager_A):
     response = client.get(
         "manager/expense-claims/employee/1/month/2025/12",
         headers={"Authorization": f"Bearer {manager_A}"},
