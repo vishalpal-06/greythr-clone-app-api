@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from mangum import Mangum
 
 from database import models
 from database.database import engine
@@ -35,6 +36,8 @@ app.include_router(auth_router)
 app.include_router(admin_router)
 app.include_router(manager_router)
 app.include_router(user_router)
+
+handler = Mangum(app)
 
 if __name__ == "__main__":
     models.Base.metadata.create_all(bind=engine)
