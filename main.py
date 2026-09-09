@@ -38,6 +38,3 @@ app.include_router(manager_router)
 app.include_router(user_router)
 
 handler = Mangum(app)
-
-if __name__ == "__main__":
-    models.Base.metadata.create_all(bind=engine)

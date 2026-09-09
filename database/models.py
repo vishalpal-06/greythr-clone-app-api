@@ -10,9 +10,8 @@ from sqlalchemy import (
     Integer,
     String,
 )
-from sqlalchemy.orm import declarative_base, relationship
-
-Base = declarative_base()
+from sqlalchemy.orm import relationship
+from database.database import Base
 
 
 class Status(StrEnum):

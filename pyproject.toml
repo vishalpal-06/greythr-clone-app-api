@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "alembic>=1.19.2",
     "fastapi>=0.141.1",
     "httpx2>=2.12.0",
     "mangum>=0.22.0",
@@ -71,3 +72,7 @@ precision = 2
 
 [tool.coverage.html]
 directory = "htmlcov"
+
+[tool.alembic]
+script_location = "alembic"
+prepend_sys_path = ["."]
