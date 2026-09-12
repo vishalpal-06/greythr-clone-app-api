@@ -8,12 +8,11 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /app
 
-# Enable bytecode compilation & force copy mode
 ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
     UV_PYTHON_DOWNLOADS=0
 
-# Copy dependency metadata first for better caching
+# Copy dependency metadata first
 COPY pyproject.toml uv.lock ./
 
 # Install only production dependencies
@@ -36,7 +35,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Apply currently available OS security updates
+# Install latest available OS security updates
 RUN apt-get update \
     && apt-get upgrade -y \
     && rm -rf /var/lib/apt/lists/*
@@ -50,12 +49,12 @@ RUN groupadd --system --gid 1001 appgroup \
         --no-create-home \
         appuser
 
-# Copy production Python environment only
+# Copy production virtual environment
 COPY --from=builder --chown=appuser:appgroup \
     /app/.venv \
     /app/.venv
 
-# Copy only application runtime files
+# Copy application code
 COPY --chown=appuser:appgroup main.py ./
 COPY --chown=appuser:appgroup common ./common
 COPY --chown=appuser:appgroup database ./database
@@ -65,11 +64,18 @@ COPY --chown=appuser:appgroup schema ./schema
 # Alembic migration files
 COPY --chown=appuser:appgroup alembic ./alembic
 
-# Alembic config lives in [tool.alembic]
+# Alembic config lives in pyproject.toml
 COPY --chown=appuser:appgroup pyproject.toml ./
 
-# Temporary SQLite DB bundled inside image
+# Copy local SQLite database
 COPY --chown=appuser:appgroup greythr.db ./greythr.db
+
+# SQLite needs write access to:
+# 1. database file
+# 2. parent directory for journal/WAL files
+RUN chown -R appuser:appgroup /app \
+    && chmod 775 /app \
+    && chmod 664 /app/greythr.db
 
 USER appuser
 
