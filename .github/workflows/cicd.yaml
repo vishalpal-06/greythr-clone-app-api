@@ -154,16 +154,7 @@ jobs:
   # Formatting
   # ==================================================
   format-check:
-    needs:
-      - changes
-      - cdk-deploy
-
-    if: |
-      always() &&
-      (
-        needs.cdk-deploy.result == 'success' ||
-        needs.cdk-deploy.result == 'skipped'
-      )
+    needs: changes
 
     runs-on: ubuntu-latest
 
@@ -218,8 +209,18 @@ jobs:
   # Build + Deploy Application
   # ==================================================
   build-and-deploy:
-    needs: test
+    needs: 
+      - test
+      - cdk-deploy
 
+    if: | 
+      always() 
+      && needs.test.result == 'success' && 
+      ( 
+        needs.cdk-deploy.result == 'success' || 
+        needs.cdk-deploy.result == 'skipped' 
+      ) 
+    
     runs-on: ubuntu-latest
 
     steps:
