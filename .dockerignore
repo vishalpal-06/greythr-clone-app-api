@@ -1,20 +1,40 @@
-# Ignore Python virtual environment folders
-venv/
-.venv/
+# Git
+.git/
+.github/
 
-# Ignore Python cache files
+# Python virtual environments
+.venv/
+venv/
+
+# Python cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
-# Ignore test and coverage specific files/folders
+# Testing / coverage
+tests/
 .pytest_cache/
 .coverage
 htmlcov/
 
-# Ignore editor/OS specific files
+# Infrastructure
+infra/
+
+# Editor / OS
 .idea/
 .vscode/
 .DS_Store
 
-# Ignore local environment file
+# Environment / secrets
 .env
+.env.*
+
+# CDK generated files
+cdk.out/
+
+# Documentation / local tooling
+CLAUDE.md
+
+# Misc
+*.log

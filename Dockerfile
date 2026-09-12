@@ -1,53 +1,78 @@
 ############################
 # Builder stage
 ############################
-FROM python:3.12-slim AS builder
+FROM python:3.12-slim-bookworm AS builder
 
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /app
 
-# Enable bytecode compilation & force copy mode (needed for multi-stage)
+# Enable bytecode compilation & force copy mode
 ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
     UV_PYTHON_DOWNLOADS=0
 
-# Install dependencies first (better layer caching)
+# Copy dependency metadata first for better caching
 COPY pyproject.toml uv.lock ./
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked --no-install-project --no-dev
 
-# Copy application code and install the project
-COPY . .
+# Install only production dependencies
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked --no-dev --no-editable
+    uv sync \
+    --locked \
+    --no-install-project \
+    --no-dev
+
 
 ############################
 # Runtime stage
 ############################
-FROM python:3.12-slim
+FROM python:3.12-slim-bookworm AS runtime
 
-# Prevent Python from writing .pyc files and enable unbuffered logs
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH="/app/.venv/bin:$PATH"
+    PATH="/app/.venv/bin:$PATH" \
+    DB_CONNECT="local"
 
 WORKDIR /app
 
-# Create non-root user
-RUN groupadd --system --gid 1001 appgroup && \
-    useradd --system --uid 1001 --gid appgroup --no-create-home appuser
+# Apply currently available OS security updates
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy only the virtual environment + application code from builder
-COPY --from=builder --chown=appuser:appgroup /app /app
+# Create non-root user
+RUN groupadd --system --gid 1001 appgroup \
+    && useradd \
+        --system \
+        --uid 1001 \
+        --gid appgroup \
+        --no-create-home \
+        appuser
+
+# Copy production Python environment only
+COPY --from=builder --chown=appuser:appgroup \
+    /app/.venv \
+    /app/.venv
+
+# Copy only application runtime files
+COPY --chown=appuser:appgroup main.py ./
+COPY --chown=appuser:appgroup common ./common
+COPY --chown=appuser:appgroup database ./database
+COPY --chown=appuser:appgroup routers ./routers
+COPY --chown=appuser:appgroup schema ./schema
+
+# Alembic migration files
+COPY --chown=appuser:appgroup alembic ./alembic
+
+# Alembic config lives in [tool.alembic]
+COPY --chown=appuser:appgroup pyproject.toml ./
+
+# Temporary SQLite DB bundled inside image
+COPY --chown=appuser:appgroup greythr.db ./greythr.db
 
 USER appuser
 
 EXPOSE 8000
-
-# Optional healthcheck (uncomment if you have a /health endpoint)
-# HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-#     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
