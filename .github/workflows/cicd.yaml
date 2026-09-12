@@ -1,141 +1,14 @@
-# name: FastAPI CI/CD
-
-# on:
-#   push:
-#     branches:
-#       - main
-
-# env:
-#   AWS_REGION: ap-south-1
-#   ECR_REPOSITORY: greythr-api
-#   ECS_CLUSTER: greythr-cluster
-#   ECS_SERVICE: greythr-service
-#   ECS_TASK_FAMILY: greythr-task
-
-# jobs:
-
-#   format-check:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout Code
-#         uses: actions/checkout@v4
-
-#       - name: Run Black Check
-#         uses: psf/black@stable
-#         with:
-#           version: "25.1.0"
-#           options: "--check"
-
-#   test:
-#     runs-on: ubuntu-latest
-#     needs: format-check
-
-#     steps:
-#       - name: Checkout Code
-#         uses: actions/checkout@v4
-
-#       - name: Install UV
-#         uses: astral-sh/setup-uv@v7
-#         with:
-#           enable-cache: true
-
-#       - name: Setup Python
-#         uses: actions/setup-python@v5
-#         with:
-#           python-version: "3.12"
-
-#       - name: Install Dependencies
-#         run: uv sync --frozen
-
-#       - name: Run Tests
-#         run: |
-#           uv run pytest \
-#             --disable-warnings \
-#             --maxfail=1 \
-#             --cov=. \
-#             --cov-fail-under=100
-
-#   build-and-deploy:
-#     runs-on: ubuntu-latest
-#     needs: test
-
-#     steps:
-#       - name: Checkout Code
-#         uses: actions/checkout@v4
-
-#       - name: Configure AWS Credentials
-#         uses: aws-actions/configure-aws-credentials@v4
-#         with:
-#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           aws-region: ${{ env.AWS_REGION }}
-
-#       - name: Login to Amazon ECR
-#         id: login-ecr
-#         uses: aws-actions/amazon-ecr-login@v2
-
-#       - name: Setup Docker Buildx
-#         uses: docker/setup-buildx-action@v3
-
-#       - name: Build Docker Image
-#         run: |
-#           docker build \
-#             -t $ECR_REPOSITORY:${{ github.sha }} \
-#             .
-
-#       - name: Run Trivy Security Scan
-#         uses: aquasecurity/trivy-action@0.28.0
-#         with:
-#           image-ref: ${{ env.ECR_REPOSITORY }}:${{ github.sha }}
-#           format: table
-#           exit-code: 1
-#           severity: HIGH,CRITICAL
-
-#       - name: Tag Docker Image
-#         run: |
-#           docker tag \
-#           $ECR_REPOSITORY:${{ github.sha }} \
-#           ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}
-
-#       - name: Push Docker Image
-#         run: |
-#           docker push \
-#           ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}
-
-#       - name: Download Current Task Definition
-#         run: |
-#           aws ecs describe-task-definition \
-#             --task-definition $ECS_TASK_FAMILY \
-#             --query taskDefinition \
-#             > task-definition.json
-
-#       - name: Render New Task Definition
-#         id: task-def
-#         uses: aws-actions/amazon-ecs-render-task-definition@v1
-#         with:
-#           task-definition: task-definition.json
-#           container-name: GreythrContainer
-#           image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
-
-#       - name: Deploy to ECS
-#         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-#         with:
-#           task-definition: ${{ steps.task-def.outputs.task-definition }}
-#           service: ${{ env.ECS_SERVICE }}
-#           cluster: ${{ env.ECS_CLUSTER }}
-#           wait-for-service-stability: true
-
 name: CI/CD + CDK
 
 on:
   push:
     branches:
       - main
+
   workflow_dispatch:
 
 permissions:
-  id-token: write          # for OIDC (CDK + AWS)
+  id-token: write
   contents: read
 
 concurrency:
@@ -144,41 +17,61 @@ concurrency:
 
 env:
   AWS_REGION: ap-south-1
+
   ECR_REPOSITORY: greythr-api
+
   ECS_CLUSTER: greythr-cluster
   ECS_SERVICE: greythr-service
   ECS_TASK_FAMILY: greythr-task
 
+  CONTAINER_NAME: GreythrContainer
+  CONTAINER_PORT: 8000
+
+
 jobs:
-  # -------------------------------------------------
-  # 1. Detect what changed
-  # -------------------------------------------------
+
+  # ==================================================
+  # Detect infrastructure changes
+  # ==================================================
   changes:
     runs-on: ubuntu-latest
+
     outputs:
       cdk: ${{ steps.filter.outputs.cdk }}
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Detect Changes
+        uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
             cdk:
               - 'infra/**'
-              - '.github/workflows/cicd.yml'   # rename if your file name is different
+              - '.github/workflows/cicd.yaml'
 
-  # -------------------------------------------------
-  # 2. CDK Deploy (only when CDK files changed)
-  # -------------------------------------------------
+
+  # ==================================================
+  # Deploy Infrastructure
+  # ==================================================
   cdk-deploy:
     needs: changes
+
     if: needs.changes.outputs.cdk == 'true'
+
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: infra
+
     steps:
-      - uses: actions/checkout@v4
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
       - name: Install UV
         uses: astral-sh/setup-uv@v7
@@ -188,19 +81,16 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: "3.12"
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: uv sync --frozen
 
-      - name: Configure AWS credentials
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}   # preferred
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
-          # fallback:
-          # aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          # aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: CDK Synth
         run: uv run cdk synth
@@ -208,27 +98,48 @@ jobs:
       - name: CDK Deploy
         run: uv run cdk deploy --all --require-approval never
 
-  # -------------------------------------------------
-  # 3. App pipeline (always runs)
-  #    Waits for CDK only when it actually ran
-  # -------------------------------------------------
+
+  # ==================================================
+  # Formatting
+  # ==================================================
   format-check:
-    needs: [changes, cdk-deploy]
-    if: always() && (needs.cdk-deploy.result == 'success' || needs.cdk-deploy.result == 'skipped')
+    needs:
+      - changes
+      - cdk-deploy
+
+    if: |
+      always() &&
+      (
+        needs.cdk-deploy.result == 'success' ||
+        needs.cdk-deploy.result == 'skipped'
+      )
+
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Run Black Check
         uses: psf/black@stable
         with:
           version: "25.1.0"
           options: "--check"
 
+
+  # ==================================================
+  # Tests
+  # ==================================================
   test:
     needs: format-check
+
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
       - name: Install UV
         uses: astral-sh/setup-uv@v7
@@ -251,26 +162,48 @@ jobs:
             --cov=. \
             --cov-fail-under=100
 
+
+  # ==================================================
+  # Build + Deploy Application
+  # ==================================================
   build-and-deploy:
     needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # ------------------------------------------------
+      # Source
+      # ------------------------------------------------
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+
+      # ------------------------------------------------
+      # AWS Authentication
+      # ------------------------------------------------
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
-          # or switch to role-to-assume like the CDK job
 
+
+      # ------------------------------------------------
+      # Login ECR
+      # ------------------------------------------------
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+
+      # ------------------------------------------------
+      # Docker
+      # ------------------------------------------------
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
+
 
       - name: Build Docker Image
         run: |
@@ -278,6 +211,10 @@ jobs:
             -t $ECR_REPOSITORY:${{ github.sha }} \
             .
 
+
+      # ------------------------------------------------
+      # Security Scan
+      # ------------------------------------------------
       - name: Run Trivy Security Scan
         uses: aquasecurity/trivy-action@0.28.0
         with:
@@ -286,36 +223,311 @@ jobs:
           exit-code: 1
           severity: HIGH,CRITICAL
 
+
+      # ------------------------------------------------
+      # Push Image
+      # ------------------------------------------------
       - name: Tag Docker Image
         run: |
           docker tag \
             $ECR_REPOSITORY:${{ github.sha }} \
             ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}
 
+
       - name: Push Docker Image
         run: |
           docker push \
             ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}
 
-      - name: Download Current Task Definition
+
+      # ------------------------------------------------
+      # Read infrastructure outputs
+      # ------------------------------------------------
+      - name: Read Infrastructure Outputs
+        id: infra
         run: |
-          aws ecs describe-task-definition \
-            --task-definition $ECS_TASK_FAMILY \
-            --query taskDefinition \
-            > task-definition.json
 
-      - name: Render New Task Definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name: GreythrContainer
-          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+          PRIVATE_SUBNETS=$(aws cloudformation describe-stacks \
+            --stack-name NetworkStack \
+            --query "Stacks[0].Outputs[?OutputKey=='PrivateSubnetIds'].OutputValue" \
+            --output text)
 
-      - name: Deploy to ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+          ECS_SECURITY_GROUP=$(aws cloudformation describe-stacks \
+            --stack-name SecurityStack \
+            --query "Stacks[0].Outputs[?OutputKey=='EcsSecurityGroupId'].OutputValue" \
+            --output text)
+
+          TARGET_GROUP_ARN=$(aws cloudformation describe-stacks \
+            --stack-name AlbStack \
+            --query "Stacks[0].Outputs[?OutputKey=='TargetGroupArn'].OutputValue" \
+            --output text)
+
+          EXECUTION_ROLE_ARN=$(aws cloudformation describe-stacks \
+            --stack-name IamStack \
+            --query "Stacks[0].Outputs[?OutputKey=='TaskExecutionRoleArn'].OutputValue" \
+            --output text)
+
+          TASK_ROLE_ARN=$(aws cloudformation describe-stacks \
+            --stack-name IamStack \
+            --query "Stacks[0].Outputs[?OutputKey=='TaskRoleArn'].OutputValue" \
+            --output text)
+
+          LOG_GROUP=$(aws cloudformation describe-stacks \
+            --stack-name EcsStack \
+            --query "Stacks[0].Outputs[?OutputKey=='LogGroupName'].OutputValue" \
+            --output text)
+
+
+          echo "private_subnets=$PRIVATE_SUBNETS" >> "$GITHUB_OUTPUT"
+
+          echo "ecs_security_group=$ECS_SECURITY_GROUP" >> "$GITHUB_OUTPUT"
+
+          echo "target_group_arn=$TARGET_GROUP_ARN" >> "$GITHUB_OUTPUT"
+
+          echo "execution_role_arn=$EXECUTION_ROLE_ARN" >> "$GITHUB_OUTPUT"
+
+          echo "task_role_arn=$TASK_ROLE_ARN" >> "$GITHUB_OUTPUT"
+
+          echo "log_group=$LOG_GROUP" >> "$GITHUB_OUTPUT"
+
+
+      # ------------------------------------------------
+      # Generate ECS Task Definition
+      # ------------------------------------------------
+      - name: Create Task Definition
+        env:
+          IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+
+          EXECUTION_ROLE_ARN: ${{ steps.infra.outputs.execution_role_arn }}
+
+          TASK_ROLE_ARN: ${{ steps.infra.outputs.task_role_arn }}
+
+          LOG_GROUP: ${{ steps.infra.outputs.log_group }}
+
+        run: |
+
+          jq -n \
+            --arg family "$ECS_TASK_FAMILY" \
+            --arg executionRoleArn "$EXECUTION_ROLE_ARN" \
+            --arg taskRoleArn "$TASK_ROLE_ARN" \
+            --arg containerName "$CONTAINER_NAME" \
+            --arg image "$IMAGE_URI" \
+            --arg logGroup "$LOG_GROUP" \
+            --arg region "$AWS_REGION" \
+            '{
+              family: $family,
+
+              networkMode: "awsvpc",
+
+              requiresCompatibilities: [
+                "FARGATE"
+              ],
+
+              cpu: "512",
+
+              memory: "1024",
+
+              executionRoleArn: $executionRoleArn,
+
+              taskRoleArn: $taskRoleArn,
+
+              containerDefinitions: [
+                {
+                  name: $containerName,
+
+                  image: $image,
+
+                  essential: true,
+
+                  portMappings: [
+                    {
+                      containerPort: 8000,
+                      protocol: "tcp"
+                    }
+                  ],
+
+                  environment: [
+                    {
+                      name: "APP_ENV",
+                      value: "prod"
+                    }
+                  ],
+
+                  healthCheck: {
+                    command: [
+                      "CMD-SHELL",
+                      "curl -f http://localhost:8000/ || exit 1"
+                    ],
+
+                    interval: 30,
+
+                    timeout: 5,
+
+                    retries: 3,
+
+                    startPeriod: 60
+                  },
+
+                  logConfiguration: {
+                    logDriver: "awslogs",
+
+                    options: {
+                      "awslogs-group": $logGroup,
+                      "awslogs-region": $region,
+                      "awslogs-stream-prefix": "greythr"
+                    }
+                  }
+                }
+              ]
+            }' > task-definition.json
+
+
+      # ------------------------------------------------
+      # Register new revision
+      # ------------------------------------------------
+      - name: Register Task Definition
+        id: task-definition
+        run: |
+
+          TASK_DEFINITION_ARN=$(aws ecs register-task-definition \
+            --cli-input-json file://task-definition.json \
+            --query "taskDefinition.taskDefinitionArn" \
+            --output text)
+
+          echo "task_definition_arn=$TASK_DEFINITION_ARN" >> "$GITHUB_OUTPUT"
+
+
+      # ------------------------------------------------
+      # Create or Update ECS Service
+      # ------------------------------------------------
+      - name: Deploy ECS Service
+        env:
+          TASK_DEFINITION_ARN: ${{ steps.task-definition.outputs.task_definition_arn }}
+
+          PRIVATE_SUBNETS: ${{ steps.infra.outputs.private_subnets }}
+
+          ECS_SECURITY_GROUP: ${{ steps.infra.outputs.ecs_security_group }}
+
+          TARGET_GROUP_ARN: ${{ steps.infra.outputs.target_group_arn }}
+
+        run: |
+
+          SERVICE_STATUS=$(aws ecs describe-services \
+            --cluster "$ECS_CLUSTER" \
+            --services "$ECS_SERVICE" \
+            --query "services[0].status" \
+            --output text 2>/dev/null || true)
+
+
+          if [ "$SERVICE_STATUS" = "ACTIVE" ]; then
+
+            echo "ECS service exists. Updating service..."
+
+            aws ecs update-service \
+              --cluster "$ECS_CLUSTER" \
+              --service "$ECS_SERVICE" \
+              --task-definition "$TASK_DEFINITION_ARN" \
+              --desired-count 3 \
+              --deployment-configuration \
+                "maximumPercent=200,minimumHealthyPercent=100,deploymentCircuitBreaker={enable=true,rollback=true}"
+
+          else
+
+            echo "ECS service does not exist. Creating service..."
+
+            SUBNET_CONFIG=$(echo "$PRIVATE_SUBNETS" | sed 's/,/","/g')
+
+
+            aws ecs create-service \
+              --cluster "$ECS_CLUSTER" \
+              --service-name "$ECS_SERVICE" \
+              --task-definition "$TASK_DEFINITION_ARN" \
+              --desired-count 3 \
+              --launch-type FARGATE \
+              --platform-version LATEST \
+              --network-configuration \
+                "awsvpcConfiguration={subnets=[\"$SUBNET_CONFIG\"],securityGroups=[\"$ECS_SECURITY_GROUP\"],assignPublicIp=DISABLED}" \
+              --load-balancers \
+                "targetGroupArn=$TARGET_GROUP_ARN,containerName=$CONTAINER_NAME,containerPort=$CONTAINER_PORT" \
+              --deployment-configuration \
+                "maximumPercent=200,minimumHealthyPercent=100,deploymentCircuitBreaker={enable=true,rollback=true}"
+
+          fi
+
+
+      # ------------------------------------------------
+      # Configure Auto Scaling
+      # ------------------------------------------------
+      - name: Configure ECS Auto Scaling
+        run: |
+
+          aws application-autoscaling register-scalable-target \
+            --service-namespace ecs \
+            --resource-id service/$ECS_CLUSTER/$ECS_SERVICE \
+            --scalable-dimension ecs:service:DesiredCount \
+            --min-capacity 2 \
+            --max-capacity 10
+
+
+          aws application-autoscaling put-scaling-policy \
+            --service-namespace ecs \
+            --resource-id service/$ECS_CLUSTER/$ECS_SERVICE \
+            --scalable-dimension ecs:service:DesiredCount \
+            --policy-name greythr-cpu-scaling \
+            --policy-type TargetTrackingScaling \
+            --target-tracking-scaling-policy-configuration \
+              '{
+                "TargetValue": 70.0,
+                "PredefinedMetricSpecification": {
+                  "PredefinedMetricType": "ECSServiceAverageCPUUtilization"
+                },
+                "ScaleOutCooldown": 60,
+                "ScaleInCooldown": 60
+              }'
+
+
+          aws application-autoscaling put-scaling-policy \
+            --service-namespace ecs \
+            --resource-id service/$ECS_CLUSTER/$ECS_SERVICE \
+            --scalable-dimension ecs:service:DesiredCount \
+            --policy-name greythr-memory-scaling \
+            --policy-type TargetTrackingScaling \
+            --target-tracking-scaling-policy-configuration \
+              '{
+                "TargetValue": 75.0,
+                "PredefinedMetricSpecification": {
+                  "PredefinedMetricType": "ECSServiceAverageMemoryUtilization"
+                },
+                "ScaleOutCooldown": 60,
+                "ScaleInCooldown": 60
+              }'
+
+
+      # ------------------------------------------------
+      # Wait until deployment stabilizes
+      # ------------------------------------------------
+      - name: Wait for ECS Deployment
+        run: |
+
+          aws ecs wait services-stable \
+            --cluster "$ECS_CLUSTER" \
+            --services "$ECS_SERVICE"
+
+
+      # ------------------------------------------------
+      # Deployment result
+      # ------------------------------------------------
+      - name: Deployment Summary
+        run: |
+
+          aws ecs describe-services \
+            --cluster "$ECS_CLUSTER" \
+            --services "$ECS_SERVICE" \
+            --query \
+              "services[0].{
+                Service:serviceName,
+                Desired:desiredCount,
+                Running:runningCount,
+                Pending:pendingCount,
+                TaskDefinition:taskDefinition
+              }"
