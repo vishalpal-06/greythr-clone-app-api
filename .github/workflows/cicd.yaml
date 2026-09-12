@@ -56,98 +56,98 @@ jobs:
   # ==================================================
   # Deploy Infrastructure
   # ==================================================
-cdk-deploy:
-  needs: changes
-  if: needs.changes.outputs.cdk == 'true'
+  cdk-deploy:
+    needs: changes
+    if: needs.changes.outputs.cdk == 'true'
 
-  runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-  defaults:
-    run:
-      working-directory: infra
+    defaults:
+      run:
+        working-directory: infra
 
-  steps:
-    # -----------------------------------------------
-    # Checkout repository
-    # -----------------------------------------------
-    - name: Checkout Code
-      uses: actions/checkout@v4
+    steps:
+      # -----------------------------------------------
+      # Checkout repository
+      # -----------------------------------------------
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    # -----------------------------------------------
-    # Python
-    # -----------------------------------------------
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.12"
+      # -----------------------------------------------
+      # Python
+      # -----------------------------------------------
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-    # -----------------------------------------------
-    # UV
-    # -----------------------------------------------
-    - name: Install UV
-      uses: astral-sh/setup-uv@v7
-      with:
-        enable-cache: true
+      # -----------------------------------------------
+      # UV
+      # -----------------------------------------------
+      - name: Install UV
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
 
-    # -----------------------------------------------
-    # Install CDK Python dependencies
-    #
-    # infra/requirements.txt contains:
-    # aws-cdk-lib
-    # constructs
-    # -----------------------------------------------
-    - name: Install CDK Python Dependencies
-      run: uv pip install --system -r requirements.txt
+      # -----------------------------------------------
+      # Install CDK Python dependencies
+      #
+      # infra/requirements.txt contains:
+      # aws-cdk-lib
+      # constructs
+      # -----------------------------------------------
+      - name: Install CDK Python Dependencies
+        run: uv pip install --system -r requirements.txt
 
-    # -----------------------------------------------
-    # Node.js
-    #
-    # AWS CDK CLI is a Node/npm CLI.
-    # -----------------------------------------------
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: "24"
+      # -----------------------------------------------
+      # Node.js
+      #
+      # AWS CDK CLI is a Node/npm CLI.
+      # -----------------------------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
 
-    # -----------------------------------------------
-    # AWS CDK CLI
-    # -----------------------------------------------
-    - name: Install AWS CDK CLI
-      run: npm install --global aws-cdk
+      # -----------------------------------------------
+      # AWS CDK CLI
+      # -----------------------------------------------
+      - name: Install AWS CDK CLI
+        run: npm install --global aws-cdk
 
-    # -----------------------------------------------
-    # AWS authentication using GitHub Secrets
-    # -----------------------------------------------
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
+      # -----------------------------------------------
+      # AWS authentication using GitHub Secrets
+      # -----------------------------------------------
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
-    # -----------------------------------------------
-    # Verify versions
-    # Useful for debugging CI failures.
-    # -----------------------------------------------
-    - name: Verify CDK Environment
-      run: |
-        python --version
-        uv --version
-        node --version
-        npm --version
-        cdk --version
+      # -----------------------------------------------
+      # Verify versions
+      # Useful for debugging CI failures.
+      # -----------------------------------------------
+      - name: Verify CDK Environment
+        run: |
+          python --version
+          uv --version
+          node --version
+          npm --version
+          cdk --version
 
-    # -----------------------------------------------
-    # Generate CloudFormation templates
-    # -----------------------------------------------
-    - name: CDK Synth
-      run: cdk synth
+      # -----------------------------------------------
+      # Generate CloudFormation templates
+      # -----------------------------------------------
+      - name: CDK Synth
+        run: cdk synth
 
-    # -----------------------------------------------
-    # Deploy infrastructure
-    # -----------------------------------------------
-    - name: CDK Deploy
-      run: cdk deploy --all --require-approval never
+      # -----------------------------------------------
+      # Deploy infrastructure
+      # -----------------------------------------------
+      - name: CDK Deploy
+        run: cdk deploy --all --require-approval never
 
 
   # ==================================================
