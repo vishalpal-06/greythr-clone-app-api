@@ -33,10 +33,7 @@ class NetworkStack(Stack):
             ],
         )
 
-        private_subnet_ids = ",".join(
-            subnet.subnet_id
-            for subnet in self.vpc.private_subnets
-        )
+        private_subnet_ids = ",".join(subnet.subnet_id for subnet in self.vpc.private_subnets)
 
         CfnOutput(
             self,

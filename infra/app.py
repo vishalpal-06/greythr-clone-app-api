@@ -7,7 +7,6 @@ from infra.iam_stack import IamStack
 from infra.network_stack import NetworkStack
 from infra.security_stack import SecurityStack
 
-
 app = cdk.App()
 
 
