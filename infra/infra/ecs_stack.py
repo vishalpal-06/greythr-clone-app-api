@@ -72,7 +72,7 @@ class ECSStack(Stack):
             service_name="greythr-service",
             cluster=self.cluster,
             task_definition=task_def,
-            desired_count=2,
+            desired_count=1,
             assign_public_ip=False,
             security_groups=[ecs_sg],
             vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS),
@@ -83,7 +83,7 @@ class ECSStack(Stack):
 
         # Auto Scaling
         scaling = self.service.auto_scale_task_count(
-            min_capacity=2,
+            min_capacity=1,
             max_capacity=10,
         )
 
