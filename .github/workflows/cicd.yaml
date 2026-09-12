@@ -164,7 +164,7 @@ jobs:
         with:
           filters: |
             cdk:
-              - 'greythr-cdk/**'
+              - 'infra/**'
               - '.github/workflows/cicd.yml'   # rename if your file name is different
 
   # -------------------------------------------------
@@ -176,7 +176,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: greythr-cdk
+        working-directory: infra
     steps:
       - uses: actions/checkout@v4
 
