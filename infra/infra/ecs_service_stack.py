@@ -72,7 +72,7 @@ class EcsServiceStack(Stack):
             health_check=ecs.HealthCheck(
                 command=[
                     "CMD-SHELL",
-                    f"curl -f http://localhost:{container_port}/health || exit 1",
+                    f"python -c \"import urllib.request; urllib.request.urlopen('http://localhost:{container_port}/health')\" || exit 1",
                 ],
                 interval=Duration.seconds(30),
                 timeout=Duration.seconds(5),
