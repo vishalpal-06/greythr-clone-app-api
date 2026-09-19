@@ -2,6 +2,12 @@
 
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/) [![FastAPI](https://img.shields.io/badge/FastAPI-0.124.0-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/) [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/) [![AWS ECS](https://img.shields.io/badge/AWS-ECS%20Fargate-FF9900?logo=amazonaws&logoColor=white)](https://aws.amazon.com/ecs/) 
 
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/5036478e-a96a-4da9-8071-0b44b94a3ec9" />
+
+---
+
+
+
 A **GreytHR/greytHR HR-platform clone** exposed as a **FastAPI** service, backed by **SQLAlchemy** and validated through **Pydantic**.
 
 The project provides role-scoped HR APIs for **Admin, Manager, and User** workflows, secured with **JWT bearer authentication**, with an additional **MCP + LangGraph AI agent** integration and a **Streamlit chatbot UI**.
