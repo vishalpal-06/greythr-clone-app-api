@@ -23,6 +23,11 @@ def health_check():
     return {"status": "Welcome to My Grehthrapp By Vishal K. Pal"}
 
 
+@app.get("/health")
+async def health():
+    return {"status": "healthy"}
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

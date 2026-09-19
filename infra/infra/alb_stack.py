@@ -50,7 +50,7 @@ class AlbStack(Stack):
             protocol=elbv2.ApplicationProtocol.HTTP,
             target_type=elbv2.TargetType.IP,
             health_check=elbv2.HealthCheck(
-                path="/",
+                path="/health",
                 healthy_http_codes="200",
                 interval=Duration.seconds(30),
                 timeout=Duration.seconds(5),

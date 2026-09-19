@@ -21,18 +21,16 @@ env:
 
   ECS_CLUSTER: greythr-cluster
   ECS_SERVICE: greythr-service
-  ECS_TASK_FAMILY: greythr-task
-
-  CONTAINER_NAME: GreythrContainer
-  CONTAINER_PORT: 8000
 
 
 jobs:
 
   # ==================================================
-  # Detect infrastructure changes
+  # Detect Infrastructure Changes
   # ==================================================
   changes:
+    name: Detect Changes
+
     runs-on: ubuntu-latest
 
     outputs:
@@ -43,7 +41,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Detect Changes
+
+      # ------------------------------------------------
+      # Check whether CDK files changed
+      # ------------------------------------------------
+      - name: Detect Infrastructure Changes
         uses: dorny/paths-filter@v3
         id: filter
         with:
@@ -54,115 +56,28 @@ jobs:
 
 
   # ==================================================
-  # Deploy Infrastructure
-  # ==================================================
-  cdk-deploy:
-    needs: changes
-    if: needs.changes.outputs.cdk == 'true'
-
-    runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: infra
-
-    steps:
-      # -----------------------------------------------
-      # Checkout repository
-      # -----------------------------------------------
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      # -----------------------------------------------
-      # Python
-      # -----------------------------------------------
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      # -----------------------------------------------
-      # UV
-      # -----------------------------------------------
-      - name: Install UV
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-
-      # -----------------------------------------------
-      # Install CDK Python dependencies
-      #
-      # infra/requirements.txt contains:
-      # aws-cdk-lib
-      # constructs
-      # -----------------------------------------------
-      - name: Install CDK Python Dependencies
-        run: uv pip install --system -r requirements.txt
-
-      # -----------------------------------------------
-      # Node.js
-      #
-      # AWS CDK CLI is a Node/npm CLI.
-      # -----------------------------------------------
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-
-      # -----------------------------------------------
-      # AWS CDK CLI
-      # -----------------------------------------------
-      - name: Install AWS CDK CLI
-        run: npm install --global aws-cdk
-
-      # -----------------------------------------------
-      # AWS authentication using GitHub Secrets
-      # -----------------------------------------------
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      # -----------------------------------------------
-      # Verify versions
-      # Useful for debugging CI failures.
-      # -----------------------------------------------
-      - name: Verify CDK Environment
-        run: |
-          python --version
-          uv --version
-          node --version
-          npm --version
-          cdk --version
-
-      # -----------------------------------------------
-      # Generate CloudFormation templates
-      # -----------------------------------------------
-      - name: CDK Synth
-        run: cdk synth
-
-      # -----------------------------------------------
-      # Deploy infrastructure
-      # -----------------------------------------------
-      - name: CDK Deploy
-        run: cdk deploy --all --require-approval never
-
-
-  # ==================================================
   # Formatting
   # ==================================================
   format-check:
-    needs: changes
+    name: Formatting
+
+    needs:
+      - changes
 
     runs-on: ubuntu-latest
 
     steps:
 
+      # ------------------------------------------------
+      # Checkout
+      # ------------------------------------------------
       - name: Checkout Code
         uses: actions/checkout@v4
 
+
+      # ------------------------------------------------
+      # Black
+      # ------------------------------------------------
       - name: Run Black Check
         uses: psf/black@stable
         with:
@@ -174,28 +89,50 @@ jobs:
   # Tests
   # ==================================================
   test:
-    needs: format-check
+    name: Tests
+
+    needs:
+      - format-check
 
     runs-on: ubuntu-latest
 
     steps:
 
+      # ------------------------------------------------
+      # Checkout
+      # ------------------------------------------------
       - name: Checkout Code
         uses: actions/checkout@v4
 
+
+      # ------------------------------------------------
+      # Install UV
+      # ------------------------------------------------
       - name: Install UV
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
 
+
+      # ------------------------------------------------
+      # Python
+      # ------------------------------------------------
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
+
+      # ------------------------------------------------
+      # Install Application Dependencies
+      # ------------------------------------------------
       - name: Install Dependencies
         run: uv sync --frozen
 
+
+      # ------------------------------------------------
+      # Tests
+      # ------------------------------------------------
       - name: Run Tests
         run: |
           uv run pytest \
@@ -206,27 +143,168 @@ jobs:
 
 
   # ==================================================
+  # Deploy Base Infrastructure
+  #
+  # Runs only when infra/** changes.
+  #
+  # IMPORTANT:
+  # EcsServiceStack is NOT deployed here because
+  # the Docker image for the current commit does not
+  # exist in ECR yet.
+  # ==================================================
+  cdk-deploy:
+    name: Deploy Base Infrastructure
+
+    needs:
+      - changes
+      - test
+
+    if: needs.changes.outputs.cdk == 'true'
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: infra
+
+    steps:
+
+      # ------------------------------------------------
+      # Checkout
+      # ------------------------------------------------
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+
+      # ------------------------------------------------
+      # Python
+      # ------------------------------------------------
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+
+      # ------------------------------------------------
+      # UV
+      # ------------------------------------------------
+      - name: Install UV
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+
+      # ------------------------------------------------
+      # Install CDK Python Dependencies
+      # ------------------------------------------------
+      - name: Install CDK Python Dependencies
+        run: |
+          uv pip install \
+            --system \
+            -r requirements.txt
+
+
+      # ------------------------------------------------
+      # Node.js
+      #
+      # AWS CDK CLI runs using Node.js.
+      # ------------------------------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+
+      # ------------------------------------------------
+      # Install AWS CDK CLI
+      # ------------------------------------------------
+      - name: Install AWS CDK CLI
+        run: npm install --global aws-cdk
+
+
+      # ------------------------------------------------
+      # AWS Authentication
+      #
+      # Currently using GitHub Secrets.
+      # Later this should be migrated to GitHub OIDC.
+      # ------------------------------------------------
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+
+      # ------------------------------------------------
+      # Verify Environment
+      # ------------------------------------------------
+      - name: Verify CDK Environment
+        run: |
+          python --version
+          uv --version
+          node --version
+          npm --version
+          cdk --version
+
+
+      # ------------------------------------------------
+      # CDK Synth
+      #
+      # Validates that CDK code can generate
+      # CloudFormation successfully.
+      # ------------------------------------------------
+      - name: CDK Synth
+        run: cdk synth
+
+
+      # ------------------------------------------------
+      # Deploy Base Infrastructure
+      #
+      # EcsServiceStack intentionally excluded.
+      # ------------------------------------------------
+      - name: Deploy Base Infrastructure
+        run: |
+          cdk deploy \
+            NetworkStack \
+            SecurityStack \
+            EcrStack \
+            IamStack \
+            EcsStack \
+            AlbStack \
+            --require-approval never
+
+
+  # ==================================================
   # Build + Deploy Application
   # ==================================================
   build-and-deploy:
-    needs: 
+    name: Build and Deploy Application
+
+    needs:
       - test
       - cdk-deploy
 
-    if: | 
-      always() 
-      && needs.test.result == 'success' && 
-      ( 
-        needs.cdk-deploy.result == 'success' || 
-        needs.cdk-deploy.result == 'skipped' 
-      ) 
-    
+    # cdk-deploy can be:
+    #
+    # success  -> infra changed and deployed
+    # skipped  -> infra did not change
+    #
+    # Application deployment should run in both cases.
+    if: |
+      always() &&
+      needs.test.result == 'success' &&
+      (
+        needs.cdk-deploy.result == 'success' ||
+        needs.cdk-deploy.result == 'skipped'
+      )
+
     runs-on: ubuntu-latest
 
     steps:
 
       # ------------------------------------------------
-      # Source
+      # Checkout
       # ------------------------------------------------
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -243,9 +321,8 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
 
-
       # ------------------------------------------------
-      # Login ECR
+      # Login to ECR
       # ------------------------------------------------
       - name: Login to Amazon ECR
         id: login-ecr
@@ -253,12 +330,17 @@ jobs:
 
 
       # ------------------------------------------------
-      # Docker
+      # Docker Buildx
       # ------------------------------------------------
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
 
+      # ------------------------------------------------
+      # Build Docker Image
+      #
+      # github.sha makes every image version unique.
+      # ------------------------------------------------
       - name: Build Docker Image
         run: |
           docker build \
@@ -268,6 +350,9 @@ jobs:
 
       # ------------------------------------------------
       # Security Scan
+      #
+      # Deployment fails if HIGH or CRITICAL
+      # vulnerabilities are found.
       # ------------------------------------------------
       - name: Run Trivy Security Scan
         uses: aquasecurity/trivy-action@v0.35.0
@@ -281,7 +366,7 @@ jobs:
 
 
       # ------------------------------------------------
-      # Push Image
+      # Tag Docker Image
       # ------------------------------------------------
       - name: Tag Docker Image
         run: |
@@ -290,292 +375,103 @@ jobs:
             ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}
 
 
+      # ------------------------------------------------
+      # Push Docker Image
+      # ------------------------------------------------
       - name: Push Docker Image
         run: |
           docker push \
             ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}
 
 
+      # ==================================================
+      # Setup CDK for Application Deployment
+      # ==================================================
+
       # ------------------------------------------------
-      # Read infrastructure outputs
+      # Python
       # ------------------------------------------------
-      - name: Read Infrastructure Outputs
-        id: infra
+      - name: Setup Python for CDK
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+
+      # ------------------------------------------------
+      # UV
+      # ------------------------------------------------
+      - name: Install UV for CDK
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+
+      # ------------------------------------------------
+      # Install CDK Python Dependencies
+      # ------------------------------------------------
+      - name: Install CDK Python Dependencies
+        working-directory: infra
         run: |
-
-          PRIVATE_SUBNETS=$(aws cloudformation describe-stacks \
-            --stack-name NetworkStack \
-            --query "Stacks[0].Outputs[?OutputKey=='PrivateSubnetIds'].OutputValue" \
-            --output text)
-
-          ECS_SECURITY_GROUP=$(aws cloudformation describe-stacks \
-            --stack-name SecurityStack \
-            --query "Stacks[0].Outputs[?OutputKey=='EcsSecurityGroupId'].OutputValue" \
-            --output text)
-
-          TARGET_GROUP_ARN=$(aws cloudformation describe-stacks \
-            --stack-name AlbStack \
-            --query "Stacks[0].Outputs[?OutputKey=='TargetGroupArn'].OutputValue" \
-            --output text)
-
-          EXECUTION_ROLE_ARN=$(aws cloudformation describe-stacks \
-            --stack-name IamStack \
-            --query "Stacks[0].Outputs[?OutputKey=='TaskExecutionRoleArn'].OutputValue" \
-            --output text)
-
-          TASK_ROLE_ARN=$(aws cloudformation describe-stacks \
-            --stack-name IamStack \
-            --query "Stacks[0].Outputs[?OutputKey=='TaskRoleArn'].OutputValue" \
-            --output text)
-
-          LOG_GROUP=$(aws cloudformation describe-stacks \
-            --stack-name EcsStack \
-            --query "Stacks[0].Outputs[?OutputKey=='LogGroupName'].OutputValue" \
-            --output text)
-
-
-          echo "private_subnets=$PRIVATE_SUBNETS" >> "$GITHUB_OUTPUT"
-
-          echo "ecs_security_group=$ECS_SECURITY_GROUP" >> "$GITHUB_OUTPUT"
-
-          echo "target_group_arn=$TARGET_GROUP_ARN" >> "$GITHUB_OUTPUT"
-
-          echo "execution_role_arn=$EXECUTION_ROLE_ARN" >> "$GITHUB_OUTPUT"
-
-          echo "task_role_arn=$TASK_ROLE_ARN" >> "$GITHUB_OUTPUT"
-
-          echo "log_group=$LOG_GROUP" >> "$GITHUB_OUTPUT"
+          uv pip install \
+            --system \
+            -r requirements.txt
 
 
       # ------------------------------------------------
-      # Generate ECS Task Definition
+      # Node.js
       # ------------------------------------------------
-      - name: Create Task Definition
-        env:
-          IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
-
-          EXECUTION_ROLE_ARN: ${{ steps.infra.outputs.execution_role_arn }}
-
-          TASK_ROLE_ARN: ${{ steps.infra.outputs.task_role_arn }}
-
-          LOG_GROUP: ${{ steps.infra.outputs.log_group }}
-
-        run: |
-
-          jq -n \
-            --arg family "$ECS_TASK_FAMILY" \
-            --arg executionRoleArn "$EXECUTION_ROLE_ARN" \
-            --arg taskRoleArn "$TASK_ROLE_ARN" \
-            --arg containerName "$CONTAINER_NAME" \
-            --arg image "$IMAGE_URI" \
-            --arg logGroup "$LOG_GROUP" \
-            --arg region "$AWS_REGION" \
-            '{
-              family: $family,
-
-              networkMode: "awsvpc",
-
-              requiresCompatibilities: [
-                "FARGATE"
-              ],
-
-              cpu: "512",
-
-              memory: "1024",
-
-              executionRoleArn: $executionRoleArn,
-
-              taskRoleArn: $taskRoleArn,
-
-              containerDefinitions: [
-                {
-                  name: $containerName,
-
-                  image: $image,
-
-                  essential: true,
-
-                  portMappings: [
-                    {
-                      containerPort: 8000,
-                      protocol: "tcp"
-                    }
-                  ],
-
-                  environment: [
-                    {
-                      name: "APP_ENV",
-                      value: "prod"
-                    }
-                  ],
-
-                  healthCheck: {
-                    command: [
-                      "CMD-SHELL",
-                      "curl -f http://localhost:8000/ || exit 1"
-                    ],
-
-                    interval: 30,
-
-                    timeout: 5,
-
-                    retries: 3,
-
-                    startPeriod: 60
-                  },
-
-                  logConfiguration: {
-                    logDriver: "awslogs",
-
-                    options: {
-                      "awslogs-group": $logGroup,
-                      "awslogs-region": $region,
-                      "awslogs-stream-prefix": "greythr"
-                    }
-                  }
-                }
-              ]
-            }' > task-definition.json
+      - name: Setup Node.js for CDK
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
 
 
       # ------------------------------------------------
-      # Register new revision
+      # AWS CDK CLI
       # ------------------------------------------------
-      - name: Register Task Definition
-        id: task-definition
-        run: |
-
-          TASK_DEFINITION_ARN=$(aws ecs register-task-definition \
-            --cli-input-json file://task-definition.json \
-            --query "taskDefinition.taskDefinitionArn" \
-            --output text)
-
-          echo "task_definition_arn=$TASK_DEFINITION_ARN" >> "$GITHUB_OUTPUT"
+      - name: Install AWS CDK CLI
+        run: npm install --global aws-cdk
 
 
       # ------------------------------------------------
-      # Create or Update ECS Service
+      # Deploy ECS Service
+      #
+      # Docker image already exists in ECR at this point.
+      #
+      # CDK now owns:
+      #
+      # - Task Definition
+      # - Container Definition
+      # - ECS Service
+      # - Rolling Deployment
+      # - Circuit Breaker
+      # - CPU Auto Scaling
+      # - Memory Auto Scaling
       # ------------------------------------------------
       - name: Deploy ECS Service
-        env:
-          TASK_DEFINITION_ARN: ${{ steps.task-definition.outputs.task_definition_arn }}
-
-          PRIVATE_SUBNETS: ${{ steps.infra.outputs.private_subnets }}
-
-          ECS_SECURITY_GROUP: ${{ steps.infra.outputs.ecs_security_group }}
-
-          TARGET_GROUP_ARN: ${{ steps.infra.outputs.target_group_arn }}
-
+        working-directory: infra
         run: |
-
-          SERVICE_STATUS=$(aws ecs describe-services \
-            --cluster "$ECS_CLUSTER" \
-            --services "$ECS_SERVICE" \
-            --query "services[0].status" \
-            --output text 2>/dev/null || true)
-
-
-          if [ "$SERVICE_STATUS" = "ACTIVE" ]; then
-
-            echo "ECS service exists. Updating service..."
-
-            aws ecs update-service \
-              --cluster "$ECS_CLUSTER" \
-              --service "$ECS_SERVICE" \
-              --task-definition "$TASK_DEFINITION_ARN" \
-              --desired-count 3 \
-              --deployment-configuration \
-                "maximumPercent=200,minimumHealthyPercent=100,deploymentCircuitBreaker={enable=true,rollback=true}"
-
-          else
-
-            echo "ECS service does not exist. Creating service..."
-
-            SUBNET_CONFIG=$(echo "$PRIVATE_SUBNETS" | sed 's/,/","/g')
-
-
-            aws ecs create-service \
-              --cluster "$ECS_CLUSTER" \
-              --service-name "$ECS_SERVICE" \
-              --task-definition "$TASK_DEFINITION_ARN" \
-              --desired-count 3 \
-              --launch-type FARGATE \
-              --platform-version LATEST \
-              --network-configuration \
-                "awsvpcConfiguration={subnets=[\"$SUBNET_CONFIG\"],securityGroups=[\"$ECS_SECURITY_GROUP\"],assignPublicIp=DISABLED}" \
-              --load-balancers \
-                "targetGroupArn=$TARGET_GROUP_ARN,containerName=$CONTAINER_NAME,containerPort=$CONTAINER_PORT" \
-              --deployment-configuration \
-                "maximumPercent=200,minimumHealthyPercent=100,deploymentCircuitBreaker={enable=true,rollback=true}"
-
-          fi
+          cdk deploy \
+            EcsServiceStack \
+            -c imageTag=${{ github.sha }} \
+            --require-approval never
 
 
       # ------------------------------------------------
-      # Configure Auto Scaling
-      # ------------------------------------------------
-      - name: Configure ECS Auto Scaling
-        run: |
-
-          aws application-autoscaling register-scalable-target \
-            --service-namespace ecs \
-            --resource-id service/$ECS_CLUSTER/$ECS_SERVICE \
-            --scalable-dimension ecs:service:DesiredCount \
-            --min-capacity 2 \
-            --max-capacity 10
-
-
-          aws application-autoscaling put-scaling-policy \
-            --service-namespace ecs \
-            --resource-id service/$ECS_CLUSTER/$ECS_SERVICE \
-            --scalable-dimension ecs:service:DesiredCount \
-            --policy-name greythr-cpu-scaling \
-            --policy-type TargetTrackingScaling \
-            --target-tracking-scaling-policy-configuration \
-              '{
-                "TargetValue": 70.0,
-                "PredefinedMetricSpecification": {
-                  "PredefinedMetricType": "ECSServiceAverageCPUUtilization"
-                },
-                "ScaleOutCooldown": 60,
-                "ScaleInCooldown": 60
-              }'
-
-
-          aws application-autoscaling put-scaling-policy \
-            --service-namespace ecs \
-            --resource-id service/$ECS_CLUSTER/$ECS_SERVICE \
-            --scalable-dimension ecs:service:DesiredCount \
-            --policy-name greythr-memory-scaling \
-            --policy-type TargetTrackingScaling \
-            --target-tracking-scaling-policy-configuration \
-              '{
-                "TargetValue": 75.0,
-                "PredefinedMetricSpecification": {
-                  "PredefinedMetricType": "ECSServiceAverageMemoryUtilization"
-                },
-                "ScaleOutCooldown": 60,
-                "ScaleInCooldown": 60
-              }'
-
-
-      # ------------------------------------------------
-      # Wait until deployment stabilizes
+      # Wait Until ECS Deployment Stabilizes
       # ------------------------------------------------
       - name: Wait for ECS Deployment
         run: |
-
           aws ecs wait services-stable \
             --cluster "$ECS_CLUSTER" \
             --services "$ECS_SERVICE"
 
 
       # ------------------------------------------------
-      # Deployment result
+      # Deployment Summary
       # ------------------------------------------------
       - name: Deployment Summary
         run: |
-
           aws ecs describe-services \
             --cluster "$ECS_CLUSTER" \
             --services "$ECS_SERVICE" \
@@ -585,5 +481,8 @@ jobs:
                 Desired:desiredCount,
                 Running:runningCount,
                 Pending:pendingCount,
-                TaskDefinition:taskDefinition
+                TaskDefinition:taskDefinition,
+                DeploymentStatus:deployments[0].rolloutState
               }"
+
+
