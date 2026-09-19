@@ -1,498 +1,788 @@
 # GreytHR Clone API 🏢
 
-[![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/) [![FastAPI](https://img.shields.io/badge/FastAPI-0.124.0-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/) [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/) [![AWS ECS](https://img.shields.io/badge/AWS-ECS%20Fargate-FF9900?logo=amazonaws&logoColor=white)](https://aws.amazon.com/ecs/) 
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python\&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.141+-009688?logo=fastapi\&logoColor=white)](https://fastapi.tiangolo.com/)
+[![uv](https://img.shields.io/badge/uv-Package%20Manager-DE5FE9)](https://docs.astral.sh/uv/)
+[![Docker](https://img.shields.io/badge/Docker-Multi--Stage-2496ED?logo=docker\&logoColor=white)](https://www.docker.com/)
+[![AWS ECS](https://img.shields.io/badge/AWS-ECS%20Fargate-FF9900?logo=amazonaws\&logoColor=white)](https://aws.amazon.com/ecs/)
+[![AWS CDK](https://img.shields.io/badge/AWS-CDK-FF9900?logo=amazonaws\&logoColor=white)](https://aws.amazon.com/cdk/)
 
-<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/5036478e-a96a-4da9-8071-0b44b94a3ec9" />
+A **GreytHR-inspired HR management REST API** built with **FastAPI, SQLAlchemy and Pydantic**.
 
----
+The application provides role-based APIs for **Admin, Manager and User** workflows including employee management, attendance, leave management, payroll, expense claims and attendance regularization.
 
-
-
-A **GreytHR/greytHR HR-platform clone** exposed as a **FastAPI** service, backed by **SQLAlchemy** and validated through **Pydantic**.
-
-The project provides role-scoped HR APIs for **Admin, Manager, and User** workflows, secured with **JWT bearer authentication**, with an additional **MCP + LangGraph AI agent** integration and a **Streamlit chatbot UI**.
+The project is containerized with Docker and deployed to **AWS ECS Fargate**, with infrastructure managed using **AWS CDK** and deployments automated through **GitHub Actions**.
 
 > **Built by Vishal Kumar Pal**
 
 ---
 
-## 🚀 Local Demo & Docs
-
-- 🌐 **API Base**: `http://localhost:8000`
-- 📚 **Swagger UI**: `http://localhost:8000/docs`
-- ❤️ **Health Check**: `GET /` → `{"status": "Welcome to My Grehthrapp By Vishal Kumar Pal"}`
-- 💬 **Streamlit UI**: `http://localhost:8501`
-
----
-
-## 📌 Overview
-
-This project covers core HR operations including:
-
-- 👥 Employee management
-- 🏛️ Department and role management
-- ⏰ Attendance tracking
-- 📝 Leave management and approvals
-- 💰 Salary and payslip management
-- 🧾 Expense claims
-- 🔄 Attendance regularization
-- 🔐 JWT-based authentication
-- 🤖 AI agent integration through MCP, LangGraph, Claude, and Gemini
-- 🐳 Docker-based deployment
-- ☁️ AWS ECS Fargate deployment
-- ⚙️ GitHub Actions CI/CD
-
----
-
 ## ✨ Features
 
-- 👥 **Employee Management** — Full CRUD with role & department associations
-- 🏛️ **Department & Role Management** — Admin-controlled organizational structure
-- ⏰ **Attendance Tracking** — Punch-in system with date-based queries
-- 📝 **Leave Management** — Allocation + applications with approval workflows
-- 💰 **Payroll** — Salary records + payslip generation
-- 🧾 **Expense Claims** — Submission and approval system
-- 🔄 **Regularization** — Attendance correction request workflows
-- 🤖 **AI Agent Integration** — MCP + Claude/Gemini chatbot over the same API
-- 🔐 **JWT Authentication** — Role-scoped endpoints (Admin / Manager / User)
+* 👥 Employee management
+* 🏛️ Department and role management
+* ⏰ Attendance tracking
+* 📝 Leave allocation and approval
+* 💰 Salary and payslip management
+* 🧾 Expense claims
+* 🔄 Attendance regularization
+* 🔐 JWT-based authentication
+* 👑 Admin / Manager / User access control
+* 🗄️ SQLAlchemy ORM
+* 🔄 Alembic database migrations
+* 🐳 Multi-stage Docker build
+* ☁️ AWS ECS Fargate deployment
+* 🏗️ AWS CDK infrastructure
+* 📈 ECS Auto Scaling
+* 🔍 Trivy container security scanning
+* ⚙️ GitHub Actions CI/CD
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| **Framework** | FastAPI 0.124.0 |
-| **Server** | Uvicorn 0.38.0 |
-| **ORM** | SQLAlchemy 2.0.27 |
-| **Dev DB** | SQLite (built-in) |
-| **Prod DB** | MySQL (PyMySQL) |
-| **Validation** | Pydantic 2.11.7 |
-| **Auth** | PyJWT 2.10.1 (HS256) |
-| **Password Hashing** | bcrypt 5.0.0 via passlib |
-| **Testing** | pytest 9.0.2 + pytest-cov 7.0.0 |
-| **Formatting** | black 25.11.0 |
-| **AI/LLM** | LangChain + LangGraph |
-| **MCP** | fastmcp 2.13.3 |
-| **UI** | Streamlit |
-| **Deployment** | Docker + AWS ECS (Fargate) |
-| **CI/CD** | GitHub Actions |
-| **Python** | 3.12 |
-
----
-
-## 📁 Project Structure
-
-```
-greythr-clone-app-api/
-├── main.py                    # FastAPI app entry point
-├── mcp_server.py              # FastMCP wrapper (FastAPI → MCP tools)
-├── mcp_client.py              # Claude agent (LangGraph over MCP)
-├── ui_app.py                  # Streamlit chatbot (Gemini 2.5 Flash)
-├── insert_db_data.py          # Production RDS seeder
-│
-├── routers/
-│   ├── auth.py                # JWT login endpoints
-│   ├── admin/                 # /admin/* (10 sub-routers)
-│   ├── manager/               # /manager/* (6 sub-routers)
-│   └── user/                  # /user/* (10 sub-routers)
-│
-├── database/
-│   ├── database.py            # Engine setup & session
-│   ├── models.py              # SQLAlchemy ORM models
-│   └── common.py              # bcrypt helpers
-│
-├── schema/                    # Pydantic v2 schemas
-├── common/                    # Business logic layer
-│
-├── tests/
-│   ├── conftest.py            # Fixtures & test DB setup
-│   ├── seed_db.py             # JSON-based test data seeder
-│   ├── test_data/             # *.json seed fixtures
-│   ├── expected_responses/    # Snapshot JSONs
-│   └── test_cases/            # ~31 test files
-│
-├── .github/workflows/ci.yaml  # CI/CD pipeline
-├── Dockerfile
-├── ecs-task-def.json
-└── requirements.txt
-```
+| Layer                  | Technology                |
+| ---------------------- | ------------------------- |
+| API                    | FastAPI                   |
+| Server                 | Uvicorn                   |
+| ORM                    | SQLAlchemy                |
+| Validation             | Pydantic                  |
+| Authentication         | JWT                       |
+| Database Migration     | Alembic                   |
+| Local Database         | SQLite                    |
+| Testing                | pytest + pytest-cov       |
+| Formatting             | Black                     |
+| Linting                | Ruff                      |
+| Package Manager        | uv                        |
+| Dependency Definition  | pyproject.toml            |
+| Dependency Lock        | uv.lock                   |
+| Containerization       | Docker                    |
+| Container Registry     | Amazon ECR                |
+| Compute                | Amazon ECS Fargate        |
+| Load Balancer          | Application Load Balancer |
+| Infrastructure as Code | AWS CDK (Python)          |
+| Monitoring             | Amazon CloudWatch         |
+| Security Scanning      | Trivy + ECR Image Scan    |
+| CI/CD                  | GitHub Actions            |
+| Python                 | 3.12                      |
 
 ---
 
 ## 🏗️ Architecture
 
-```mermaid
-flowchart LR
-    A[Client / Swagger / Streamlit] --> B[FastAPI]
-    B --> C[Role-Based Routers]
-    C --> D[Common Business Logic]
-    D --> E[SQLAlchemy]
-    E --> F[(SQLite / MySQL)]
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/5036478e-a96a-4da9-8071-0b44b94a3ec9" />
 
-    G[AI Agent] --> H[MCP Client]
-    H --> I[MCP Server]
-    I --> B
+The application runs as Docker containers on **ECS Fargate** inside private subnets.
 
-    J[GitHub Actions] --> K[Docker Image]
-    K --> L[AWS ECR]
-    L --> M[AWS ECS Fargate]
-```
+Public traffic reaches the application through an **Application Load Balancer**. ECS tasks are not directly exposed to the internet.
 
-### Three-Layer Application Design
+Infrastructure provisioning and application deployment are intentionally separated:
 
 ```text
-┌──────────────────────────┐
-│        Routers           │
-│ HTTP + Auth + DI         │
-└────────────┬─────────────┘
-             │
-             ▼
-┌──────────────────────────┐
-│        Common            │
-│ Business Logic           │
-│ Authorization / CRUD     │
-└────────────┬─────────────┘
-             │
-             ▼
-┌──────────────────────────┐
-│        Database          │
-│ SQLAlchemy + ORM Models  │
-└──────────────────────────┘
+AWS CDK
+   ↓
+Base AWS Infrastructure
+
+GitHub Actions
+   ↓
+Build + Test + Docker + ECS Deployment
 ```
 
-1. **Routers** — HTTP concerns, dependency injection, and role-based routing
-2. **Common** — Authorization, CRUD orchestration, and computed fields
-3. **Database** — SQLAlchemy engine, sessions, and ORM models
+---
 
-### Role-Based API Access
+## 📁 Project Structure
 
-| API Mount | Role | Access Scope |
-|---|---|---|
-| `/admin` | 👑 Admin (`is_admin=True`) | All records across all employees |
-| `/manager` | 👔 Manager (authenticated user) | Direct reports only |
-| `/user` | 👤 User (authenticated user) | Own records only (`/user/my/*`) |
+```text
+greythr-clone-app-api/
+│
+├── main.py                     # FastAPI application entry point
+├── pyproject.toml              # Dependencies and tool configuration
+├── uv.lock                     # Locked Python dependencies
+├── .python-version             # Python version
+│
+├── common/                     # Business logic
+├── database/                   # Database configuration and ORM models
+├── routers/                    # API routers
+├── schema/                     # Pydantic schemas
+├── utils/                      # Shared utilities
+│
+├── alembic/                    # Database migrations
+│
+├── tests/                      # Automated tests
+│
+├── infra/                      # AWS CDK infrastructure
+│   ├── app.py                  # CDK application entry point
+│   ├── config/
+│   └── infra/
+│       ├── network_stack.py
+│       ├── security_stack.py
+│       ├── ecr_stack.py
+│       ├── iam_stack.py
+│       ├── ecs_stack.py
+│       └── alb_stack.py
+│
+├── .github/
+│   └── workflows/
+│       └── cicd.yaml           # CI/CD pipeline
+│
+├── Dockerfile
+└── .dockerignore
+```
 
--------|------|-------------|
-| `/admin` | Admin (`is_admin=True`) | All records across all employees |
-| `/manager` | Manager (any auth user) | Direct reports only |
-| `/user` | User (any auth user) | Own records only (`/user/my/*`) |
+---
+
+## 🧩 Application Design
+
+The backend follows a simple layered structure:
+
+```text
+Request
+   ↓
+Router
+   ↓
+Business Logic
+   ↓
+SQLAlchemy
+   ↓
+Database
+```
+
+### Layers
+
+**Routers** handle HTTP requests, authentication, dependency injection and role-based access.
+
+**Common** contains reusable business logic and CRUD operations.
+
+**Database** manages SQLAlchemy sessions and ORM models.
+
+**Schema** contains Pydantic request and response models.
+
+---
+
+## 👥 Role-Based Access
+
+| API          | Role    | Access                       |
+| ------------ | ------- | ---------------------------- |
+| `/admin/*`   | Admin   | Organization-wide access     |
+| `/manager/*` | Manager | Direct-report related access |
+| `/user/*`    | User    | Own records                  |
 
 ---
 
 ## 🔐 Authentication
 
-- **Type**: JWT Bearer Token (HS256)
-- **TTL**: 60 minutes
-- **Login Endpoints**:
-  - `POST /auth/token` — Form data (Swagger-compatible)
-  - `POST /auth/login_json` — JSON body (`username`, `password`)
+Authentication uses **JWT Bearer tokens**.
+
+Login endpoints:
+
+```text
+POST /auth/token
+POST /auth/login_json
+```
+
+Authenticated requests use:
+
+```http
+Authorization: Bearer <token>
+```
+
+Example token response:
 
 ```json
-// Response
 {
-  "access_token": "eyJ...",
+  "access_token": "<jwt-token>",
   "token_type": "bearer"
 }
 ```
 
-**Token Payload:**
-```json
-{
-  "email": "user@example.com",
-  "emp_id": 1,
-  "is_admin": false,
-  "exp": "<timestamp>"
-}
+---
+
+## 📡 Main API Areas
+
+### Admin
+
+Admin APIs provide organization-level management for:
+
+* Employees
+* Departments
+* Roles
+* Attendance
+* Leave allocations
+* Leave applications
+* Regularizations
+* Expense claims
+* Salaries
+* Payslips
+
+### Manager
+
+Manager APIs provide access to:
+
+* Subordinates
+* Attendance
+* Leave applications
+* Regularizations
+* Expense claims
+
+### User
+
+Users can manage or view their own:
+
+* Profile
+* Attendance
+* Leave
+* Leave applications
+* Regularizations
+* Expense claims
+* Salary
+* Payslips
+* Roles
+* Departments
+
+For complete request and response schemas, use Swagger:
+
+```text
+http://localhost:8000/docs
 ```
 
 ---
 
-## 📡 API Endpoints
-
-<details>
-<summary><b>👑 Admin Endpoints</b></summary>
-
-| Resource | Methods |
-|----------|---------|
-| `/admin/employees` | GET, POST, PUT, DELETE (by id & email) |
-| `/admin/roles` | POST, PUT, DELETE (by id & name) |
-| `/admin/departments` | POST, PUT, DELETE (by id & name) |
-| `/admin/attendance` | GET (all, by date, by employee) |
-| `/admin/leaves` | GET, POST, DELETE |
-| `/admin/leave-applications` | GET, PUT (status update) |
-| `/admin/regularizations` | GET, PUT (status update) |
-| `/admin/expense-claims` | GET, PUT (status update) |
-| `/admin/payslips` | GET, POST, DELETE |
-| `/admin/salaries` | GET, POST, DELETE |
-
-</details>
-
-<details>
-<summary><b>👔 Manager Endpoints</b></summary>
-
-| Resource | Methods |
-|----------|---------|
-| `/manager/subordinates` | GET (by id & email) |
-| `/manager/attendance` | GET (by date, by employee) |
-| `/manager/leaves` | GET |
-| `/manager/leave-applications` | GET, PUT (status update) |
-| `/manager/regularizations` | GET (pending, by id, by employee), PUT (status) |
-| `/manager/expense-claims` | GET, PUT (status update) |
-
-</details>
-
-<details>
-<summary><b>👤 User Endpoints</b></summary>
-
-| Resource | Methods |
-|----------|---------|
-| `/user/my` | GET (profile) |
-| `/user/my/attendance` | GET, POST (punch-in) |
-| `/user/my/leave` | GET |
-| `/user/my/leave-applications` | GET, POST, DELETE (Pending only) |
-| `/user/my/regularizations` | GET, POST |
-| `/user/my/expense-claims` | GET, POST, DELETE (Pending only) |
-| `/user/my/payslips` | GET |
-| `/user/my/salary` | GET |
-| `/user/my/roles` | GET (read-only) |
-| `/user/my/departments` | GET (read-only) |
-
-</details>
-
-> 💡 For complete request/response schemas and interactive documentation, run the API and open `http://localhost:8000/docs`.
-
----
-
-## ⚙️ Setup & Installation
+## ⚙️ Local Setup
 
 ### Prerequisites
-- Python 3.12
-- Git
 
-### 1. Clone & Setup
+Install:
 
-```powershell
-git clone <repo-url>
-cd greythr-clone-app-api
+* Python 3.12
+* Git
+* uv
 
-# Activate virtual environment
-.\venv\Scripts\Activate.ps1       # Windows
-source venv/bin/activate           # Linux/Mac
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-### 2. Configure Environment
+Clone the repository:
 
 ```bash
-cp .env.example .env   # create from example
+git clone https://github.com/vishalpal-06/greythr-clone-app-api.git
+cd greythr-clone-app-api
 ```
 
-> 🔐 **Security:** Never commit real API keys, database passwords, or production secrets to GitHub.
+Install the locked dependencies:
 
-Edit `.env`:
-
-```env
-# Database (leave as "local" for SQLite dev)
-DB_CONNECT=local
-
-# For MySQL/Production
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
-DB_HOST=your_db_host
-DB_PORT=3306
-DB_NAME=your_db_name
-
-# Auth (MUST override in production)
-SECRET_KEY=your-secure-secret-key
-ALGORITHM=HS256
-
-# LLM Keys (only needed for MCP/UI features)
-ANTHROPIC_API_KEY=your_key
-GOOGLE_API_KEY=your_key
+```bash
+uv sync
 ```
 
-### 3. Run the API
+`uv` creates and manages the project virtual environment automatically.
 
-```powershell
-uvicorn main:app --reload
+---
+
+## ▶️ Run Locally
+
+Start the FastAPI application:
+
+```bash
+uv run uvicorn main:app --reload
 ```
 
-> Tables are auto-created on startup. No migration step needed.
+Application:
 
-### 4. Seed the Database (Optional)
-
-```powershell
-python insert_db_data.py
+```text
+http://localhost:8000
 ```
+
+Swagger:
+
+```text
+http://localhost:8000/docs
+```
+
+Health endpoint:
+
+```text
+GET /
+```
+
+---
+
+## 📦 Dependency Management
+
+Application dependencies are managed using:
+
+```text
+pyproject.toml
+        +
+     uv.lock
+```
+
+Install dependencies:
+
+```bash
+uv sync
+```
+
+Add a dependency:
+
+```bash
+uv add <package>
+```
+
+Add a development dependency:
+
+```bash
+uv add --dev <package>
+```
+
+Remove a dependency:
+
+```bash
+uv remove <package>
+```
+
+Run commands inside the project environment:
+
+```bash
+uv run <command>
+```
+
+The application does **not** use a root `requirements.txt`.
+
+---
+
+## 🗄️ Database Migrations
+
+Database schema changes are managed using **Alembic**.
+
+Create a migration:
+
+```bash
+uv run alembic revision --autogenerate -m "migration description"
+```
+
+Apply migrations:
+
+```bash
+uv run alembic upgrade head
+```
+
+View migration history:
+
+```bash
+uv run alembic history
+```
+
+Rollback one migration:
+
+```bash
+uv run alembic downgrade -1
+```
+
+Alembic configuration is maintained through `pyproject.toml`.
 
 ---
 
 ## 🧪 Testing
 
-### Run Tests
+Run all tests:
 
-```powershell
-# Full suite
-pytest
-
-# Verbose
-pytest -v
-
-# Single file
-pytest tests\test_cases\test_health.py
-
-# Filter by name
-pytest -k "department" -v
-
-# With coverage
-pytest --cov=. --cov-report=html
-
-# CI mode (strict 100% coverage)
-pytest --disable-warnings --maxfail=1 --cov=. --cov-fail-under=100
+```bash
+uv run pytest
 ```
 
-### View Coverage Report
+Run with coverage:
 
-```powershell
-start htmlcov\index.html    # Windows
-open htmlcov/index.html     # Mac
+```bash
+uv run pytest --cov=.
 ```
 
-### Update Snapshots
+CI requires **100% test coverage**:
 
-```powershell
-$env:UPDATE_TEST_DATA = "1"
-pytest tests\test_cases\test_admin_api\test_admin_department_api.py
-Remove-Item Env:UPDATE_TEST_DATA
+```bash
+uv run pytest \
+  --disable-warnings \
+  --maxfail=1 \
+  --cov=. \
+  --cov-fail-under=100
 ```
-
-### Simulate CI Locally
-
-```powershell
-black --check .
-pytest --disable-warnings --maxfail=1 --cov=. --cov-fail-under=100
-```
-
-> ⚠️ CI enforces **100% coverage**. New code must be fully covered or add to `.coveragerc` omit list.
 
 ---
 
-## 🤖 AI Agent Integration
+## 🧹 Code Quality
 
-Three companion scripts layer an AI agent over the FastAPI app:
+### Black
 
-```
-User
-  → mcp_client.py / ui_app.py  (LangGraph + LLM)
-    → MCP (stdio subprocess)
-      → mcp_server.py (FastMCP)
-        → FastAPI app
-          → SQLAlchemy / DB
+Check formatting:
+
+```bash
+uv run black --check .
 ```
 
-### MCP Server
-```powershell
-python mcp_server.py
-```
-Exposes every FastAPI route as an MCP tool.
+Format code:
 
-### Claude Agent (Terminal)
-```powershell
-python mcp_client.py
+```bash
+uv run black .
 ```
-LangGraph agent using `claude-sonnet-4-5`.
 
-### Streamlit Web UI
-```powershell
-streamlit run ui_app.py
-# Open http://localhost:8501
+### Ruff
+
+Run linting:
+
+```bash
+uv run ruff check .
 ```
-Chatbot powered by `gemini-2.5-flash`.
 
-> Both `mcp_client.py` and `ui_app.py` start `mcp_server.py` automatically.
+Auto-fix supported issues:
+
+```bash
+uv run ruff check . --fix
+```
+
+Black, Ruff, pytest and coverage configuration are stored in `pyproject.toml`.
 
 ---
 
 ## 🐳 Docker
 
-```powershell
-# Build
-docker build -t greythr-clone-api:latest .
+The project uses a **multi-stage Docker build**.
 
-# Run
-docker run -p 8000:8000 greythr-clone-api:latest
+The builder stage uses `uv` and the locked dependencies from:
+
+```text
+pyproject.toml
+uv.lock
+```
+
+Only production dependencies are installed into the final image.
+
+Build:
+
+```bash
+docker build -t greythr-api .
+```
+
+Run:
+
+```bash
+docker run -p 8000:8000 greythr-api
+```
+
+Open:
+
+```text
+http://localhost:8000/docs
+```
+
+The runtime container runs as a **non-root user**.
+
+---
+
+## ☁️ AWS Infrastructure
+
+AWS infrastructure is defined using **AWS CDK with Python** under:
+
+```text
+infra/
+```
+
+The CDK application manages the long-lived AWS resources required by the application.
+
+Main stacks:
+
+```text
+NetworkStack
+SecurityStack
+EcrStack
+IamStack
+EcsStack
+AlbStack
+```
+
+The **ECS Task Definition and ECS Service are managed by the CI/CD pipeline**, allowing application deployments to happen independently from base infrastructure changes.
+
+### Deploy Infrastructure Manually
+
+```bash
+cd infra
+```
+
+Create a virtual environment:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+Install CDK Python dependencies:
+
+```bash
+uv pip install -r requirements.txt
+```
+
+> `infra/requirements.txt` is only for the standalone CDK project. Application dependencies are managed through the root `pyproject.toml` and `uv.lock`.
+
+Synthesize CloudFormation:
+
+```bash
+cdk synth
+```
+
+Review changes:
+
+```bash
+cdk diff
+```
+
+Deploy:
+
+```bash
+cdk deploy --all
+```
+
+For a new AWS account/region:
+
+```bash
+cdk bootstrap
 ```
 
 ---
 
-## 🚀 CI/CD Pipeline
+## 🚀 CI/CD
 
-GitHub Actions (`.github/workflows/ci.yaml`) on push/PR to `main`:
+GitHub Actions automatically deploys changes pushed to `main`.
 
+```text
+Push to main
+      ↓
+Detect Infrastructure Changes
+      ↓
+Black Formatting Check
+      ↓
+pytest + 100% Coverage
+      ↓
+Build Docker Image
+      ↓
+Trivy Security Scan
+      ↓
+Push Image to Amazon ECR
+      ↓
+Generate ECS Task Definition
+      ↓
+Register Task Definition
+      ↓
+Create / Update ECS Service
+      ↓
+Configure Auto Scaling
+      ↓
+Wait for Stable Deployment
 ```
-Format Check (black)
-    ↓
-Tests (pytest 100% coverage)
-    ↓
-Push to AWS ECR
-    ↓
-Deploy to AWS ECS (Fargate)
+
+### Infrastructure Changes
+
+Changes under:
+
+```text
+infra/**
 ```
 
-**Required GitHub Secrets:**
+trigger the CDK deployment job.
 
-| Secret | Description |
-|--------|-------------|
-| `AWS_ACCESS_KEY_ID` | AWS credentials |
-| `AWS_SECRET_ACCESS_KEY` | AWS credentials |
-| `AWS_REGION` | Target region |
-| `ECR_REPOSITORY` | ECR repo name |
-| `ECS_SERVICE_NAME` | ECS service |
-| `ECS_CLUSTER_NAME` | ECS cluster |
-| `ECS_CONTAINER_NAME` | Container name |
+The pipeline runs:
+
+```text
+cdk synth
+      ↓
+cdk deploy --all
+```
+
+Application deployment continues after the required infrastructure is available.
 
 ---
 
-## 🗄️ Data Models
+## 🔍 Container Security
 
-| Model | Key Fields |
-|-------|-----------|
-| `Employee` | id, name, email, password, isadmin, dept, role, manager |
-| `Department` | id, name (unique) |
-| `Role` | id, name (unique) |
-| `Attendance` | id, punch_time, employee_id |
-| `Leave` | id, year, casual/plan/probation/sick/balance counts |
-| `LeaveApplication` | id, from_date, end_date, total_days, status, manager_id |
-| `Regularization` | id, start_time, end_time, reason, status, manager_id |
-| `Salary` | id, lpa (Float), year, employee_id |
-| `Payslip` | id, basic, hra, allowances, month (1st of month), employee_id |
-| `ExpenseClaim` | id, date, amount, description, status, manager_id |
+Before an image is pushed to ECR, CI scans it using **Trivy**.
+
+The deployment fails when fixable:
+
+```text
+HIGH
+CRITICAL
+```
+
+vulnerabilities are detected.
+
+ECR also has image scanning enabled when images are pushed.
 
 ---
 
-## ⚠️ Known Limitations
+## 🚢 ECS Deployment
 
-| Issue | Severity |
-|-------|---------|
-| No leave-balance check on approval | 🔴 High |
-| No overlap detection on approved leaves | 🔴 High |
-| Password stored/compared as plain text | 🔴 High |
-| All monetary fields use `Float` (not `Decimal`) | 🟡 Medium |
-| No database migrations (Alembic) | 🟡 Medium |
-| Manager reassignment doesn't reroute pending approvals | 🟡 Medium |
-| No soft delete / audit trail | 🟡 Medium |
-| Synchronous SQLAlchemy blocks async event loop | 🟡 Medium |
-| CORS allows only `http://localhost:3000` | 🟡 Medium |
+Each successful deployment creates a Docker image tagged with the Git commit SHA:
 
+```text
+greythr-api:<git-sha>
+```
+
+The pipeline then dynamically generates and registers a new ECS Task Definition revision.
+
+Current task configuration:
+
+```text
+CPU       : 512
+Memory    : 1024 MB
+Port      : 8000
+Launch    : Fargate
+Network   : awsvpc
+Public IP : Disabled
+```
+
+ECS tasks run in **private subnets** and receive application traffic only through the Application Load Balancer.
+
+---
+
+## 📈 Auto Scaling
+
+The ECS service is configured with:
+
+```text
+Minimum Tasks : 2
+Maximum Tasks : 10
+```
+
+CPU scaling target:
+
+```text
+70%
+```
+
+Memory scaling target:
+
+```text
+75%
+```
+
+Scale-in and scale-out cooldown:
+
+```text
+60 seconds
+```
+
+The deployment starts with a desired task count of `3`.
+
+---
+
+## 🔄 Deployment Strategy
+
+ECS uses a rolling deployment configuration:
+
+```text
+minimumHealthyPercent = 100
+maximumPercent        = 200
+```
+
+During deployment, ECS can start new tasks while keeping the existing healthy tasks available.
+
+Deployment Circuit Breaker is enabled with automatic rollback:
+
+```text
+Deployment fails
+       ↓
+Circuit Breaker
+       ↓
+Rollback
+       ↓
+Previous healthy deployment
+```
+
+The pipeline waits until the ECS service becomes stable before marking deployment successful.
+
+---
+
+## 📊 Monitoring & Logs
+
+ECS Container Insights is enabled.
+
+Application container logs are sent to:
+
+```text
+/ecs/greythr-api
+```
+
+The CloudWatch log group is retained for one month.
+
+The deployment pipeline also waits for ECS service stability and prints the final:
+
+* Service name
+* Desired tasks
+* Running tasks
+* Pending tasks
+* Task Definition revision
+
+---
+
+## 🔒 Security
+
+The deployment follows these basic security controls:
+
+* ECS tasks run inside private subnets
+* ECS tasks do not receive public IP addresses
+* Internet traffic enters through the ALB
+* ECS port `8000` accepts traffic only from the ALB security group
+* Containers run as a non-root Linux user
+* IAM execution and application task roles are separated
+* Docker images are scanned before deployment
+* ECR image scanning is enabled
+* Production Docker builds exclude development dependencies
+* AWS credentials are stored in GitHub Secrets
+
+---
+
+## 🔑 Required GitHub Secrets
+
+The current pipeline requires:
+
+| Secret                  | Purpose                              |
+| ----------------------- | ------------------------------------ |
+| `AWS_ACCESS_KEY_ID`     | Authenticate GitHub Actions with AWS |
+| `AWS_SECRET_ACCESS_KEY` | Authenticate GitHub Actions with AWS |
+
+Deployment configuration such as AWS region, ECR repository, ECS cluster and ECS service names is currently defined in the workflow environment.
+
+---
+
+## 🌐 Deployment Flow
+
+```text
+Developer
+    ↓
+GitHub
+    ↓
+GitHub Actions
+    ↓
+Tests + Security Scan
+    ↓
+Docker Image
+    ↓
+Amazon ECR
+    ↓
+ECS Task Definition
+    ↓
+ECS Service
+    ↓
+Fargate Tasks
+    ↑
+Application Load Balancer
+    ↑
+Internet
+```
+
+---
 
 ## 👨‍💻 Author
 
-**Vishal Kumar Pal** — GreytHR Clone API
+**Vishal Kumar Pal**
 
+GreytHR Clone API
 
 <div align="center">
+
 ⭐ If you find this project useful, consider giving it a star!
+
 </div>
