@@ -1,3 +1,6 @@
+import pytest
+
+
 # -----------------------------------Test User API -----------------------------------
 def test_user_create_my_attendance_success(client, user_A1, read_json):
     response = client.post(
@@ -67,37 +70,20 @@ def test_user_manager_access_get_subordinate_attendance_by_empid_and_date_nonsub
 # ------------------------------Test Admin API -------------------------------
 
 
-def test_user_admin_access_get_all_attendance_list_forbidden(client, user_A1, read_json):
-    response = client.get(
+@pytest.mark.parametrize(
+    "url",
+    [
         "/admin/attendance/",
-        headers={"Authorization": f"Bearer {user_A1}"},
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_user_admin_access_get_attendance_by_date_forbidden(client, user_A1, read_json):
-    response = client.get(
         "admin/attendance/date/2025-11-27",
-        headers={"Authorization": f"Bearer {user_A1}"},
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_user_admin_access_get_attendance_by_empid_and_date_forbidden(client, user_A1, read_json):
-    response = client.get(
         "admin/attendance/employee/120/date/2025-11-27",
-        headers={"Authorization": f"Bearer {user_A1}"},
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_user_admin_access_get_attendance_by_empid_forbidden(client, user_A1, read_json):
-    response = client.get(
         "/admin/attendance/employee/3",
+    ],
+)
+def test_user_admin_access_attendance_forbidden(client, user_A1, url):
+    response = client.get(
+        url,
         headers={"Authorization": f"Bearer {user_A1}"},
     )
+
     assert response.status_code == 403
     assert response.json() == {"detail": "Admin privileges required"}

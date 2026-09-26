@@ -20,7 +20,7 @@ origins = ["http://localhost:3000"]
 
 @app.get("/")
 def health_check():
-    return {"status": "Welcome to My Grehthrapp By Vishal K. Pal"}
+    return {"status": "Welcome to Greyth-Hr Clone By Vishal K. Pal"}
 
 
 @app.get("/health")

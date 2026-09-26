@@ -1,3 +1,6 @@
+import pytest
+
+
 # -----------------------------------Test User API -----------------------------------
 def test_manager_create_leave_application_success(client, manager_A, read_json):
     payload = {
@@ -201,41 +204,31 @@ def test_manager_manager_access_leave_applications_by_empid_not_exist_not_found(
 
 
 # ------------------------------Test Admin API -------------------------------
-def test_manager_admin_access_get_employee_leave_application_by_id_forbidden(client, manager_A):
-    response = client.get(
-        "/admin/leave-applications/1", headers={"Authorization": f"Bearer {manager_A}"}
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_manager_admin_access_get_employee_leave_application_by_empid_forbidden(client, manager_A):
-    response = client.get(
-        "/admin/leave-applications/employee/1",
-        headers={"Authorization": f"Bearer {manager_A}"},
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_manager_admin_access_get_employee_leave_application_by_year_and_month_forbidden(
-    client, manager_A
+@pytest.mark.parametrize(
+    ("method", "url", "kwargs"),
+    [
+        ("get", "/admin/leave-applications/1", {}),
+        ("get", "/admin/leave-applications/employee/1", {}),
+        ("get", "/admin/leave-applications/month/2026/11", {}),
+        (
+            "put",
+            "/admin/leave-applications/1/status",
+            {"json": {"leave_status": "Approved"}},
+        ),
+    ],
+)
+def test_manager_admin_access_leave_application_forbidden(
+    client,
+    manager_A,
+    method,
+    url,
+    kwargs,
 ):
-    response = client.get(
-        "/admin/leave-applications/month/2026/11",
+    response = getattr(client, method)(
+        url,
         headers={"Authorization": f"Bearer {manager_A}"},
+        **kwargs,
     )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
 
-
-def test_manager_admin_access_update_employee_leave_application_status_by_id_forbidden(
-    client, manager_A
-):
-    response = client.put(
-        "/admin/leave-applications/1/status",
-        json={"leave_status": "Approved"},
-        headers={"Authorization": f"Bearer {manager_A}"},
-    )
     assert response.status_code == 403
     assert response.json() == {"detail": "Admin privileges required"}

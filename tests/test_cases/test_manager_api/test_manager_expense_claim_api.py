@@ -1,3 +1,6 @@
+import pytest
+
+
 # -----------------------------------Test User API -----------------------------------
 def test_manager_create_expense_claim_success(client, manager_A, read_json):
     response = client.post(
@@ -214,57 +217,33 @@ def test_manager_manager_access_update_expense_claim_status_not_found(client, ma
 
 
 # ------------------------------Test Admin API -------------------------------
-def test_manager_admin_access_get_expense_claim_by_id_forbidden(client, manager_A, read_json):
-    response = client.get(
-        "admin/expense-claims/1", headers={"Authorization": f"Bearer {manager_A}"}
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_manager_admin_access_get_expense_claims_by_empid_forbidden(client, manager_A, read_json):
-    response = client.get(
-        "admin/expense-claims/employee/100",
-        headers={"Authorization": f"Bearer {manager_A}"},
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_manager_admin_access_get_expense_claims_by_status_forbidden(client, manager_A, read_json):
-    response = client.get(
-        "/admin/expense-claims/status/Pending",
-        headers={"Authorization": f"Bearer {manager_A}"},
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_manager_admin_access_get_expense_claims_by_year_month_forbidden(client, manager_A):
-    response = client.get(
-        "admin/expense-claims/month/2025/11",
-        headers={"Authorization": f"Bearer {manager_A}"},
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_manager_admin_access_get_expense_claims_by_empid_year_and_month_forbidden(
-    client, manager_A
+@pytest.mark.parametrize(
+    ("method", "url", "kwargs"),
+    [
+        ("get", "admin/expense-claims/1", {}),
+        ("get", "admin/expense-claims/employee/100", {}),
+        ("get", "/admin/expense-claims/status/Pending", {}),
+        ("get", "admin/expense-claims/month/2025/11", {}),
+        ("get", "admin/expense-claims/employee/1/month/2025/11", {}),
+        (
+            "put",
+            "admin/expense-claims/1/status",
+            {"json": {"claim_status": "Approved"}},
+        ),
+    ],
+)
+def test_manager_admin_access_expense_claim_forbidden(
+    client,
+    manager_A,
+    method,
+    url,
+    kwargs,
 ):
-    response = client.get(
-        "admin/expense-claims/employee/1/month/2025/11",
+    response = getattr(client, method)(
+        url,
         headers={"Authorization": f"Bearer {manager_A}"},
+        **kwargs,
     )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
 
-
-def test_manager_admin_access_update_expense_claim_status_forbidden(client, manager_A, read_json):
-    response = client.put(
-        "admin/expense-claims/1/status",
-        json={"claim_status": "Approved"},
-        headers={"Authorization": f"Bearer {manager_A}"},
-    )
     assert response.status_code == 403
     assert response.json() == {"detail": "Admin privileges required"}

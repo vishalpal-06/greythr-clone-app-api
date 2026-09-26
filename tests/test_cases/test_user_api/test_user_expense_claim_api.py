@@ -1,3 +1,6 @@
+import pytest
+
+
 # -----------------------------------Test User API -----------------------------------
 def test_user_create_my_expense_claim_success(client, user_A1, read_json):
     response = client.post(
@@ -161,55 +164,33 @@ def test_user_update_subordinate_expense_claim_status_by_id_not_found(client, us
 
 
 # ------------------------------Test Admin API -------------------------------
-def test_user_admin_access_get_employee_expense_claim_by_id_forbidden(client, user_A1, read_json):
-    response = client.get("admin/expense-claims/1", headers={"Authorization": f"Bearer {user_A1}"})
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_user_admin_access_get_employee_expense_claims_by_empid_forbidden(client, user_A1):
-    response = client.get(
-        "admin/expense-claims/employee/100",
-        headers={"Authorization": f"Bearer {user_A1}"},
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_user_admin_access_get_employee_expense_claims_by_status_forbidden(client, user_A1):
-    response = client.get(
-        "/admin/expense-claims/status/Pending",
-        headers={"Authorization": f"Bearer {user_A1}"},
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_user_admin_access_get_employee_expense_claims_by_year_month_forbidden(client, user_A1):
-    response = client.get(
-        "admin/expense-claims/month/2025/11",
-        headers={"Authorization": f"Bearer {user_A1}"},
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_user_admin_access_get_employee_expense_claims_by_empid_year_month_forbidden(
-    client, user_A1
+@pytest.mark.parametrize(
+    ("method", "url", "kwargs"),
+    [
+        ("get", "admin/expense-claims/1", {}),
+        ("get", "admin/expense-claims/employee/100", {}),
+        ("get", "/admin/expense-claims/status/Pending", {}),
+        ("get", "admin/expense-claims/month/2025/11", {}),
+        ("get", "admin/expense-claims/employee/1/month/2025/11", {}),
+        (
+            "put",
+            "admin/expense-claims/1/status",
+            {"json": {"claim_status": "Approved"}},
+        ),
+    ],
+)
+def test_user_admin_access_expense_claim_forbidden(
+    client,
+    user_A1,
+    method,
+    url,
+    kwargs,
 ):
-    response = client.get(
-        "admin/expense-claims/employee/1/month/2025/11",
+    response = getattr(client, method)(
+        url,
         headers={"Authorization": f"Bearer {user_A1}"},
+        **kwargs,
     )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
 
-
-def test_user_update_employee_expense_claim_status_by_id_forbidden(client, user_A1, read_json):
-    response = client.put(
-        "admin/expense-claims/1/status",
-        json={"claim_status": "Approved"},
-        headers={"Authorization": f"Bearer {user_A1}"},
-    )
     assert response.status_code == 403
     assert response.json() == {"detail": "Admin privileges required"}

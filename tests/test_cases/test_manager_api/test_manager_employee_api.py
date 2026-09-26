@@ -1,3 +1,6 @@
+import pytest
+
+
 # -----------------------------------Test User API -----------------------------------
 def test_manager_get_my_profile_success(client, manager_A, read_json):
     response = client.get("/user/my/me/", headers={"Authorization": f"Bearer {manager_A}"})
@@ -72,103 +75,61 @@ def test_manager_manager_access_get_subordinate_by_id_not_found(client, manager_
 
 
 # ------------------------------Test Admin API -------------------------------
-def test_manager_admin_access_get_all_employees_forbidden(client, manager_A, read_json):
-    response = client.get("/admin/employees/", headers={"Authorization": f"Bearer {manager_A}"})
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
+EMPLOYEE_CREATE_PAYLOAD = {
+    "first_name": "string",
+    "last_name": "string",
+    "email": "string@example.com",
+    "joining_date": "2025-11-27",
+    "address": "string",
+    "isadmin": True,
+    "fk_department_id": 1,
+    "fk_role_id": 1,
+    "fk_manager_id": 1,
+    "password": "string",
+}
+
+EMPLOYEE_UPDATE_PAYLOAD = {
+    "first_name": "string",
+    "last_name": "string",
+    "joining_date": "2025-11-27",
+    "address": "string",
+    "isadmin": True,
+    "fk_department_id": 1,
+    "fk_role_id": 1,
+    "fk_manager_id": 1,
+    "password": "string",
+}
 
 
-def test_manager_admin_access_create_employee_forbidden(client, manager_A, read_json):
-    payload = {
-        "first_name": "string",
-        "last_name": "string",
-        "email": "string@example.com",
-        "joining_date": "2025-11-27",
-        "address": "string",
-        "isadmin": True,
-        "fk_department_id": 1,
-        "fk_role_id": 1,
-        "fk_manager_id": 1,
-        "password": "string",
-    }
-    response = client.post(
-        "/admin/employees/",
-        json=payload,
+@pytest.mark.parametrize(
+    ("method", "url", "kwargs"),
+    [
+        ("get", "/admin/employees/", {}),
+        ("post", "/admin/employees/", {"json": EMPLOYEE_CREATE_PAYLOAD}),
+        ("get", "/admin/employees/id/1", {}),
+        ("put", "/admin/employees/id/1", {"json": EMPLOYEE_UPDATE_PAYLOAD}),
+        ("delete", "/admin/employees/id/1", {}),
+        ("get", "/admin/employees/email/admin@test.com", {}),
+        (
+            "put",
+            "/admin/employees/email/admin@test.com",
+            {"json": EMPLOYEE_UPDATE_PAYLOAD},
+        ),
+        ("delete", "/admin/employees/email/admin@test.com", {}),
+    ],
+)
+def test_manager_admin_access_employee_forbidden(
+    client,
+    manager_A,
+    method,
+    url,
+    kwargs,
+):
+    response = getattr(client, method)(
+        url,
         headers={"Authorization": f"Bearer {manager_A}"},
+        **kwargs,
     )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
 
-
-def test_manager_admin_access_get_employee_by_id_forbidden(client, manager_A, read_json):
-    response = client.get("/admin/employees/id/1", headers={"Authorization": f"Bearer {manager_A}"})
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_manager_admin_access_update_employee_by_id_forbidden(client, manager_A, read_json):
-    payload = {
-        "first_name": "string",
-        "last_name": "string",
-        "joining_date": "2025-11-27",
-        "address": "string",
-        "isadmin": True,
-        "fk_department_id": 1,
-        "fk_role_id": 1,
-        "fk_manager_id": 1,
-        "password": "string",
-    }
-    response = client.put(
-        "/admin/employees/id/1",
-        json=payload,
-        headers={"Authorization": f"Bearer {manager_A}"},
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_manager_admin_access_delete_employee_by_id_forbidden(client, manager_A, read_json):
-    response = client.delete(
-        "/admin/employees/id/1", headers={"Authorization": f"Bearer {manager_A}"}
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_manager_admin_access_get_employee_by_email_forbidden(client, manager_A, read_json):
-    response = client.get(
-        "/admin/employees/email/admin@test.com",
-        headers={"Authorization": f"Bearer {manager_A}"},
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_manager_admin_access_update_employee_by_email_forbidden(client, manager_A, read_json):
-    payload = {
-        "first_name": "string",
-        "last_name": "string",
-        "joining_date": "2025-11-27",
-        "address": "string",
-        "isadmin": True,
-        "fk_department_id": 1,
-        "fk_role_id": 1,
-        "fk_manager_id": 1,
-        "password": "string",
-    }
-    response = client.put(
-        "/admin/employees/email/admin@test.com",
-        json=payload,
-        headers={"Authorization": f"Bearer {manager_A}"},
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_manager_admin_access_delete_employee_by_email_forbidden(client, manager_A, read_json):
-    response = client.delete(
-        "/admin/employees/email/admin@test.com",
-        headers={"Authorization": f"Bearer {manager_A}"},
-    )
     assert response.status_code == 403
     assert response.json() == {"detail": "Admin privileges required"}

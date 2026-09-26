@@ -1,3 +1,6 @@
+import pytest
+
+
 # -----------------------------------Test User API -----------------------------------
 def test_user_get_all_my_regularization_success(client, user_A1, read_json):
     response = client.get(
@@ -104,19 +107,29 @@ def test_user_manager_access_update_subordinate_regularization_by_id_not_allowed
 
 
 # ------------------------------Test Admin API -------------------------------
-def test_user_admin_access_get_employee_regularization_by_id_forbidden(client, user_A1, read_json):
-    response = client.get(
-        "/admin/regularizations/1", headers={"Authorization": f"Bearer {user_A1}"}
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_user_admin_access_update_employee_regularization_by_id_forbidden(client, user_A1):
-    response = client.put(
-        "/admin/regularizations/1/status",
-        json={"regularization_status": "Rejected"},
+@pytest.mark.parametrize(
+    ("method", "url", "kwargs"),
+    [
+        ("get", "/admin/regularizations/1", {}),
+        (
+            "put",
+            "/admin/regularizations/1/status",
+            {"json": {"regularization_status": "Rejected"}},
+        ),
+    ],
+)
+def test_user_admin_access_regularization_forbidden(
+    client,
+    user_A1,
+    method,
+    url,
+    kwargs,
+):
+    response = getattr(client, method)(
+        url,
         headers={"Authorization": f"Bearer {user_A1}"},
+        **kwargs,
     )
+
     assert response.status_code == 403
     assert response.json() == {"detail": "Admin privileges required"}

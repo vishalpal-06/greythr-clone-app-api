@@ -1,3 +1,6 @@
+import pytest
+
+
 # -----------------------------------Test User API -----------------------------------
 def test_manager_get_all_departments_success(client, manager_A, read_json):
     response = client.get("/user/my/departments/", headers={"Authorization": f"Bearer {manager_A}"})
@@ -31,52 +34,31 @@ def test_manager_get_department_by_id_not_found(client, manager_A, read_json):
 
 
 # ------------------------------Test Admin API -------------------------------
-def test_manager_admin_access_create_department_forbidden(client, manager_A, read_json):
-    payload = {"department_name": "string"}
-    response = client.post(
-        "/admin/departments/",
-        json=payload,
+@pytest.mark.parametrize(
+    ("method", "url", "kwargs"),
+    [
+        ("post", "/admin/departments/", {"json": {"department_name": "string"}}),
+        ("put", "/admin/departments/id/1", {"params": {"new_name": "HR"}}),
+        ("delete", "/admin/departments/id/1", {}),
+        (
+            "put",
+            "/admin/departments/name/Human Resources",
+            {"params": {"new_name": "HR"}},
+        ),
+        ("delete", "/admin/departments/name/Human Resources", {}),
+    ],
+)
+def test_manager_admin_access_department_forbidden(
+    client,
+    manager_A,
+    method,
+    url,
+    kwargs,
+):
+    response = getattr(client, method)(
+        url,
         headers={"Authorization": f"Bearer {manager_A}"},
-    )
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_manager_admin_access_update_department_by_id_forbidden(client, manager_A, read_json):
-    response = client.put(
-        "/admin/departments/id/1",
-        params={"new_name": "HR"},
-        headers={"Authorization": f"Bearer {manager_A}"},
-    )
-
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_manager_admin_access_delete_department_by_id_forbidden(client, manager_A, read_json):
-    response = client.delete(
-        "/admin/departments/id/1", headers={"Authorization": f"Bearer {manager_A}"}
-    )
-
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_manager_admin_access_update_department_by_name_forbidden(client, manager_A, read_json):
-    response = client.put(
-        "/admin/departments/name/Human Resources",
-        params={"new_name": "HR"},
-        headers={"Authorization": f"Bearer {manager_A}"},
-    )
-
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Admin privileges required"}
-
-
-def test_manager_admin_access_delete_department_by_name_forbidden(client, manager_A, read_json):
-    response = client.delete(
-        "/admin/departments/name/Human Resources",
-        headers={"Authorization": f"Bearer {manager_A}"},
+        **kwargs,
     )
 
     assert response.status_code == 403
