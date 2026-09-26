@@ -21,38 +21,61 @@ from .seed_db import seed_all_tables
 # ------------------------------
 TEST_DB_URL = "sqlite:///./test_db.sqlite3"
 
-engine = create_engine(TEST_DB_URL, connect_args={"check_same_thread": False})
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_engine(
+    TEST_DB_URL,
+    connect_args={"check_same_thread": False},
+)
 
-# Determine the base directory for test data once
+TestingSessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+)
+
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "test_data")
 
-# REMOVE load_json_data function from here, it's now in seed_db.py
-
 
 # ------------------------------
-# DATABASE FIXTURE
+# CREATE + SEED DATABASE ONCE
 # ------------------------------
-@pytest.fixture
-def db_session():
-    # 1. Setup DB Schema
+@pytest.fixture(scope="session", autouse=True)
+def setup_test_database():
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
-    session = TestingSessionLocal()
+    session = TestingSessionLocal(bind=engine)
 
-    # 2. Seed Data using the new external function
-    # Pass the session and the path to the test data directory
-    seed_all_tables(session, TEST_DATA_DIR)
+    try:
+        seed_all_tables(session, TEST_DATA_DIR)
+    finally:
+        session.close()
 
-    # 3. Yield the session for tests and clean up
+    yield
+
+    Base.metadata.drop_all(bind=engine)
+
+
+# ------------------------------
+# DATABASE SESSION PER TEST
+# ------------------------------
+@pytest.fixture
+def db_session(setup_test_database):
+    connection = engine.connect()
+    transaction = connection.begin()
+
+    session = TestingSessionLocal(
+        bind=connection,
+        join_transaction_mode="rollback_only",
+    )
+
     try:
         yield session
     finally:
         session.close()
 
+        if transaction.is_active:
+            transaction.rollback()
 
-# ... (rest of conftest.py remains the same, including client, tokens, etc.)
+        connection.close()
 
 
 # ------------------------------
@@ -61,14 +84,14 @@ def db_session():
 @pytest.fixture
 def client(db_session):
     def override_get_db():
-        try:
-            yield db_session
-        finally:
-            pass
+        yield db_session
 
     app.dependency_overrides[get_db] = override_get_db
 
-    return TestClient(app)
+    with TestClient(app) as test_client:
+        yield test_client
+
+    app.dependency_overrides.clear()
 
 
 # ------------------------------

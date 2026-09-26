@@ -107,8 +107,6 @@ async def login_for_access_token_form(
         user.isadmin,
         expires_delta=timedelta(minutes=60),
     )
-
-    db.commit()
     return {"access_token": token, "token_type": "bearer"}
 
 
@@ -130,6 +128,4 @@ async def login_for_access_token_json(payload: LoginRequest, db: db_dependency):
         user.isadmin,
         expires_delta=timedelta(minutes=60),
     )
-
-    db.commit()
     return {"access_token": token, "token_type": "bearer"}
